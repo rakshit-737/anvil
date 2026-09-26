@@ -1,0 +1,59 @@
+{
+ "rules": 3757,
+ "parse_errors": 0,
+ "lint_seconds": 0.4,
+ "rules_with_errors": 0,
+ "rules_with_warnings": 3121,
+ "findings_by_code": {
+  "W209": 3029,
+  "W205": 2826,
+  "W203": 468,
+  "W206": 46,
+  "W204": 27,
+  "W210": 2
+ },
+ "status": {
+  "test": 3328,
+  "stable": 103,
+  "experimental": 326
+ },
+ "level": {
+  "high": 1721,
+  "medium": 1496,
+  "low": 336,
+  "critical": 176,
+  "informational": 28
+ },
+ "product": {
+  "windows": 2861,
+  "linux": 248,
+  "(none)": 168,
+  "azure": 124,
+  "macos": 75,
+  "aws": 57,
+  "gcp": 26,
+  "opencanary": 24,
+  "zeek": 24,
+  "okta": 23,
+  "m365": 21,
+  "rpc_firewall": 17,
+  "cisco": 17,
+  "kubernetes": 16,
+  "github": 15
+ },
+ "windows_rules": 2861,
+ "compiled": 3755,
+ "unsupported": 2,
+ "unsupported_reasons": {
+  "modifier ['expand'] not supported": 2
+ },
+ "routable_windows": 2843,
+ "unroutable_windows": {
+  "service 'smbserver-connectivity' not mapped": 1,
+  "category 'file_access' not mapped": 13,
+  "category 'file_rename' not mapped": 2
+ },
+ "with_regression_test": 460,
+ "test_or_stable_without_regression": 3029,
+ "attack_version": "19.2"
+}

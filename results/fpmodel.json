@@ -1,0 +1,86 @@
+{
+ "n_rules": 2803,
+ "positives": 78,
+ "features": 65,
+ "models": {
+  "logreg": {
+   "roc_auc": 0.836,
+   "pr_auc": 0.202,
+   "precision_at_78": 0.269,
+   "recall_at_top10pct": 0.564
+  },
+  "gbdt": {
+   "roc_auc": 0.805,
+   "pr_auc": 0.217,
+   "precision_at_78": 0.256,
+   "recall_at_top10pct": 0.538
+  },
+  "heuristic_level": {
+   "roc_auc": 0.837,
+   "pr_auc": 0.166,
+   "precision_at_78": 0.423,
+   "recall_at_top10pct": 0.679
+  },
+  "heuristic_hunting": {
+   "roc_auc": 0.836,
+   "pr_auc": 0.165,
+   "precision_at_78": 0.244,
+   "recall_at_top10pct": 0.551
+  },
+  "heuristic_no_filter": {
+   "roc_auc": 0.522,
+   "pr_auc": 0.104,
+   "precision_at_78": 0.295,
+   "recall_at_top10pct": 0.474
+  },
+  "random": {
+   "roc_auc": 0.497,
+   "pr_auc": 0.03,
+   "precision_at_78": 0.038,
+   "recall_at_top10pct": 0.09
+  }
+ },
+ "top_features": [
+  [
+   "level",
+   0.5962
+  ],
+  [
+   "mean_len",
+   0.2328
+  ],
+  [
+   "desc_len",
+   0.1557
+  ],
+  [
+   "n_values",
+   0.1291
+  ],
+  [
+   "min_len",
+   0.1212
+  ],
+  [
+   "cat_ps_script",
+   0.0556
+  ],
+  [
+   "mod_eq",
+   0.0521
+  ],
+  [
+   "mod_contains",
+   0.0423
+  ],
+  [
+   "fp_mentions_legit",
+   0.0397
+  ],
+  [
+   "field_TargetFilename",
+   0.0387
+  ]
+ ],
+ "label": "rule fires at least once on the benign evtx-baseline corpus (observable rules only)"
+}

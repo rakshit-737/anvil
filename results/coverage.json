@@ -1,0 +1,240 @@
+{
+ "catalog": "19.2",
+ "claimed": {
+  "catalog_size": 474,
+  "covered": 299,
+  "validated": 299,
+  "coverage_pct": 63.1,
+  "validated_pct": 63.1,
+  "parent_total": 176,
+  "parent_covered": 137,
+  "parent_validated": 137,
+  "tactics": {
+   "initial-access": {
+    "total": 21,
+    "covered": 13,
+    "validated": 13
+   },
+   "execution": {
+    "total": 43,
+    "covered": 33,
+    "validated": 33
+   },
+   "persistence": {
+    "total": 80,
+    "covered": 54,
+    "validated": 54
+   },
+   "privilege-escalation": {
+    "total": 64,
+    "covered": 48,
+    "validated": 48
+   },
+   "credential-access": {
+    "total": 53,
+    "covered": 34,
+    "validated": 34
+   },
+   "discovery": {
+    "total": 42,
+    "covered": 30,
+    "validated": 30
+   },
+   "lateral-movement": {
+    "total": 17,
+    "covered": 14,
+    "validated": 14
+   },
+   "collection": {
+    "total": 32,
+    "covered": 20,
+    "validated": 20
+   },
+   "command-and-control": {
+    "total": 45,
+    "covered": 22,
+    "validated": 22
+   },
+   "exfiltration": {
+    "total": 17,
+    "covered": 8,
+    "validated": 8
+   },
+   "impact": {
+    "total": 30,
+    "covered": 14,
+    "validated": 14
+   },
+   "stealth": {
+    "total": 132,
+    "covered": 78,
+    "validated": 78
+   },
+   "defense-impairment": {
+    "total": 30,
+    "covered": 17,
+    "validated": 17
+   }
+  }
+ },
+ "tp_validated": {
+  "catalog_size": 474,
+  "covered": 299,
+  "validated": 164,
+  "coverage_pct": 63.1,
+  "validated_pct": 34.6,
+  "parent_total": 176,
+  "parent_covered": 137,
+  "parent_validated": 89,
+  "tactics": {
+   "initial-access": {
+    "total": 21,
+    "covered": 13,
+    "validated": 3
+   },
+   "execution": {
+    "total": 43,
+    "covered": 33,
+    "validated": 20
+   },
+   "persistence": {
+    "total": 80,
+    "covered": 54,
+    "validated": 24
+   },
+   "privilege-escalation": {
+    "total": 64,
+    "covered": 48,
+    "validated": 26
+   },
+   "credential-access": {
+    "total": 53,
+    "covered": 34,
+    "validated": 21
+   },
+   "discovery": {
+    "total": 42,
+    "covered": 30,
+    "validated": 23
+   },
+   "lateral-movement": {
+    "total": 17,
+    "covered": 14,
+    "validated": 6
+   },
+   "collection": {
+    "total": 32,
+    "covered": 20,
+    "validated": 8
+   },
+   "command-and-control": {
+    "total": 45,
+    "covered": 22,
+    "validated": 8
+   },
+   "exfiltration": {
+    "total": 17,
+    "covered": 8,
+    "validated": 2
+   },
+   "impact": {
+    "total": 30,
+    "covered": 14,
+    "validated": 6
+   },
+   "stealth": {
+    "total": 132,
+    "covered": 78,
+    "validated": 45
+   },
+   "defense-impairment": {
+    "total": 30,
+    "covered": 17,
+    "validated": 10
+   }
+  }
+ },
+ "tp_validated_and_gated": {
+  "catalog_size": 474,
+  "covered": 299,
+  "validated": 164,
+  "coverage_pct": 63.1,
+  "validated_pct": 34.6,
+  "parent_total": 176,
+  "parent_covered": 137,
+  "parent_validated": 89,
+  "tactics": {
+   "initial-access": {
+    "total": 21,
+    "covered": 13,
+    "validated": 3
+   },
+   "execution": {
+    "total": 43,
+    "covered": 33,
+    "validated": 20
+   },
+   "persistence": {
+    "total": 80,
+    "covered": 54,
+    "validated": 24
+   },
+   "privilege-escalation": {
+    "total": 64,
+    "covered": 48,
+    "validated": 26
+   },
+   "credential-access": {
+    "total": 53,
+    "covered": 34,
+    "validated": 21
+   },
+   "discovery": {
+    "total": 42,
+    "covered": 30,
+    "validated": 23
+   },
+   "lateral-movement": {
+    "total": 17,
+    "covered": 14,
+    "validated": 6
+   },
+   "collection": {
+    "total": 32,
+    "covered": 20,
+    "validated": 8
+   },
+   "command-and-control": {
+    "total": 45,
+    "covered": 22,
+    "validated": 8
+   },
+   "exfiltration": {
+    "total": 17,
+    "covered": 8,
+    "validated": 2
+   },
+   "impact": {
+    "total": 30,
+    "covered": 14,
+    "validated": 6
+   },
+   "stealth": {
+    "total": 132,
+    "covered": 78,
+    "validated": 45
+   },
+   "defense-impairment": {
+    "total": 30,
+    "covered": 17,
+    "validated": 10
+   }
+  }
+ },
+ "stale_tags": {},
+ "otrf_emulation": {
+  "datasets": 96,
+  "claimed": 88,
+  "detected": 67
+ }
+}

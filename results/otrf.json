@@ -1,0 +1,2573 @@
+{
+ "datasets": 96,
+ "events": 751973,
+ "files_blocked_by_av": 2,
+ "wall_seconds": 882.9,
+ "any_alert": 93,
+ "technique_detected": 67,
+ "claimed_coverage": 88,
+ "claimed_but_not_detected": [
+  {
+   "id": "SDWIN-190301125905",
+   "title": "Empire Powerview Add-DomainObjectAcl",
+   "techniques": [
+    "T1222.001"
+   ]
+  },
+  {
+   "id": "SDWIN-190518201922",
+   "title": "Empire WDigest Downgrade",
+   "techniques": [
+    "T1112"
+   ]
+  },
+  {
+   "id": "SDWIN-190518203650",
+   "title": "Empire Enable RDP",
+   "techniques": [
+    "T1112"
+   ]
+  },
+  {
+   "id": "SDWIN-190518211052",
+   "title": "Empire Invoke DCOM ShellWindows",
+   "techniques": [
+    "T1021.003"
+   ]
+  },
+  {
+   "id": "SDWIN-190519005224",
+   "title": "Empire Remote Get Session",
+   "techniques": [
+    "T1049"
+   ]
+  },
+  {
+   "id": "SDWIN-200805034820",
+   "title": "Covenant SC.exe Utility Query",
+   "techniques": [
+    "T1021.002"
+   ]
+  },
+  {
+   "id": "SDWIN-200806012009",
+   "title": "Covenant SharpSC Query",
+   "techniques": [
+    "T1021.002"
+   ]
+  },
+  {
+   "id": "SDWIN-200806022635",
+   "title": "Covenant SharpSC Create",
+   "techniques": [
+    "T1021.002"
+   ]
+  },
+  {
+   "id": "SDWIN-200806031938",
+   "title": "Covenant SharpSC Stop Service",
+   "techniques": [
+    "T1021.002"
+   ]
+  },
+  {
+   "id": "SDWIN-200806130039",
+   "title": "Covenant GetDomainGroup Domain Admins",
+   "techniques": [
+    "T1069.002"
+   ]
+  },
+  {
+   "id": "SDWIN-200916232559",
+   "title": "Mimikatz Netlogon Unauthenticated NetrServerAuthenticate2",
+   "techniques": [
+    "T1210"
+   ]
+  },
+  {
+   "id": "SDWIN-200917174542",
+   "title": "DCOM ExecuteExcel4macro",
+   "techniques": [
+    "T1021.003"
+   ]
+  },
+  {
+   "id": "SDWIN-200918145959",
+   "title": "DCOM RegisterXLL",
+   "techniques": [
+    "T1021.003"
+   ]
+  },
+  {
+   "id": "SDWIN-201020013208",
+   "title": "UI Prompt For Credentials Function",
+   "techniques": [
+    "T1056.002"
+   ]
+  },
+  {
+   "id": "SDWIN-201023020513",
+   "title": "Register-CimProvider Execute Dll",
+   "techniques": [
+    "T1218"
+   ]
+  },
+  {
+   "id": "SDWIN-201026235835",
+   "title": "Process Herpaderping Mimikatz",
+   "techniques": [
+    "T1055"
+   ]
+  },
+  {
+   "id": "SDWIN-201028191914",
+   "title": "Windows Vault Web Credentials",
+   "techniques": [
+    "T1055"
+   ]
+  },
+  {
+   "id": "SDWIN-201029001615",
+   "title": "Python HTTP Server",
+   "techniques": [
+    "T1059"
+   ]
+  },
+  {
+   "id": "SDWIN-201102041306",
+   "title": "PowerShell HTTP Listener",
+   "techniques": [
+    "T1059.001"
+   ]
+  },
+  {
+   "id": "SDWIN-201102163918",
+   "title": "Seatbelt Group User Discovery",
+   "techniques": [
+    "T1012"
+   ]
+  },
+  {
+   "id": "SDWIN-230720004300",
+   "title": "Dumping NTDS.dit using NinjaCopy",
+   "techniques": [
+    "T1003.003"
+   ]
+  }
+ ],
+ "median_rules_fired": 8.0,
+ "rows": [
+  {
+   "id": "SDWIN-190301125905",
+   "title": "Empire Powerview Add-DomainObjectAcl",
+   "techniques": [
+    "T1222.001"
+   ],
+   "events": 9002,
+   "rules_fired": 6,
+   "alerts": 75,
+   "any_alert": true,
+   "technique_detected": false,
+   "technique_rules": [],
+   "claimed": true,
+   "top_rules": [
+    "User Logoff Event",
+    "Scheduled Task Created - Registry",
+    "Malicious PowerShell Commandlets - PoshModule",
+    "Network Connection Initiated By PowerShell Process",
+    "Powerview Add-DomainObjectAcl DCSync AD Extend Right"
+   ]
+  },
+  {
+   "id": "SDWIN-190301174830",
+   "title": "Empire DCSync",
+   "techniques": [
+    "T1003.006"
+   ],
+   "events": 8465,
+   "rules_fired": 5,
+   "alerts": 15,
+   "any_alert": true,
+   "technique_detected": true,
+   "technique_rules": [
+    "Active Directory Replication from Non Machine Account - DcSync Indicator",
+    "Mimikatz Use"
+   ],
+   "claimed": true,
+   "top_rules": [
+    "User Logoff Event",
+    "Active Directory Replication from Non Machine Account - DcSync Indicator",
+    "Local Accounts Discovery",
+    "Network Connection Initiated By PowerShell Process",
+    "Mimikatz Use"
+   ]
+  },
+  {
+   "id": "SDWIN-190319021158",
+   "title": "Empire Net Domain Users",
+   "techniques": [
+    "T1087.002"
+   ],
+   "events": 633,
+   "rules_fired": 3,
+   "alerts": 10,
+   "any_alert": true,
+   "technique_detected": true,
+   "technique_rules": [
+    "Net.EXE Execution"
+   ],
+   "claimed": true,
+   "top_rules": [
+    "User Logoff Event",
+    "Net.EXE Execution",
+    "Password Policy Enumerated"
+   ]
+  },
+  {
+   "id": "SDWIN-190319023812",
+   "title": "Empire Userland Registry Run Keys",
+   "techniques": [
+    "T1547.001"
+   ],
+   "events": 40569,
+   "rules_fired": 41,
+   "alerts": 431,
+   "any_alert": true,
+   "technique_detected": true,
+   "technique_rules": [
+    "CurrentVersion Autorun Keys Modification",
+    "Suspicious PowerShell In Registry Run Keys"
+   ],
+   "claimed": true,
+   "top_rules": [
+    "Alternate PowerShell Hosts - PowerShell Module",
+    "File Creation Date Changed to Another Year",
+    "User Logoff Event",
+    "Scheduled Task Created - Registry",
+    "Suspicious Network Command"
+   ]
+  },
+  {
+   "id": "SDWIN-190319024742",
+   "title": "Empire Userland Scheduled Tasks",
+   "techniques": [
+    "T1053.005"
+   ],
+   "events": 1297,
+   "rules_fired": 8,
+   "alerts": 32,
+   "any_alert": true,
+   "technique_detected": true,
+   "technique_rules": [
+    "Scheduled Task Created - FileCreation",
+    "Scheduled Task Created - Registry",
+    "Scheduled Task Creation Via Schtasks.EXE",
+    "Suspicious Command Patterns In Scheduled Task Creation"
+   ],
+   "claimed": true,
+   "top_rules": [
+    "Scheduled Task Created - Registry",
+    "User Logoff Event",
+    "Base64 Encoded PowerShell Command Detected",
+    "Scheduled Task Creation Via Schtasks.EXE",
+    "Suspicious Command Patterns In Scheduled Task Creation"
+   ]
+  },
+  {
+   "id": "SDWIN-190319131123",
+   "title": "Empire Over-Pass-The-Hash",
+   "techniques": [
+    "T1550.002"
+   ],
+   "events": 10271,
+   "rules_fired": 14,
+   "alerts": 196,
+   "any_alert": true,
+   "technique_detected": true,
+   "technique_rules": [
+    "Outgoing Logon with New Credentials",
+    "Pass the Hash Activity 2",
+    "Successful Overpass the Hash Attempt"
+   ],
+   "claimed": true,
+   "top_rules": [
+    "Alternate PowerShell Hosts - PowerShell Module",
+    "Scheduled Task Created - Registry",
+    "User Logoff Event",
+    "Potentially Suspicious AccessMask Requested From LSASS",
+    "Local Accounts Discovery"
+   ]
+  },
+  {
+   "id": "SDWIN-190319145126",
+   "title": "Rubeus Userland ASKTGT PTT",
+   "techniques": [
+    "T1003.003"
+   ],
+   "events": 1179,
+   "rules_fired": 4,
+   "alerts": 12,
+   "any_alert": true,
+   "technique_detected": true,
+   "technique_rules": [
+    "HackTool - Rubeus Execution"
+   ],
+   "claimed": true,
+   "top_rules": [
+    "User Logoff Event",
+    "HackTool - Rubeus Execution",
+    "Uncommon Outbound Kerberos Connection - Security",
+    "Uncommon Outbound Kerberos Connection"
+   ]
+  },
+  {
+   "id": "SDWIN-190403133337",
+   "title": "IKEEXT Remote Service DLL Hijack",
+   "techniques": [
+    "T1574.001"
+   ],
+   "events": 6349,
+   "rules_fired": 15,
+   "alerts": 242,
+   "any_alert": true,
+   "technique_detected": true,
+   "technique_rules": [
+    "Creation Of Non-Existent System DLL",
+    "Potential DLL Sideloading Of Non-Existent DLLs From System Folders"
+   ],
+   "claimed": true,
+   "top_rules": [
+    "Alternate PowerShell Hosts - PowerShell Module",
+    "User Logoff Event",
+    "Scheduled Task Created - Registry",
+    "Creation Of Non-Existent System DLL",
+    "Stop Windows Service Via Sc.EXE"
+   ]
+  },
+  {
+   "id": "SDWIN-190518182022",
+   "title": "Empire VBS Execution",
+   "techniques": [
+    "T1059.005"
+   ],
+   "events": 2067,
+   "rules_fired": 13,
+   "alerts": 22,
+   "any_alert": true,
+   "technique_detected": true,
+   "technique_rules": [
+    "HackTool - Empire PowerShell Launch Parameters",
+    "Net WebClient Casing Anomalies",
+    "Network Connection Initiated By PowerShell Process",
+    "New PowerShell Instance Created",
+    "Non Interactive PowerShell Process Spawned",
+    "Suspicious Execution of Powershell with Base64",
+    "Suspicious PowerShell Invocation From Script Engines",
+    "Suspicious PowerShell Invocations - Specific"
+   ],
+   "claimed": true,
+   "top_rules": [
+    "User Logoff Event",
+    "WSF/JSE/JS/VBA/VBE File Execution Via Cscript/Wscript",
+    "HackTool - Empire PowerShell Launch Parameters",
+    "Suspicious Execution of Powershell with Base64",
+    "Non Interactive PowerShell Process Spawned"
+   ]
+  },
+  {
+   "id": "SDWIN-190518184306",
+   "title": "Empire Elevated WMI Eventing",
+   "techniques": [
+    "T1546.003"
+   ],
+   "events": 79896,
+   "rules_fired": 44,
+   "alerts": 670,
+   "any_alert": true,
+   "technique_detected": true,
+   "technique_rules": [
+    "WMI Event Subscription",
+    "WMI Persistence",
+    "WMI Persistence - Command Line Event Consumer"
+   ],
+   "claimed": true,
+   "top_rules": [
+    "Scheduled Task Created - Registry",
+    "Suspicious PowerShell Invocations - Generic - PowerShell Module",
+    "File Creation Date Changed to Another Year",
+    "User Logoff Event",
+    "HackTool - SysmonEnte Execution"
+   ]
+  },
+  {
+   "id": "SDWIN-190518200432",
+   "title": "Empire PSInject",
+   "techniques": [
+    "T1055.003"
+   ],
+   "events": 5898,
+   "rules_fired": 14,
+   "alerts": 312,
+   "any_alert": true,
+   "technique_detected": true,
+   "technique_rules": [
+    "Network Connection Initiated Via Notepad.EXE",
+    "Potential Shellcode Injection",
+    "Remote Thread Creation In Uncommon Target Image"
+   ],
+   "claimed": true,
+   "top_rules": [
+    "Remote Thread Creation In Uncommon Target Image",
+    "Remote Thread Creation Via PowerShell",
+    "Alternate PowerShell Hosts - PowerShell Module",
+    "Network Connection Initiated By PowerShell Process",
+    "Network Connection Initiated Via Notepad.EXE"
+   ]
+  },
+  {
+   "id": "SDWIN-190518201207",
+   "title": "Empire Shell Net Domain Admins",
+   "techniques": [
+    "T1069.002"
+   ],
+   "events": 1749,
+   "rules_fired": 4,
+   "alerts": 20,
+   "any_alert": true,
+   "technique_detected": true,
+   "technique_rules": [
+    "Net.EXE Execution"
+   ],
+   "claimed": true,
+   "top_rules": [
+    "User Logoff Event",
+    "Suspicious Group And Account Reconnaissance Activity Using Net.EXE",
+    "Net.EXE Execution",
+    "AD Privileged Users or Groups Reconnaissance"
+   ]
+  },
+  {
+   "id": "SDWIN-190518201922",
+   "title": "Empire WDigest Downgrade",
+   "techniques": [
+    "T1112"
+   ],
+   "events": 2710,
+   "rules_fired": 0,
+   "alerts": 0,
+   "any_alert": false,
+   "technique_detected": false,
+   "technique_rules": [],
+   "claimed": true,
+   "top_rules": []
+  },
+  {
+   "id": "SDWIN-190518202151",
+   "title": "Empire Mimikatz LogonPasswords",
+   "techniques": [
+    "T1003.001"
+   ],
+   "events": 6026,
+   "rules_fired": 6,
+   "alerts": 51,
+   "any_alert": true,
+   "technique_detected": true,
+   "technique_rules": [
+    "LSASS Access From Non System Account",
+    "Potential Credential Dumping Attempt Via PowerShell",
+    "Potentially Suspicious AccessMask Requested From LSASS"
+   ],
+   "claimed": true,
+   "top_rules": [
+    "Network Connection Initiated By PowerShell Process",
+    "User Logoff Event",
+    "Local Accounts Discovery",
+    "Potentially Suspicious AccessMask Requested From LSASS",
+    "Potential Credential Dumping Attempt Via PowerShell"
+   ]
+  },
+  {
+   "id": "SDWIN-190518203650",
+   "title": "Empire Enable RDP",
+   "techniques": [
+    "T1112"
+   ],
+   "events": 2668,
+   "rules_fired": 0,
+   "alerts": 0,
+   "any_alert": false,
+   "technique_detected": false,
+   "technique_rules": [],
+   "claimed": true,
+   "top_rules": []
+  },
+  {
+   "id": "SDWIN-190518210125",
+   "title": "Empire Invoke SMBExec",
+   "techniques": [
+    "T1021.002"
+   ],
+   "events": 7504,
+   "rules_fired": 28,
+   "alerts": 53,
+   "any_alert": true,
+   "technique_detected": true,
+   "technique_rules": [
+    "CobaltStrike Service Installations - Security",
+    "CobaltStrike Service Installations - System",
+    "Potential CobaltStrike Service Installations - Registry"
+   ],
+   "claimed": true,
+   "top_rules": [
+    "User Logoff Event",
+    "HackTool - Empire PowerShell Launch Parameters",
+    "Cmd Launched with Hidden Start Flags to Suspicious Targets",
+    "Elevated System Shell Spawned",
+    "Suspicious SYSTEM User Process Creation"
+   ]
+  },
+  {
+   "id": "SDWIN-190518210652",
+   "title": "Empire Invoke PsExec",
+   "techniques": [
+    "T1021"
+   ],
+   "events": 4348,
+   "rules_fired": 27,
+   "alerts": 50,
+   "any_alert": true,
+   "technique_detected": true,
+   "technique_rules": [
+    "CobaltStrike Service Installations - Security",
+    "CobaltStrike Service Installations - System",
+    "Potential CobaltStrike Service Installations - Registry"
+   ],
+   "claimed": true,
+   "top_rules": [
+    "User Logoff Event",
+    "Scheduled Task Created - Registry",
+    "HackTool - Empire PowerShell Launch Parameters",
+    "Cmd Launched with Hidden Start Flags to Suspicious Targets",
+    "Suspicious SYSTEM User Process Creation"
+   ]
+  },
+  {
+   "id": "SDWIN-190518211052",
+   "title": "Empire Invoke DCOM ShellWindows",
+   "techniques": [
+    "T1021.003"
+   ],
+   "events": 32706,
+   "rules_fired": 21,
+   "alerts": 128,
+   "any_alert": true,
+   "technique_detected": false,
+   "technique_rules": [],
+   "claimed": true,
+   "top_rules": [
+    "Scheduled Task Created - Registry",
+    "Potential Executable Run Itself As Sacrificial Process",
+    "HackTool - Empire PowerShell Launch Parameters",
+    "User Logoff Event",
+    "WMI Module Loaded By Uncommon Process"
+   ]
+  },
+  {
+   "id": "SDWIN-190518211456",
+   "title": "Empire Invoke PSRemoting",
+   "techniques": [
+    "T1021.006"
+   ],
+   "events": 2744,
+   "rules_fired": 17,
+   "alerts": 39,
+   "any_alert": true,
+   "technique_detected": true,
+   "technique_rules": [
+    "Potential Remote PowerShell Session Initiated",
+    "Remote PowerShell Session Host Process (WinRM)",
+    "Suspicious WSMAN Provider Image Loads"
+   ],
+   "claimed": true,
+   "top_rules": [
+    "User Logoff Event",
+    "Remote PowerShell Session Host Process (WinRM)",
+    "Network Connection Initiated By PowerShell Process",
+    "Remote PowerShell Sessions Network Connections (WinRM)",
+    "Potential Remote PowerShell Session Initiated"
+   ]
+  },
+  {
+   "id": "SDWIN-190518213907",
+   "title": "Empire Invoke Execute MSBuild",
+   "techniques": [
+    "T1047"
+   ],
+   "events": 4559,
+   "rules_fired": 24,
+   "alerts": 55,
+   "any_alert": true,
+   "technique_detected": true,
+   "technique_rules": [
+    "WmiPrvSE Spawned A Process"
+   ],
+   "claimed": true,
+   "top_rules": [
+    "User Logoff Event",
+    "Dynamic .NET Compilation Via Csc.EXE",
+    "Dynamic .NET Compilation Via Csc.EXE - Hunting",
+    "Scheduled Task Created - Registry",
+    "Network Connection Initiated By PowerShell Process"
+   ]
+  },
+  {
+   "id": "SDWIN-190518221344",
+   "title": "Empire Invoke DLLInjection",
+   "techniques": [
+    "T1055.001"
+   ],
+   "events": 12200,
+   "rules_fired": 18,
+   "alerts": 554,
+   "any_alert": true,
+   "technique_detected": true,
+   "technique_rules": [
+    "CreateRemoteThread API and LoadLibrary",
+    "Potential Shellcode Injection",
+    "Remote Thread Creation In Uncommon Target Image"
+   ],
+   "claimed": true,
+   "top_rules": [
+    "Alternate PowerShell Hosts - PowerShell Module",
+    "Network Connection Initiated By PowerShell Process",
+    "Scheduled Task Created - Registry",
+    "User Logoff Event",
+    "Password Policy Enumerated"
+   ]
+  },
+  {
+   "id": "SDWIN-190518224039",
+   "title": "Empire Find Local Admin Access",
+   "techniques": [
+    "T1069.001"
+   ],
+   "events": 4570,
+   "rules_fired": 5,
+   "alerts": 81,
+   "any_alert": true,
+   "technique_detected": true,
+   "technique_rules": [
+    "Malicious PowerShell Commandlets - PoshModule"
+   ],
+   "claimed": true,
+   "top_rules": [
+    "Malicious PowerShell Commandlets - PoshModule",
+    "User Logoff Event",
+    "Network Connection Initiated By PowerShell Process",
+    "SCM Database Handle Failure",
+    "SCM Database Privileged Operation"
+   ]
+  },
+  {
+   "id": "SDWIN-190518230752",
+   "title": "Empire Mimikatz Extract Kerberos Keys",
+   "techniques": [
+    "T1003.004"
+   ],
+   "events": 13199,
+   "rules_fired": 6,
+   "alerts": 42,
+   "any_alert": true,
+   "technique_detected": true,
+   "technique_rules": [
+    "Mimikatz Use"
+   ],
+   "claimed": true,
+   "top_rules": [
+    "Scheduled Task Created - Registry",
+    "Potential Executable Run Itself As Sacrificial Process",
+    "Local Accounts Discovery",
+    "Mimikatz Use",
+    "HackTool - Mimikatz Kirbi File Creation"
+   ]
+  },
+  {
+   "id": "SDWIN-190518235535",
+   "title": "Empire Mimikatz Backup Keys",
+   "techniques": [
+    "T1003"
+   ],
+   "events": 7887,
+   "rules_fired": 6,
+   "alerts": 14,
+   "any_alert": true,
+   "technique_detected": true,
+   "technique_rules": [
+    "DPAPI Domain Backup Key Extraction",
+    "Mimikatz Use"
+   ],
+   "claimed": true,
+   "top_rules": [
+    "DPAPI Domain Backup Key Extraction",
+    "DPAPI Backup Keys And Certificate Export Activity IOC",
+    "Local Accounts Discovery",
+    "Mimikatz Use",
+    "User Logoff Event"
+   ]
+  },
+  {
+   "id": "SDWIN-190519005224",
+   "title": "Empire Remote Get Session",
+   "techniques": [
+    "T1049"
+   ],
+   "events": 5047,
+   "rules_fired": 5,
+   "alerts": 308,
+   "any_alert": true,
+   "technique_detected": false,
+   "technique_rules": [],
+   "claimed": true,
+   "top_rules": [
+    "Alternate PowerShell Hosts - PowerShell Module",
+    "User Logoff Event",
+    "Malicious PowerShell Commandlets - PoshModule",
+    "Scheduled Task Created - Registry",
+    "Password Policy Discovery With Get-AdDefaultDomainPasswordPolicy"
+   ]
+  },
+  {
+   "id": "SDWIN-190625103712",
+   "title": "Empire Mimikatz SAM Extract Hashes",
+   "techniques": [
+    "T1003.002"
+   ],
+   "events": 12349,
+   "rules_fired": 6,
+   "alerts": 1499,
+   "any_alert": true,
+   "technique_detected": true,
+   "technique_rules": [
+    "Mimikatz Use",
+    "Potential Credential Dumping Attempt Via PowerShell"
+   ],
+   "claimed": true,
+   "top_rules": [
+    "Potential Credential Dumping Attempt Via PowerShell",
+    "SysKey Registry Keys Access",
+    "User Logoff Event",
+    "Scheduled Task Created - Registry",
+    "Local Accounts Discovery"
+   ]
+  },
+  {
+   "id": "SDWIN-190625133822",
+   "title": "Empire Reg Dump SAM Hive",
+   "techniques": [
+    "T1003.002"
+   ],
+   "events": 738,
+   "rules_fired": 2,
+   "alerts": 3,
+   "any_alert": true,
+   "technique_detected": true,
+   "technique_rules": [
+    "Dumping of Sensitive Hives Via Reg.EXE"
+   ],
+   "claimed": true,
+   "top_rules": [
+    "Dumping of Sensitive Hives Via Reg.EXE",
+    "User Logoff Event"
+   ]
+  },
+  {
+   "id": "SDWIN-191027055035",
+   "title": "RDP TaskManager LSASS Dump",
+   "techniques": [
+    "T1003.001"
+   ],
+   "events": 5489,
+   "rules_fired": 8,
+   "alerts": 33,
+   "any_alert": true,
+   "technique_detected": true,
+   "technique_rules": [
+    "LSASS Access From Non System Account",
+    "LSASS Process Memory Dump Creation Via Taskmgr.EXE",
+    "LSASS Process Memory Dump Files",
+    "Potential Credential Dumping Activity Via LSASS"
+   ],
+   "claimed": true,
+   "top_rules": [
+    "User Logoff Event",
+    "Scheduled Task Created - Registry",
+    "Potential Credential Dumping Activity Via LSASS",
+    "External Remote SMB Logon from Public IP",
+    "LSASS Access From Non System Account"
+   ]
+  },
+  {
+   "id": "SDWIN-191027223020",
+   "title": "Covenant ShellCmd InstallUtil",
+   "techniques": [
+    "T1218.004"
+   ],
+   "events": 1730,
+   "rules_fired": 5,
+   "alerts": 20,
+   "any_alert": true,
+   "technique_detected": true,
+   "technique_rules": [
+    "Unsigned DLL Loaded by Windows Utility"
+   ],
+   "claimed": true,
+   "top_rules": [
+    "User Logoff Event",
+    "Unsigned DLL Loaded by Windows Utility",
+    "HackTool - Covenant PowerShell Launcher",
+    "Suspicious Execution of InstallUtil Without Log",
+    "Amsi.DLL Load By Uncommon Process"
+   ]
+  },
+  {
+   "id": "SDWIN-191225045202",
+   "title": "Empire Invoke InternalMonologue",
+   "techniques": [
+    "T1112"
+   ],
+   "events": 1635,
+   "rules_fired": 6,
+   "alerts": 226,
+   "any_alert": true,
+   "technique_detected": true,
+   "technique_rules": [
+    "NetNTLM Downgrade Attack",
+    "NetNTLM Downgrade Attack - Registry"
+   ],
+   "claimed": true,
+   "top_rules": [
+    "Potential Shellcode Injection",
+    "Suspicious Svchost Process Access",
+    "Network Connection Initiated By PowerShell Process",
+    "NetNTLM Downgrade Attack",
+    "User Logoff Event"
+   ]
+  },
+  {
+   "id": "SDWIN-200609225055",
+   "title": "MSF Record Mic",
+   "techniques": [
+    "T1123"
+   ],
+   "events": 6202,
+   "rules_fired": 7,
+   "alerts": 47,
+   "any_alert": true,
+   "technique_detected": true,
+   "technique_rules": [
+    "Processes Accessing the Microphone and Webcam"
+   ],
+   "claimed": true,
+   "top_rules": [
+    "Scheduled Task Created - Registry",
+    "Password Policy Enumerated",
+    "User Logoff Event",
+    "Processes Accessing the Microphone and Webcam",
+    "Potentially Suspicious AccessMask Requested From LSASS"
+   ]
+  },
+  {
+   "id": "SDWIN-200721232741",
+   "title": "Empire Regsvr32 Execution",
+   "techniques": [
+    "T1218.010"
+   ],
+   "events": 2390,
+   "rules_fired": 18,
+   "alerts": 38,
+   "any_alert": true,
+   "technique_detected": true,
+   "technique_rules": [
+    "Network Connection Initiated By Regsvr32.EXE",
+    "Potentially Suspicious Child Process Of Regsvr32",
+    "Potentially Suspicious Regsvr32 HTTP IP Pattern",
+    "Potentially Suspicious Regsvr32 HTTP/FTP Pattern",
+    "Scripting/CommandLine Process Spawned Regsvr32"
+   ],
+   "claimed": true,
+   "top_rules": [
+    "Network Connection Initiated By PowerShell Process",
+    "Potentially Suspicious Regsvr32 HTTP IP Pattern",
+    "Potentially Suspicious Regsvr32 HTTP/FTP Pattern",
+    "Scripting/CommandLine Process Spawned Regsvr32",
+    "Potentially Suspicious PowerShell Child Processes"
+   ]
+  },
+  {
+   "id": "SDWIN-200722001847",
+   "title": "Empire Elevated Registry Run Keys",
+   "techniques": [
+    "T1547.001"
+   ],
+   "events": 657,
+   "rules_fired": 4,
+   "alerts": 17,
+   "any_alert": true,
+   "technique_detected": true,
+   "technique_rules": [
+    "CurrentVersion Autorun Keys Modification",
+    "Suspicious PowerShell In Registry Run Keys"
+   ],
+   "claimed": true,
+   "top_rules": [
+    "Network Connection Initiated By PowerShell Process",
+    "User Logoff Event",
+    "CurrentVersion Autorun Keys Modification",
+    "Suspicious PowerShell In Registry Run Keys"
+   ]
+  },
+  {
+   "id": "SDWIN-200724174200",
+   "title": "Covenant Remote WMI Eventing ActiveScriptEventConsumers",
+   "techniques": [
+    "T1047"
+   ],
+   "events": 3719,
+   "rules_fired": 9,
+   "alerts": 44,
+   "any_alert": true,
+   "technique_detected": true,
+   "technique_rules": [
+    "WMI Event Consumer Created Named Pipe",
+    "WMI Module Loaded By Uncommon Process"
+   ],
+   "claimed": true,
+   "top_rules": [
+    "User Logoff Event",
+    "WMI Module Loaded By Uncommon Process",
+    "WMI Event Subscription",
+    "WMI ActiveScriptEventConsumers Activity Via Scrcons.EXE DLL Load",
+    "Scheduled Task Created - Registry"
+   ]
+  },
+  {
+   "id": "SDWIN-200805020926",
+   "title": "Covenant DCSync",
+   "techniques": [
+    "T1003.006"
+   ],
+   "events": 869,
+   "rules_fired": 2,
+   "alerts": 8,
+   "any_alert": true,
+   "technique_detected": true,
+   "technique_rules": [
+    "Active Directory Replication from Non Machine Account - DcSync Indicator"
+   ],
+   "claimed": true,
+   "top_rules": [
+    "User Logoff Event",
+    "Active Directory Replication from Non Machine Account - DcSync Indicator"
+   ]
+  },
+  {
+   "id": "SDWIN-200805034820",
+   "title": "Covenant SC.exe Utility Query",
+   "techniques": [
+    "T1021.002"
+   ],
+   "events": 629,
+   "rules_fired": 2,
+   "alerts": 4,
+   "any_alert": true,
+   "technique_detected": false,
+   "technique_rules": [],
+   "claimed": true,
+   "top_rules": [
+    "User Logoff Event",
+    "SC.EXE Query Execution"
+   ]
+  },
+  {
+   "id": "SDWIN-200806012009",
+   "title": "Covenant SharpSC Query",
+   "techniques": [
+    "T1021.002"
+   ],
+   "events": 349,
+   "rules_fired": 2,
+   "alerts": 9,
+   "any_alert": true,
+   "technique_detected": false,
+   "technique_rules": [],
+   "claimed": true,
+   "top_rules": [
+    "User Logoff Event",
+    "Scheduled Task Created - Registry"
+   ]
+  },
+  {
+   "id": "SDWIN-200806015757",
+   "title": "Covenant Remote File Copy",
+   "techniques": [
+    "T1021.002"
+   ],
+   "events": 506,
+   "rules_fired": 2,
+   "alerts": 3,
+   "any_alert": true,
+   "technique_detected": true,
+   "technique_rules": [
+    "SMB Create Remote File Admin Share"
+   ],
+   "claimed": true,
+   "top_rules": [
+    "User Logoff Event",
+    "SMB Create Remote File Admin Share"
+   ]
+  },
+  {
+   "id": "SDWIN-200806022635",
+   "title": "Covenant SharpSC Create",
+   "techniques": [
+    "T1021.002"
+   ],
+   "events": 3390,
+   "rules_fired": 2,
+   "alerts": 26,
+   "any_alert": true,
+   "technique_detected": false,
+   "technique_rules": [],
+   "claimed": true,
+   "top_rules": [
+    "User Logoff Event",
+    "Scheduled Task Created - Registry"
+   ]
+  },
+  {
+   "id": "SDWIN-200806030120",
+   "title": "Covenant SharpSC Start",
+   "techniques": [
+    "T1021.002"
+   ],
+   "events": 6046,
+   "rules_fired": 7,
+   "alerts": 199,
+   "any_alert": true,
+   "technique_detected": true,
+   "technique_rules": [
+    "Suspicious WSMAN Provider Image Loads"
+   ],
+   "claimed": true,
+   "top_rules": [
+    "Alternate PowerShell Hosts - PowerShell Module",
+    "User Logoff Event",
+    "Uncommon Connection to Active Directory Web Services",
+    "PSScriptPolicyTest Creation By Uncommon Process",
+    "PowerShell Core DLL Loaded By Non PowerShell Process"
+   ]
+  },
+  {
+   "id": "SDWIN-200806031938",
+   "title": "Covenant SharpSC Stop Service",
+   "techniques": [
+    "T1021.002"
+   ],
+   "events": 1264,
+   "rules_fired": 5,
+   "alerts": 31,
+   "any_alert": true,
+   "technique_detected": false,
+   "technique_rules": [],
+   "claimed": true,
+   "top_rules": [
+    "Scheduled Task Created - Registry",
+    "User Logoff Event",
+    "Potentially Suspicious AccessMask Requested From LSASS",
+    "Elevated System Shell Spawned From Uncommon Parent Location",
+    "Elevated System Shell Spawned"
+   ]
+  },
+  {
+   "id": "SDWIN-200806035621",
+   "title": "Covenant SharpWMI Exec",
+   "techniques": [
+    "T1047"
+   ],
+   "events": 2343,
+   "rules_fired": 5,
+   "alerts": 23,
+   "any_alert": true,
+   "technique_detected": true,
+   "technique_rules": [
+    "WmiPrvSE Spawned A Process"
+   ],
+   "claimed": true,
+   "top_rules": [
+    "User Logoff Event",
+    "Scheduled Task Created - Registry",
+    "HackTool - Covenant PowerShell Launcher",
+    "WmiPrvSE Spawned A Process",
+    "Suspicious High IntegrityLevel Conhost Legacy Option"
+   ]
+  },
+  {
+   "id": "SDWIN-200806115603",
+   "title": "Covenant PowerShell Remoting Command",
+   "techniques": [
+    "T1021.006"
+   ],
+   "events": 4284,
+   "rules_fired": 16,
+   "alerts": 270,
+   "any_alert": true,
+   "technique_detected": true,
+   "technique_rules": [
+    "Potential Remote PowerShell Session Initiated",
+    "Remote LSASS Process Access Through Windows Remote Management",
+    "Remote PowerShell Session Host Process (WinRM)",
+    "Suspicious WSMAN Provider Image Loads"
+   ],
+   "claimed": true,
+   "top_rules": [
+    "Potential Shellcode Injection",
+    "Suspicious Svchost Process Access",
+    "Potentially Suspicious AccessMask Requested From LSASS",
+    "User Logoff Event",
+    "Remote LSASS Process Access Through Windows Remote Management"
+   ]
+  },
+  {
+   "id": "SDWIN-200806130039",
+   "title": "Covenant GetDomainGroup Domain Admins",
+   "techniques": [
+    "T1069.002"
+   ],
+   "events": 619,
+   "rules_fired": 2,
+   "alerts": 3,
+   "any_alert": true,
+   "technique_detected": false,
+   "technique_rules": [],
+   "claimed": true,
+   "top_rules": [
+    "User Logoff Event",
+    "ADSI-Cache File Creation By Uncommon Tool"
+   ]
+  },
+  {
+   "id": "SDWIN-200807103913",
+   "title": "Empire Mimikatz Lsadump LSA Patch",
+   "techniques": [
+    "T1003.001"
+   ],
+   "events": 6982,
+   "rules_fired": 10,
+   "alerts": 69,
+   "any_alert": true,
+   "technique_detected": true,
+   "technique_rules": [
+    "LSASS Access From Non System Account",
+    "Mimikatz Use",
+    "Password Dumper Activity on LSASS",
+    "Potential Credential Dumping Activity Via LSASS",
+    "Potential Credential Dumping Attempt Via PowerShell",
+    "Potentially Suspicious AccessMask Requested From LSASS"
+   ],
+   "claimed": true,
+   "top_rules": [
+    "Network Connection Initiated By PowerShell Process",
+    "Scheduled Task Created - Registry",
+    "User Logoff Event",
+    "Local Accounts Discovery",
+    "Potentially Suspicious AccessMask Requested From LSASS"
+   ]
+  },
+  {
+   "id": "SDWIN-200904032946",
+   "title": "Invoke BypassUAC FodHelper",
+   "techniques": [
+    "T1548.002"
+   ],
+   "events": 4139,
+   "rules_fired": 21,
+   "alerts": 157,
+   "any_alert": true,
+   "technique_detected": true,
+   "technique_rules": [
+    "Bypass UAC Using DelegateExecute",
+    "Bypass UAC via Fodhelper.exe",
+    "HackTool - Empire PowerShell UAC Bypass"
+   ],
+   "claimed": true,
+   "top_rules": [
+    "Suspicious PowerShell Invocations - Generic - PowerShell Module",
+    "Scheduled Task Created - Registry",
+    "Local Accounts Discovery",
+    "Group Membership Reconnaissance Via Whoami.EXE",
+    "HackTool - Empire PowerShell Launch Parameters"
+   ]
+  },
+  {
+   "id": "SDWIN-200914080546",
+   "title": "Empire Remote WMIC Add User",
+   "techniques": [
+    "T1047"
+   ],
+   "events": 12278,
+   "rules_fired": 12,
+   "alerts": 101,
+   "any_alert": true,
+   "technique_detected": true,
+   "technique_rules": [
+    "Process Creation Attempt via Wmic.EXE",
+    "WMIC Remote Command Execution",
+    "WmiPrvSE Spawned A Process"
+   ],
+   "claimed": true,
+   "top_rules": [
+    "Scheduled Task Created - Registry",
+    "User Logoff Event",
+    "New User Created Via Net.EXE",
+    "Net.EXE Execution",
+    "Process Creation Attempt via Wmic.EXE"
+   ]
+  },
+  {
+   "id": "SDWIN-200916232559",
+   "title": "Mimikatz Netlogon Unauthenticated NetrServerAuthenticate2",
+   "techniques": [
+    "T1210"
+   ],
+   "events": 790,
+   "rules_fired": 4,
+   "alerts": 15,
+   "any_alert": true,
+   "technique_detected": false,
+   "technique_rules": [],
+   "claimed": true,
+   "top_rules": [
+    "Mimikatz Use",
+    "User Logoff Event",
+    "HackTool - Mimikatz Execution",
+    "Operator Bloopers Cobalt Strike Modules"
+   ]
+  },
+  {
+   "id": "SDWIN-200917174542",
+   "title": "DCOM ExecuteExcel4macro",
+   "techniques": [
+    "T1021.003"
+   ],
+   "events": 8121,
+   "rules_fired": 9,
+   "alerts": 51,
+   "any_alert": true,
+   "technique_detected": false,
+   "technique_rules": [],
+   "claimed": true,
+   "top_rules": [
+    "Scheduled Task Created - Registry",
+    "User Logoff Event",
+    "Office Autorun Keys Modification",
+    "Office Application Initiated Network Connection To Non-Local IP",
+    "Suspicious New Instance Of An Office COM Object"
+   ]
+  },
+  {
+   "id": "SDWIN-200918145959",
+   "title": "DCOM RegisterXLL",
+   "techniques": [
+    "T1021.003"
+   ],
+   "events": 5504,
+   "rules_fired": 7,
+   "alerts": 214,
+   "any_alert": true,
+   "technique_detected": false,
+   "technique_rules": [],
+   "claimed": true,
+   "top_rules": [
+    "Alternate PowerShell Hosts - PowerShell Module",
+    "User Logoff Event",
+    "Scheduled Task Created - Registry",
+    "Suspicious New Instance Of An Office COM Object",
+    "Password Policy Discovery With Get-AdDefaultDomainPasswordPolicy"
+   ]
+  },
+  {
+   "id": "SDWIN-200921001437",
+   "title": "Empire Invoke WMI",
+   "techniques": [
+    "T1047"
+   ],
+   "events": 6383,
+   "rules_fired": 17,
+   "alerts": 337,
+   "any_alert": true,
+   "technique_detected": true,
+   "technique_rules": [
+    "Potential WMI Lateral Movement WmiPrvSE Spawned PowerShell",
+    "WmiPrvSE Spawned A Process"
+   ],
+   "claimed": true,
+   "top_rules": [
+    "Alternate PowerShell Hosts - PowerShell Module",
+    "User Logoff Event",
+    "Scheduled Task Created - Registry",
+    "HackTool - Empire PowerShell Launch Parameters",
+    "Suspicious Execution of Powershell with Base64"
+   ]
+  },
+  {
+   "id": "SDWIN-200921175806",
+   "title": "Empire Elevated Scheduled Tasks",
+   "techniques": [
+    "T1053.005"
+   ],
+   "events": 59399,
+   "rules_fired": 33,
+   "alerts": 530,
+   "any_alert": true,
+   "technique_detected": true,
+   "technique_rules": [
+    "Scheduled Task Created - FileCreation",
+    "Scheduled Task Created - Registry",
+    "Scheduled Task Creation Via Schtasks.EXE",
+    "Scheduled Task Deletion",
+    "Schtasks Creation Or Modification With SYSTEM Privileges",
+    "Suspicious Command Patterns In Scheduled Task Creation",
+    "Suspicious Schtasks Schedule Type With High Privileges"
+   ],
+   "claimed": true,
+   "top_rules": [
+    "Scheduled Task Created - Registry",
+    "Alternate PowerShell Hosts - PowerShell Module",
+    "User Logoff Event",
+    "Potential Executable Run Itself As Sacrificial Process",
+    "Base64 Encoded PowerShell Command Detected"
+   ]
+  },
+  {
+   "id": "SDWIN-200921230246",
+   "title": "Rubeus Elevated ASKTGT CreateNetOnly",
+   "techniques": [
+    "T1003.003"
+   ],
+   "events": 3590,
+   "rules_fired": 14,
+   "alerts": 96,
+   "any_alert": true,
+   "technique_detected": true,
+   "technique_rules": [
+    "HackTool - Generic Process Access",
+    "HackTool - Rubeus Execution"
+   ],
+   "claimed": true,
+   "top_rules": [
+    "Scheduled Task Created - Registry",
+    "User Logoff Event",
+    "HackTool - Rubeus Execution",
+    "Scheduled Task Created - FileCreation",
+    "Scheduled Task Deletion"
+   ]
+  },
+  {
+   "id": "SDWIN-200922042230",
+   "title": "Empire Powerdump Extract Hashes",
+   "techniques": [
+    "T1003.002"
+   ],
+   "events": 1182,
+   "rules_fired": 10,
+   "alerts": 39,
+   "any_alert": true,
+   "technique_detected": true,
+   "technique_rules": [
+    "LSASS Access From Non System Account",
+    "Potential Credential Dumping Attempt Via PowerShell",
+    "Potentially Suspicious AccessMask Requested From LSASS"
+   ],
+   "claimed": true,
+   "top_rules": [
+    "Scheduled Task Created - Registry",
+    "SysKey Registry Keys Access",
+    "Dynamic .NET Compilation Via Csc.EXE",
+    "Dynamic .NET Compilation Via Csc.EXE - Hunting",
+    "Dynamic CSharp Compile Artefact"
+   ]
+  },
+  {
+   "id": "SDWIN-201009173318",
+   "title": "Covenant Remote WMI Wbemcomn DLL Hijacking",
+   "techniques": [
+    "T1047"
+   ],
+   "events": 8947,
+   "rules_fired": 24,
+   "alerts": 232,
+   "any_alert": true,
+   "technique_detected": true,
+   "technique_rules": [
+    "T1047 Wmiprvse Wbemcomn DLL Hijack",
+    "WMIC Remote Command Execution",
+    "Wmiprvse Wbemcomn DLL Hijack",
+    "Wmiprvse Wbemcomn DLL Hijack - File"
+   ],
+   "claimed": true,
+   "top_rules": [
+    "Alternate PowerShell Hosts - PowerShell Module",
+    "User Logoff Event",
+    "Scheduled Task Created - Registry",
+    "Uncommon Connection to Active Directory Web Services",
+    "T1047 Wmiprvse Wbemcomn DLL Hijack"
+   ]
+  },
+  {
+   "id": "SDWIN-201009183000",
+   "title": "Covenant Remote DCOM Iertutil DLL Hijacking",
+   "techniques": [
+    "T1021.003"
+   ],
+   "events": 37814,
+   "rules_fired": 21,
+   "alerts": 131,
+   "any_alert": true,
+   "technique_detected": true,
+   "technique_rules": [
+    "DCOM InternetExplorer.Application Iertutil DLL Hijack - Security",
+    "Potential DCOM InternetExplorer.Application DLL Hijack",
+    "Potential DCOM InternetExplorer.Application DLL Hijack - Image Load",
+    "SMB Create Remote File Admin Share"
+   ],
+   "claimed": true,
+   "top_rules": [
+    "Scheduled Task Created - Registry",
+    "User Logoff Event",
+    "Password Policy Enumerated",
+    "File Creation Date Changed to Another Year",
+    "WMI Module Loaded By Uncommon Process"
+   ]
+  },
+  {
+   "id": "SDWIN-201012183248",
+   "title": "Covenant Wuauclt CreateRemoteThread Execution",
+   "techniques": [
+    "T1218"
+   ],
+   "events": 1326,
+   "rules_fired": 5,
+   "alerts": 16,
+   "any_alert": true,
+   "technique_detected": true,
+   "technique_rules": [
+    "Proxy Execution Via Wuauclt.EXE"
+   ],
+   "claimed": true,
+   "top_rules": [
+    "User Logoff Event",
+    "Uncommon Process Access Rights For Target Image",
+    "Proxy Execution Via Wuauclt.EXE",
+    "Suspicious High IntegrityLevel Conhost Legacy Option",
+    "Network Connection Initiated Via Notepad.EXE"
+   ]
+  },
+  {
+   "id": "SDWIN-201017061100",
+   "title": "WMIC Remote XSL Jscript Execution",
+   "techniques": [
+    "T1220"
+   ],
+   "events": 1364,
+   "rules_fired": 4,
+   "alerts": 7,
+   "any_alert": true,
+   "technique_detected": true,
+   "technique_rules": [
+    "Potential Remote SquiblyTwo Technique Execution",
+    "WMIC Loading Scripting Libraries"
+   ],
+   "claimed": true,
+   "top_rules": [
+    "Potential Process Reconnaissance via Wmic.EXE",
+    "Potential Remote SquiblyTwo Technique Execution",
+    "Uncommon Process Access Rights For Target Image",
+    "WMIC Loading Scripting Libraries"
+   ]
+  },
+  {
+   "id": "SDWIN-201018195009",
+   "title": "Lsass Memory Dump via Comsvcs.dll",
+   "techniques": [
+    "T1003.001"
+   ],
+   "events": 184,
+   "rules_fired": 13,
+   "alerts": 22,
+   "any_alert": true,
+   "technique_detected": true,
+   "technique_rules": [
+    "Dbghelp/Dbgcore DLL Loaded By Uncommon/Suspicious Process",
+    "LSASS Access From Non System Account",
+    "LSASS Dump Keyword In CommandLine",
+    "LSASS Process Memory Dump Files",
+    "Lsass Memory Dump via Comsvcs DLL",
+    "Potential Credential Dumping Activity Via LSASS",
+    "Potentially Suspicious AccessMask Requested From LSASS",
+    "Process Memory Dump Via Comsvcs.DLL"
+   ],
+   "claimed": true,
+   "top_rules": [
+    "Potentially Suspicious AccessMask Requested From LSASS",
+    "Process Memory Dump Via Comsvcs.DLL",
+    "Potentially Suspicious Rundll32 Activity",
+    "LSASS Dump Keyword In CommandLine",
+    "Potential Qakbot Rundll32 Execution"
+   ]
+  },
+  {
+   "id": "SDWIN-201018225619",
+   "title": "Lsass Memory Dump via Syscalls",
+   "techniques": [
+    "T1003.001"
+   ],
+   "events": 118,
+   "rules_fired": 9,
+   "alerts": 13,
+   "any_alert": true,
+   "technique_detected": true,
+   "technique_rules": [
+    "HackTool - Dumpert Process Dumper Default File",
+    "HackTool - Dumpert Process Dumper Execution",
+    "Hacktool Execution - Imphash",
+    "LSASS Memory Access by Tool With Dump Keyword In Name",
+    "Potential Credential Dumping Activity Via LSASS",
+    "Potentially Suspicious AccessMask Requested From LSASS",
+    "Suspicious Process Access to LSASS with Dbgcore/Dbghelp DLLs"
+   ],
+   "claimed": true,
+   "top_rules": [
+    "Potentially Suspicious AccessMask Requested From LSASS",
+    "HackTool - Dumpert Process Dumper Execution",
+    "LSASS Memory Access by Tool With Dump Keyword In Name",
+    "Potential Credential Dumping Activity Via LSASS",
+    "Security Eventlog Cleared"
+   ]
+  },
+  {
+   "id": "SDWIN-201019002900",
+   "title": "SAM Copy via Esentutl VSS",
+   "techniques": [
+    "T1003.002"
+   ],
+   "events": 915,
+   "rules_fired": 9,
+   "alerts": 47,
+   "any_alert": true,
+   "technique_detected": true,
+   "technique_rules": [
+    "Copying Sensitive Files with Credential Data",
+    "Esentutl Volume Shadow Copy Service Keys",
+    "Potential SAM Database Dump",
+    "VSSAudit Security Event Source Registration",
+    "Volume Shadow Copy Mount"
+   ],
+   "claimed": true,
+   "top_rules": [
+    "Esentutl Volume Shadow Copy Service Keys",
+    "VSSAudit Security Event Source Registration",
+    "Copying Sensitive Files with Credential Data",
+    "Security Eventlog Cleared",
+    "Potential SAM Database Dump"
+   ]
+  },
+  {
+   "id": "SDWIN-201019033054",
+   "title": "Psexec Reg LSA Secrets Dump",
+   "techniques": [
+    "T1003.004"
+   ],
+   "events": 286,
+   "rules_fired": 14,
+   "alerts": 19,
+   "any_alert": true,
+   "technique_detected": true,
+   "technique_rules": [
+    "Dumping of Sensitive Hives Via Reg.EXE"
+   ],
+   "claimed": true,
+   "top_rules": [
+    "Potential Execution of Sysinternals Tools",
+    "Psexec Execution",
+    "PsExec Service Execution",
+    "Dumping of Sensitive Hives Via Reg.EXE",
+    "PsExec Default Named Pipe"
+   ]
+  },
+  {
+   "id": "SDWIN-201019224718",
+   "title": "Logon Scripts via UserInitMprLogonScript",
+   "techniques": [
+    "T1037.001"
+   ],
+   "events": 122,
+   "rules_fired": 6,
+   "alerts": 7,
+   "any_alert": true,
+   "technique_detected": true,
+   "technique_rules": [
+    "Potential Persistence Via Logon Scripts - CommandLine",
+    "Potential Persistence Via Logon Scripts - Registry"
+   ],
+   "claimed": true,
+   "top_rules": [
+    "Potential Persistence Via Logon Scripts - CommandLine",
+    "Security Eventlog Cleared",
+    "Common Autorun Keys Modification",
+    "Potential Persistence Via Logon Scripts - Registry",
+    "Suspicious Environment Variable Has Been Registered"
+   ]
+  },
+  {
+   "id": "SDWIN-201019232515",
+   "title": "Mavinject Process DLL Injection",
+   "techniques": [
+    "T1055"
+   ],
+   "events": 509,
+   "rules_fired": 8,
+   "alerts": 11,
+   "any_alert": true,
+   "technique_detected": true,
+   "technique_rules": [
+    "Mavinject Inject DLL Into Running Process",
+    "Remote Thread Creation In Uncommon Target Image",
+    "Renamed Mavinject.EXE Execution",
+    "Uncommon Process Access Rights For Target Image"
+   ],
+   "claimed": true,
+   "top_rules": [
+    "Mavinject Inject DLL Into Running Process",
+    "Network Connection Initiated By PowerShell Process",
+    "Uncommon Process Access Rights For Target Image",
+    "Security Eventlog Cleared",
+    "Potential Binary Or Script Dropper Via PowerShell"
+   ]
+  },
+  {
+   "id": "SDWIN-201020013208",
+   "title": "UI Prompt For Credentials Function",
+   "techniques": [
+    "T1056.002"
+   ],
+   "events": 163,
+   "rules_fired": 2,
+   "alerts": 2,
+   "any_alert": true,
+   "technique_detected": false,
+   "technique_rules": [],
+   "claimed": true,
+   "top_rules": [
+    "Security Eventlog Cleared",
+    "Important Windows Eventlog Cleared"
+   ]
+  },
+  {
+   "id": "SDWIN-201021001911",
+   "title": "Netsh Open FW Proxy Ports",
+   "techniques": [
+    "T1562.004"
+   ],
+   "events": 2366,
+   "rules_fired": 4,
+   "alerts": 6,
+   "any_alert": true,
+   "technique_detected": false,
+   "technique_rules": [],
+   "claimed": false,
+   "top_rules": [
+    "New Firewall Rule Added Via Netsh.EXE",
+    "Firewall Rule Deleted Via Netsh.EXE",
+    "Security Eventlog Cleared",
+    "Important Windows Eventlog Cleared"
+   ]
+  },
+  {
+   "id": "SDWIN-201021204544",
+   "title": "Service Modification Fax",
+   "techniques": [
+    "T1543.003"
+   ],
+   "events": 437,
+   "rules_fired": 8,
+   "alerts": 14,
+   "any_alert": true,
+   "technique_detected": true,
+   "technique_rules": [
+    "Potential Persistence Attempt Via Existing Service Tampering",
+    "Suspicious Service Path Modification"
+   ],
+   "claimed": true,
+   "top_rules": [
+    "Potential Persistence Attempt Via Existing Service Tampering",
+    "Suspicious Service Path Modification",
+    "Non Interactive PowerShell Process Spawned",
+    "Suspicious PowerShell Parent Process",
+    "Security Eventlog Cleared"
+   ]
+  },
+  {
+   "id": "SDWIN-201021232814",
+   "title": "Internet Explorer Version Discovery",
+   "techniques": [
+    "T1518"
+   ],
+   "events": 68,
+   "rules_fired": 3,
+   "alerts": 4,
+   "any_alert": true,
+   "technique_detected": true,
+   "technique_rules": [
+    "Detected Windows Software Discovery"
+   ],
+   "claimed": true,
+   "top_rules": [
+    "Detected Windows Software Discovery",
+    "Security Eventlog Cleared",
+    "Important Windows Eventlog Cleared"
+   ]
+  },
+  {
+   "id": "SDWIN-201022002145",
+   "title": "HH Execution of Local Compiled HTML Payload",
+   "techniques": [
+    "T1218.001"
+   ],
+   "events": 1221,
+   "rules_fired": 10,
+   "alerts": 16,
+   "any_alert": true,
+   "technique_detected": true,
+   "technique_rules": [
+    "HH.EXE Execution",
+    "HTML Help HH.EXE Suspicious Child Process",
+    "Legitimate Application Writing Files In Uncommon Location"
+   ],
+   "claimed": true,
+   "top_rules": [
+    "HH.EXE Execution",
+    "Potentially Suspicious PowerShell Child Processes",
+    "HTML Help HH.EXE Suspicious Child Process",
+    "Network Connection Initiated By PowerShell Process",
+    "Legitimate Application Writing Files In Uncommon Location"
+   ]
+  },
+  {
+   "id": "SDWIN-201022013121",
+   "title": "Control Panel Execution",
+   "techniques": [
+    "T1218.002"
+   ],
+   "events": 1291,
+   "rules_fired": 11,
+   "alerts": 22,
+   "any_alert": true,
+   "technique_detected": true,
+   "technique_rules": [
+    "Control Panel Items",
+    "DLL Call by Ordinal Via Rundll32.EXE",
+    "Potentially Suspicious Rundll32 Activity",
+    "Unsigned DLL Loaded by Windows Utility"
+   ],
+   "claimed": true,
+   "top_rules": [
+    "Potential Raspberry Robin Registry Set Internet Settings ZoneMap",
+    "Control Panel Items",
+    "DLL Call by Ordinal Via Rundll32.EXE",
+    "Network Connection Initiated By PowerShell Process",
+    "Uncommon Process Access Rights For Target Image"
+   ]
+  },
+  {
+   "id": "SDWIN-201022015432",
+   "title": "CMSTP Proxy Execution",
+   "techniques": [
+    "T1218.003"
+   ],
+   "events": 1166,
+   "rules_fired": 11,
+   "alerts": 15,
+   "any_alert": true,
+   "technique_detected": true,
+   "technique_rules": [
+    "Bypass UAC via CMSTP",
+    "CMSTP App Paths Registry Key Modification",
+    "CMSTP Execution Process Access",
+    "CMSTP UAC Bypass via COM Object Access"
+   ],
+   "claimed": true,
+   "top_rules": [
+    "Bypass UAC via CMSTP",
+    "Unusual Parent Process For Cmd.EXE",
+    "Local Accounts Discovery",
+    "Network Connection Initiated By PowerShell Process",
+    "Security Eventlog Cleared"
+   ]
+  },
+  {
+   "id": "SDWIN-201022022144",
+   "title": "Mshta Javascript GetObject Sct",
+   "techniques": [
+    "T1218.005"
+   ],
+   "events": 1151,
+   "rules_fired": 7,
+   "alerts": 21,
+   "any_alert": true,
+   "technique_detected": true,
+   "technique_rules": [
+    "Legitimate Application Writing Files In Uncommon Location",
+    "Remotely Hosted HTA File Executed Via Mshta.EXE",
+    "Suspicious JavaScript Execution Via Mshta.EXE"
+   ],
+   "claimed": true,
+   "top_rules": [
+    "Registry Tampering by Potentially Suspicious Processes",
+    "Remotely Hosted HTA File Executed Via Mshta.EXE",
+    "Suspicious JavaScript Execution Via Mshta.EXE",
+    "Uncommon Process Access Rights For Target Image",
+    "Important Windows Eventlog Cleared"
+   ]
+  },
+  {
+   "id": "SDWIN-201022025808",
+   "title": "Mshta VBScript Execute PowerShell",
+   "techniques": [
+    "T1218.005"
+   ],
+   "events": 1127,
+   "rules_fired": 10,
+   "alerts": 23,
+   "any_alert": true,
+   "technique_detected": true,
+   "technique_rules": [
+    "MSHTA Execution with Suspicious File Extensions",
+    "Suspicious MSHTA Child Process"
+   ],
+   "claimed": true,
+   "top_rules": [
+    "Registry Tampering by Potentially Suspicious Processes",
+    "Wscript Shell Run In CommandLine",
+    "MSHTA Execution with Suspicious File Extensions",
+    "Suspicious MSHTA Child Process",
+    "Non Interactive PowerShell Process Spawned"
+   ]
+  },
+  {
+   "id": "SDWIN-201022035214",
+   "title": "Mshta HTML Application (HTA) Execution",
+   "techniques": [
+    "T1218.005"
+   ],
+   "events": 1553,
+   "rules_fired": 15,
+   "alerts": 32,
+   "any_alert": true,
+   "technique_detected": true,
+   "technique_rules": [
+    "Suspicious MSHTA Child Process",
+    "Windows Shell/Scripting Processes Spawning Suspicious Programs"
+   ],
+   "claimed": true,
+   "top_rules": [
+    "Registry Tampering by Potentially Suspicious Processes",
+    "Scheduled Task Created - Registry",
+    "Script Interpreter Execution From Suspicious Folder",
+    "Windows Shell/Scripting Processes Spawning Suspicious Programs",
+    "Potential Dropper Script Execution Via WScript/CScript/MSHTA"
+   ]
+  },
+  {
+   "id": "SDWIN-201022042947",
+   "title": "PurpleSharp Active Directory Playbook I",
+   "techniques": [
+    "T1021.006",
+    "T1110.003",
+    "T1135",
+    "T1558.003"
+   ],
+   "events": 25993,
+   "rules_fired": 21,
+   "alerts": 558,
+   "any_alert": true,
+   "technique_detected": true,
+   "technique_rules": [
+    "Kerberoasting Activity - Initial Query",
+    "Potential Remote PowerShell Session Initiated",
+    "Remote PowerShell Session Host Process (WinRM)",
+    "Suspicious Kerberos RC4 Ticket Encryption",
+    "Suspicious WSMAN Provider Image Loads"
+   ],
+   "claimed": true,
+   "top_rules": [
+    "Alternate PowerShell Hosts - PowerShell Module",
+    "Modification of IE Registry Settings",
+    "User Logoff Event",
+    "Remote PowerShell Session Host Process (WinRM)",
+    "Remote PowerShell Sessions Network Connections (WinRM)"
+   ]
+  },
+  {
+   "id": "SDWIN-201023020513",
+   "title": "Register-CimProvider Execute Dll",
+   "techniques": [
+    "T1218"
+   ],
+   "events": 1316,
+   "rules_fired": 6,
+   "alerts": 12,
+   "any_alert": true,
+   "technique_detected": false,
+   "technique_rules": [],
+   "claimed": true,
+   "top_rules": [
+    "Uncommon Process Access Rights For Target Image",
+    "DLL Execution Via Register-cimprovider.exe",
+    "Network Connection Initiated By PowerShell Process",
+    "Important Windows Eventlog Cleared",
+    "Security Eventlog Cleared"
+   ]
+  },
+  {
+   "id": "SDWIN-201023023651",
+   "title": "Bitsadmin Download Malicious File",
+   "techniques": [
+    "T1197"
+   ],
+   "events": 424,
+   "rules_fired": 7,
+   "alerts": 12,
+   "any_alert": true,
+   "technique_detected": true,
+   "technique_rules": [
+    "BITS Client BitsProxy DLL Loaded By Uncommon Process",
+    "File Download Via Bitsadmin",
+    "File Download Via Bitsadmin To A Suspicious Target Folder",
+    "File With Suspicious Extension Downloaded Via Bitsadmin",
+    "Suspicious Download From File-Sharing Website Via Bitsadmin"
+   ],
+   "claimed": true,
+   "top_rules": [
+    "File Download Via Bitsadmin",
+    "Suspicious Download From File-Sharing Website Via Bitsadmin",
+    "File With Suspicious Extension Downloaded Via Bitsadmin",
+    "File Download Via Bitsadmin To A Suspicious Target Folder",
+    "Important Windows Eventlog Cleared"
+   ]
+  },
+  {
+   "id": "SDWIN-201023031210",
+   "title": "PurpleSharp PE Injection CreateRemoteThread",
+   "techniques": [
+    "T1055.002"
+   ],
+   "events": 692,
+   "rules_fired": 8,
+   "alerts": 16,
+   "any_alert": true,
+   "technique_detected": true,
+   "technique_rules": [
+    "Remote Thread Creation In Uncommon Target Image",
+    "Uncommon Process Access Rights For Target Image"
+   ],
+   "claimed": true,
+   "top_rules": [
+    "Uncommon Process Access Rights For Target Image",
+    "HackTool - PurpleSharp Execution",
+    "Suspicious Process Parents",
+    "HackTool - Generic Process Access",
+    "Important Windows Eventlog Cleared"
+   ]
+  },
+  {
+   "id": "SDWIN-201026235835",
+   "title": "Process Herpaderping Mimikatz",
+   "techniques": [
+    "T1055"
+   ],
+   "events": 282,
+   "rules_fired": 4,
+   "alerts": 5,
+   "any_alert": true,
+   "technique_detected": false,
+   "technique_rules": [],
+   "claimed": true,
+   "top_rules": [
+    "HackTool - Mimikatz Execution",
+    "Security Eventlog Cleared",
+    "Creation of an Executable by an Executable",
+    "Suspicious High IntegrityLevel Conhost Legacy Option"
+   ]
+  },
+  {
+   "id": "SDWIN-201028191914",
+   "title": "Windows Vault Web Credentials",
+   "techniques": [
+    "T1055"
+   ],
+   "events": 120,
+   "rules_fired": 1,
+   "alerts": 1,
+   "any_alert": true,
+   "technique_detected": false,
+   "technique_rules": [],
+   "claimed": true,
+   "top_rules": [
+    "Security Eventlog Cleared"
+   ]
+  },
+  {
+   "id": "SDWIN-201029001615",
+   "title": "Python HTTP Server",
+   "techniques": [
+    "T1059"
+   ],
+   "events": 2395,
+   "rules_fired": 2,
+   "alerts": 5,
+   "any_alert": true,
+   "technique_detected": false,
+   "technique_rules": [],
+   "claimed": true,
+   "top_rules": [
+    "New Firewall Rule Added Via Netsh.EXE",
+    "Security Eventlog Cleared"
+   ]
+  },
+  {
+   "id": "SDWIN-201029202324",
+   "title": "SharpView PCRE.NET",
+   "techniques": [
+    "T1059"
+   ],
+   "events": 267,
+   "rules_fired": 7,
+   "alerts": 11,
+   "any_alert": true,
+   "technique_detected": true,
+   "technique_rules": [
+    "PCRE.NET Package Image Load",
+    "PCRE.NET Package Temp Files"
+   ],
+   "claimed": true,
+   "top_rules": [
+    "PCRE.NET Package Image Load",
+    "HackTool - SharpView Execution",
+    "DNS Server Discovery Via LDAP Query",
+    "Security Eventlog Cleared",
+    "Amsi.DLL Load By Uncommon Process"
+   ]
+  },
+  {
+   "id": "SDWIN-201102041306",
+   "title": "PowerShell HTTP Listener",
+   "techniques": [
+    "T1059.001"
+   ],
+   "events": 110,
+   "rules_fired": 1,
+   "alerts": 1,
+   "any_alert": true,
+   "technique_detected": false,
+   "technique_rules": [],
+   "claimed": true,
+   "top_rules": [
+    "Security Eventlog Cleared"
+   ]
+  },
+  {
+   "id": "SDWIN-201102163918",
+   "title": "Seatbelt Group User Discovery",
+   "techniques": [
+    "T1012"
+   ],
+   "events": 451,
+   "rules_fired": 4,
+   "alerts": 10,
+   "any_alert": true,
+   "technique_detected": false,
+   "technique_rules": [],
+   "claimed": true,
+   "top_rules": [
+    "WMI Module Loaded By Uncommon Process",
+    "PUA - Seatbelt Execution",
+    "Security Eventlog Cleared",
+    "Amsi.DLL Load By Uncommon Process"
+   ]
+  },
+  {
+   "id": "SDWIN-201219070027",
+   "title": "Remote Scheduled Task Creation",
+   "techniques": [
+    "T1053.005"
+   ],
+   "events": 1041,
+   "rules_fired": 9,
+   "alerts": 30,
+   "any_alert": true,
+   "technique_detected": true,
+   "technique_rules": [
+    "Scheduled Task Created - FileCreation",
+    "Scheduled Task Created - Registry",
+    "Scheduled Task Creation Via Schtasks.EXE",
+    "Schtasks Creation Or Modification With SYSTEM Privileges",
+    "Suspicious Command Patterns In Scheduled Task Creation",
+    "Suspicious Schtasks Schedule Type With High Privileges"
+   ],
+   "claimed": true,
+   "top_rules": [
+    "Scheduled Task Created - Registry",
+    "WSF/JSE/JS/VBA/VBE File Execution Via Cscript/Wscript",
+    "Scheduled Task Creation Via Schtasks.EXE",
+    "Suspicious Schtasks Schedule Type With High Privileges",
+    "Suspicious Command Patterns In Scheduled Task Creation"
+   ]
+  },
+  {
+   "id": "SDWIN-201219075059",
+   "title": "Remote Scheduled Task Modification",
+   "techniques": [
+    "T1053.005"
+   ],
+   "events": 2657,
+   "rules_fired": 7,
+   "alerts": 24,
+   "any_alert": true,
+   "technique_detected": true,
+   "technique_rules": [
+    "Scheduled Task Created - Registry"
+   ],
+   "claimed": true,
+   "top_rules": [
+    "Scheduled Task Created - Registry",
+    "WSF/JSE/JS/VBA/VBE File Execution Via Cscript/Wscript",
+    "Network Connection Initiated By PowerShell Process",
+    "Suspicious SYSTEM User Process Creation",
+    "Suspicious High IntegrityLevel Conhost Legacy Option"
+   ]
+  },
+  {
+   "id": "SDWIN-210314014019",
+   "title": "Exchange ProxyLogon SSRF RCE Vuln POC",
+   "techniques": [
+    "T1505.003"
+   ],
+   "events": 10487,
+   "rules_fired": 9,
+   "alerts": 35,
+   "any_alert": true,
+   "technique_detected": true,
+   "technique_rules": [
+    "Suspicious Process By Web Server Process"
+   ],
+   "claimed": true,
+   "top_rules": [
+    "Python Initiated Connection",
+    "User Logoff Event",
+    "Suspicious Process By Web Server Process",
+    "Local Accounts Discovery",
+    "Elevated System Shell Spawned"
+   ]
+  },
+  {
+   "id": "SDWIN-210427020247",
+   "title": "Export ADFS Database Configuration Remotely",
+   "techniques": [
+    "T0000"
+   ],
+   "events": 285,
+   "rules_fired": 0,
+   "alerts": 0,
+   "any_alert": false,
+   "technique_detected": false,
+   "technique_rules": [],
+   "claimed": false,
+   "top_rules": []
+  },
+  {
+   "id": "SDWIN-220630130349",
+   "title": "Disabling Windows Event Logging via Audit Policy Modification",
+   "techniques": [
+    "T1562.002"
+   ],
+   "events": 13645,
+   "rules_fired": 10,
+   "alerts": 112,
+   "any_alert": true,
+   "technique_detected": false,
+   "technique_rules": [],
+   "claimed": false,
+   "top_rules": [
+    "Windows Event Auditing Disabled",
+    "Important Windows Event Auditing Disabled",
+    "Potential Defense Evasion Via Raw Disk Access By Uncommon Tools",
+    "Audit Policy Tampering Via Auditpol",
+    "Potential Raspberry Robin Registry Set Internet Settings ZoneMap"
+   ]
+  },
+  {
+   "id": "SDWIN-220703123711",
+   "title": "Disabling Process Command Line Logging via Registry Modification",
+   "techniques": [
+    "T1562.002"
+   ],
+   "events": 21457,
+   "rules_fired": 6,
+   "alerts": 30,
+   "any_alert": true,
+   "technique_detected": false,
+   "technique_rules": [],
+   "claimed": false,
+   "top_rules": [
+    "Potential Raspberry Robin Registry Set Internet Settings ZoneMap",
+    "Important Windows Eventlog Cleared",
+    "Scheduled Task Created - Registry",
+    "User Logoff Event",
+    "ADS Zone.Identifier Deleted"
+   ]
+  },
+  {
+   "id": "SDWIN-220705170038",
+   "title": "Modifying Security Event Log File Path via Modification of Log Configuration",
+   "techniques": [
+    "T1562.002"
+   ],
+   "events": 25208,
+   "rules_fired": 11,
+   "alerts": 349,
+   "any_alert": true,
+   "technique_detected": false,
+   "technique_rules": [],
+   "claimed": false,
+   "top_rules": [
+    "Scheduled Task Created - Registry",
+    "Potential Raspberry Robin Registry Set Internet Settings ZoneMap",
+    "ISO Image Mounted",
+    "Potential Executable Run Itself As Sacrificial Process",
+    "ADS Zone.Identifier Deleted"
+   ]
+  },
+  {
+   "id": "SDWIN-220708104215",
+   "title": "Stopping Event Log Service via Modification of Start Up Type",
+   "techniques": [
+    "T1562.002"
+   ],
+   "events": 17926,
+   "rules_fired": 15,
+   "alerts": 88,
+   "any_alert": true,
+   "technique_detected": false,
+   "technique_rules": [],
+   "claimed": false,
+   "top_rules": [
+    "Scheduled Task Created - Registry",
+    "Potential Raspberry Robin Registry Set Internet Settings ZoneMap",
+    "Alternate PowerShell Hosts - PowerShell Module",
+    "User Logoff Event",
+    "ADS Zone.Identifier Deleted"
+   ]
+  },
+  {
+   "id": "SDWIN-220708104300",
+   "title": "Stopping Event Log Service after Stopping Depending Services",
+   "techniques": [
+    "T1562.002"
+   ],
+   "events": 55321,
+   "rules_fired": 22,
+   "alerts": 188,
+   "any_alert": true,
+   "technique_detected": false,
+   "technique_rules": [],
+   "claimed": false,
+   "top_rules": [
+    "Scheduled Task Created - Registry",
+    "Alternate PowerShell Hosts - PowerShell Module",
+    "Potential Raspberry Robin Registry Set Internet Settings ZoneMap",
+    "Windows Service Terminated With Error",
+    "Malicious PowerShell Commandlets - ScriptBlock"
+   ]
+  },
+  {
+   "id": "SDWIN-220803205800",
+   "title": "Stopping Event Logging via Creation of MiniNt Registry Key",
+   "techniques": [
+    "T1562.002"
+   ],
+   "events": 47496,
+   "rules_fired": 18,
+   "alerts": 264,
+   "any_alert": true,
+   "technique_detected": false,
+   "technique_rules": [],
+   "claimed": false,
+   "top_rules": [
+    "Scheduled Task Created - Registry",
+    "Potential Raspberry Robin Registry Set Internet Settings ZoneMap",
+    "Alternate PowerShell Hosts - PowerShell Module",
+    "User Logoff Event",
+    "ADS Zone.Identifier Deleted"
+   ]
+  },
+  {
+   "id": "SDWIN-230718151900",
+   "title": "Dumping NTDS.dit using NTDSutil",
+   "techniques": [
+    "T1003.003"
+   ],
+   "events": 11184,
+   "rules_fired": 14,
+   "alerts": 263,
+   "any_alert": true,
+   "technique_detected": true,
+   "technique_rules": [
+    "Invocation of Active Directory Diagnostic Tool (ntdsutil.exe)",
+    "NTDS.DIT Created",
+    "Suspicious Process Patterns NTDS.DIT Exfil",
+    "Suspicious Usage Of Active Directory Diagnostic Tool (ntdsutil.exe)",
+    "VSSAudit Security Event Source Registration",
+    "Volume Shadow Copy Mount"
+   ],
+   "claimed": true,
+   "top_rules": [
+    "Password Policy Enumerated",
+    "Sysmon Blocked File Shredding",
+    "User Logoff Event",
+    "Suspicious Volume Shadow Copy VSS_PS.dll Load",
+    "Suspicious Usage Of Active Directory Diagnostic Tool (ntdsutil.exe)"
+   ]
+  },
+  {
+   "id": "SDWIN-230720004300",
+   "title": "Dumping NTDS.dit using NinjaCopy",
+   "techniques": [
+    "T1003.003"
+   ],
+   "events": 13969,
+   "rules_fired": 19,
+   "alerts": 73,
+   "any_alert": true,
+   "technique_detected": false,
+   "technique_rules": [],
+   "claimed": true,
+   "top_rules": [
+    "Sysmon Blocked File Shredding",
+    "Password Policy Enumerated",
+    "User Logoff Event",
+    "Scheduled Task Created - Registry",
+    "AD Privileged Users or Groups Reconnaissance"
+   ]
+  }
+ ],
+ "compound": {
+  "apt29_evals_day1_manual.zip": {
+   "events": 196081,
+   "rules_fired": 111,
+   "alerts": 3765,
+   "techniques_alerted": 69,
+   "top_rules": [
+    "Alternate PowerShell Hosts - PowerShell Module",
+    "PowerShell Decompress Commands",
+    "Python Initiated Connection",
+    "Scheduled Task Created - Registry",
+    "Potential Binary Or Script Dropper Via PowerShell",
+    "Creation of an Executable by an Executable",
+    "User Logoff Event",
+    "Potential Shellcode Injection",
+    "File Creation Date Changed to Another Year",
+    "Suspicious Svchost Process Access"
+   ]
+  },
+  "apt29_evals_day2_manual.zip": {
+   "events": 587286,
+   "rules_fired": 117,
+   "alerts": 4723,
+   "techniques_alerted": 70,
+   "top_rules": [
+    "Alternate PowerShell Hosts - PowerShell Module",
+    "Scheduled Task Created - Registry",
+    "Network Connection Initiated By PowerShell Process",
+    "User Logoff Event",
+    "File Creation Date Changed to Another Year",
+    "HackTool - SysmonEnte Execution",
+    "New Root or CA or AuthRoot Certificate to Store",
+    "Mimikatz Use",
+    "Unsigned DLL Loaded by Windows Utility",
+    "Remote PowerShell Sessions Network Connections (WinRM)"
+   ]
+  }
+ },
+ "rule_fire_counts": [
+  [
+   "User Logoff Event",
+   77
+  ],
+  [
+   "Scheduled Task Created - Registry",
+   48
+  ],
+  [
+   "Suspicious High IntegrityLevel Conhost Legacy Option",
+   29
+  ],
+  [
+   "New PowerShell Instance Created",
+   28
+  ],
+  [
+   "Network Connection Initiated By PowerShell Process",
+   26
+  ],
+  [
+   "Security Eventlog Cleared",
+   25
+  ],
+  [
+   "Important Windows Eventlog Cleared",
+   24
+  ],
+  [
+   "Local Accounts Discovery",
+   19
+  ],
+  [
+   "Potential Raspberry Robin Registry Set Internet Settings ZoneMap",
+   19
+  ],
+  [
+   "Non Interactive PowerShell Process Spawned",
+   18
+  ],
+  [
+   "Alternate PowerShell Hosts - PowerShell Module",
+   18
+  ],
+  [
+   "ADS Zone.Identifier Deleted",
+   17
+  ],
+  [
+   "PSScriptPolicyTest Creation By Uncommon Process",
+   16
+  ],
+  [
+   "Potentially Suspicious AccessMask Requested From LSASS",
+   15
+  ],
+  [
+   "New Application in AppCompat",
+   15
+  ],
+  [
+   "Suspicious WSMAN Provider Image Loads",
+   15
+  ],
+  [
+   "AMSI Bypass Pattern Assembly GetType",
+   14
+  ],
+  [
+   "Suspicious PowerShell Invocations - Specific",
+   14
+  ],
+  [
+   "PowerShell Core DLL Loaded By Non PowerShell Process",
+   14
+  ],
+  [
+   "Amsi.DLL Load By Uncommon Process",
+   13
+  ],
+  [
+   "Suspicious Execution of Powershell with Base64",
+   12
+  ],
+  [
+   "Unusually Long PowerShell CommandLine",
+   12
+  ],
+  [
+   "Potential Executable Run Itself As Sacrificial Process",
+   11
+  ],
+  [
+   "Uncommon Process Access Rights For Target Image",
+   11
+  ],
+  [
+   "Alternate PowerShell Hosts Pipe",
+   11
+  ],
+  [
+   "Net WebClient Casing Anomalies",
+   11
+  ],
+  [
+   "Password Policy Enumerated",
+   10
+  ],
+  [
+   "HackTool - Empire PowerShell Launch Parameters",
+   10
+  ],
+  [
+   "Password Policy Discovery With Get-AdDefaultDomainPasswordPolicy",
+   10
+  ],
+  [
+   "Elevated System Shell Spawned",
+   9
+  ],
+  [
+   "Scheduled Task Created - FileCreation",
+   9
+  ],
+  [
+   "Malicious PowerShell Commandlets - PoshModule",
+   9
+  ],
+  [
+   "Potential Credential Dumping Activity Via LSASS",
+   8
+  ],
+  [
+   "Mimikatz Use",
+   7
+  ],
+  [
+   "LSASS Access From Non System Account",
+   7
+  ],
+  [
+   "Elevated System Shell Spawned From Uncommon Parent Location",
+   6
+  ],
+  [
+   "Potential Shellcode Injection",
+   6
+  ],
+  [
+   "Potentially Suspicious PowerShell Child Processes",
+   6
+  ],
+  [
+   "BITS Client BitsProxy DLL Loaded By Uncommon Process",
+   6
+  ],
+  [
+   "Suspicious SYSTEM User Process Creation",
+   6
+  ]
+ ]
+}

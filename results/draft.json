@@ -1,0 +1,1406 @@
+{
+ "datasets": 98,
+ "benign_events": 2994137,
+ "backends": {
+  "heuristic": {
+   "drafts": 90,
+   "datasets_with_drafts": 68,
+   "fires_on_own_capture": 30,
+   "tp_rate": 0.441,
+   "datasets_with_benign_fp": 6,
+   "benign_alerts_total": 57,
+   "rules_over_budget": 0,
+   "gate_pass_and_fires": 30,
+   "rows": [
+    {
+     "id": "SDWIN-190301125905",
+     "drafts": 1,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-190301174830",
+     "drafts": 1,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-190319020147",
+     "drafts": 1,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-190319020729",
+     "drafts": 1,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-190319021158",
+     "drafts": 1,
+     "fires_on_own_capture": true,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-190319023812",
+     "drafts": 1,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-190319024742",
+     "drafts": 2,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-190319131123",
+     "drafts": 1,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-190319145126",
+     "drafts": 1,
+     "fires_on_own_capture": true,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-190403133337",
+     "drafts": 4,
+     "fires_on_own_capture": true,
+     "benign_alerts": 12,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-190518182022",
+     "drafts": 1,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-190518184306",
+     "drafts": 1,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-190518200432",
+     "drafts": 1,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-190518201207",
+     "drafts": 1,
+     "fires_on_own_capture": true,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-190518201922",
+     "drafts": 0,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-190518202151",
+     "drafts": 1,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-190518203650",
+     "drafts": 1,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-190518210125",
+     "drafts": 1,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-190518210652",
+     "drafts": 1,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-190518211052",
+     "drafts": 1,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-190518211456",
+     "drafts": 1,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-190518213907",
+     "drafts": 1,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-190518221344",
+     "drafts": 2,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-190518224039",
+     "drafts": 1,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-190518230752",
+     "drafts": 1,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-190518235535",
+     "drafts": 0,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-190519005224",
+     "drafts": 1,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-190625103712",
+     "drafts": 1,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-190625133822",
+     "drafts": 1,
+     "fires_on_own_capture": true,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-191027055035",
+     "drafts": 0,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-191027223020",
+     "drafts": 0,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-191225045202",
+     "drafts": 1,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-200609225055",
+     "drafts": 0,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-200721232741",
+     "drafts": 2,
+     "fires_on_own_capture": true,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-200722001847",
+     "drafts": 1,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-200724174200",
+     "drafts": 0,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-200805020926",
+     "drafts": 0,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-200805034820",
+     "drafts": 1,
+     "fires_on_own_capture": true,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-200806012009",
+     "drafts": 0,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-200806015757",
+     "drafts": 0,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-200806022635",
+     "drafts": 0,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-200806030120",
+     "drafts": 0,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-200806031938",
+     "drafts": 0,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-200806035621",
+     "drafts": 0,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-200806115603",
+     "drafts": 0,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-200806130039",
+     "drafts": 0,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-200807103913",
+     "drafts": 1,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-200904032946",
+     "drafts": 1,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-200914080546",
+     "drafts": 1,
+     "fires_on_own_capture": true,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-200916232559",
+     "drafts": 1,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-200917174542",
+     "drafts": 0,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-200918145959",
+     "drafts": 0,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-200921001437",
+     "drafts": 1,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-200921175806",
+     "drafts": 2,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-200921230246",
+     "drafts": 1,
+     "fires_on_own_capture": true,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-200922042230",
+     "drafts": 1,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-201009173318",
+     "drafts": 0,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-201009183000",
+     "drafts": 0,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-201012183248",
+     "drafts": 0,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-201017061100",
+     "drafts": 1,
+     "fires_on_own_capture": true,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-201018195009",
+     "drafts": 2,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-201018225619",
+     "drafts": 0,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-201019002900",
+     "drafts": 1,
+     "fires_on_own_capture": true,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-201019033054",
+     "drafts": 3,
+     "fires_on_own_capture": true,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-201019224718",
+     "drafts": 1,
+     "fires_on_own_capture": true,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-201019232515",
+     "drafts": 2,
+     "fires_on_own_capture": true,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-201020013208",
+     "drafts": 0,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-201021001911",
+     "drafts": 1,
+     "fires_on_own_capture": true,
+     "benign_alerts": 6,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-201021204544",
+     "drafts": 2,
+     "fires_on_own_capture": true,
+     "benign_alerts": 12,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-201021232814",
+     "drafts": 1,
+     "fires_on_own_capture": true,
+     "benign_alerts": 15,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-201022002145",
+     "drafts": 1,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-201022013121",
+     "drafts": 1,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-201022015432",
+     "drafts": 2,
+     "fires_on_own_capture": true,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-201022022144",
+     "drafts": 0,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-201022025808",
+     "drafts": 2,
+     "fires_on_own_capture": true,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-201022035214",
+     "drafts": 1,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-201022042947",
+     "drafts": 0,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-201023020513",
+     "drafts": 2,
+     "fires_on_own_capture": true,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-201023023651",
+     "drafts": 1,
+     "fires_on_own_capture": true,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-201023031210",
+     "drafts": 0,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-201026235835",
+     "drafts": 1,
+     "fires_on_own_capture": true,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-201028191914",
+     "drafts": 1,
+     "fires_on_own_capture": false,
+     "benign_alerts": 6,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-201029001615",
+     "drafts": 0,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-201029202324",
+     "drafts": 2,
+     "fires_on_own_capture": true,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-201102041306",
+     "drafts": 1,
+     "fires_on_own_capture": false,
+     "benign_alerts": 6,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-201102163918",
+     "drafts": 2,
+     "fires_on_own_capture": true,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-201219070027",
+     "drafts": 0,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-201219075059",
+     "drafts": 0,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-210314014019",
+     "drafts": 0,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-210427020247",
+     "drafts": 1,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-220630130349",
+     "drafts": 0,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-220703123711",
+     "drafts": 2,
+     "fires_on_own_capture": true,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-220705170038",
+     "drafts": 1,
+     "fires_on_own_capture": true,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-220708104215",
+     "drafts": 3,
+     "fires_on_own_capture": true,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-220708104300",
+     "drafts": 1,
+     "fires_on_own_capture": true,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-220803205800",
+     "drafts": 3,
+     "fires_on_own_capture": true,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-230718151900",
+     "drafts": 1,
+     "fires_on_own_capture": true,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-230720004300",
+     "drafts": 1,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    }
+   ]
+  },
+  "keywords": {
+   "drafts": 75,
+   "datasets_with_drafts": 75,
+   "fires_on_own_capture": 55,
+   "tp_rate": 0.733,
+   "datasets_with_benign_fp": 33,
+   "benign_alerts_total": 126768,
+   "rules_over_budget": 21,
+   "gate_pass_and_fires": 35,
+   "rows": [
+    {
+     "id": "SDWIN-190301125905",
+     "drafts": 1,
+     "fires_on_own_capture": true,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-190301174830",
+     "drafts": 1,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-190319020147",
+     "drafts": 1,
+     "fires_on_own_capture": false,
+     "benign_alerts": 1315,
+     "rules_over_budget": 1
+    },
+    {
+     "id": "SDWIN-190319020729",
+     "drafts": 0,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-190319021158",
+     "drafts": 0,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-190319023812",
+     "drafts": 1,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-190319024742",
+     "drafts": 1,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-190319131123",
+     "drafts": 1,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-190319145126",
+     "drafts": 1,
+     "fires_on_own_capture": true,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-190403133337",
+     "drafts": 1,
+     "fires_on_own_capture": true,
+     "benign_alerts": 343,
+     "rules_over_budget": 1
+    },
+    {
+     "id": "SDWIN-190518182022",
+     "drafts": 1,
+     "fires_on_own_capture": true,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-190518184306",
+     "drafts": 1,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-190518200432",
+     "drafts": 1,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-190518201207",
+     "drafts": 0,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-190518201922",
+     "drafts": 0,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-190518202151",
+     "drafts": 1,
+     "fires_on_own_capture": true,
+     "benign_alerts": 7622,
+     "rules_over_budget": 1
+    },
+    {
+     "id": "SDWIN-190518203650",
+     "drafts": 1,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-190518210125",
+     "drafts": 1,
+     "fires_on_own_capture": true,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-190518210652",
+     "drafts": 1,
+     "fires_on_own_capture": true,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-190518211052",
+     "drafts": 1,
+     "fires_on_own_capture": true,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-190518211456",
+     "drafts": 1,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-190518213907",
+     "drafts": 1,
+     "fires_on_own_capture": true,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-190518221344",
+     "drafts": 1,
+     "fires_on_own_capture": true,
+     "benign_alerts": 168,
+     "rules_over_budget": 1
+    },
+    {
+     "id": "SDWIN-190518224039",
+     "drafts": 1,
+     "fires_on_own_capture": true,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-190518230752",
+     "drafts": 1,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-190518235535",
+     "drafts": 0,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-190519005224",
+     "drafts": 1,
+     "fires_on_own_capture": true,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-190625103712",
+     "drafts": 1,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-190625133822",
+     "drafts": 0,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-191027055035",
+     "drafts": 1,
+     "fires_on_own_capture": true,
+     "benign_alerts": 7622,
+     "rules_over_budget": 1
+    },
+    {
+     "id": "SDWIN-191027223020",
+     "drafts": 1,
+     "fires_on_own_capture": true,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-191225045202",
+     "drafts": 1,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-200609225055",
+     "drafts": 0,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-200721232741",
+     "drafts": 1,
+     "fires_on_own_capture": true,
+     "benign_alerts": 8060,
+     "rules_over_budget": 1
+    },
+    {
+     "id": "SDWIN-200722001847",
+     "drafts": 1,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-200724174200",
+     "drafts": 0,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-200805020926",
+     "drafts": 0,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-200805034820",
+     "drafts": 1,
+     "fires_on_own_capture": true,
+     "benign_alerts": 343,
+     "rules_over_budget": 1
+    },
+    {
+     "id": "SDWIN-200806012009",
+     "drafts": 0,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-200806015757",
+     "drafts": 1,
+     "fires_on_own_capture": true,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-200806022635",
+     "drafts": 1,
+     "fires_on_own_capture": true,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-200806030120",
+     "drafts": 0,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-200806031938",
+     "drafts": 0,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-200806035621",
+     "drafts": 1,
+     "fires_on_own_capture": true,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-200806115603",
+     "drafts": 0,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-200806130039",
+     "drafts": 0,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-200807103913",
+     "drafts": 1,
+     "fires_on_own_capture": true,
+     "benign_alerts": 7622,
+     "rules_over_budget": 1
+    },
+    {
+     "id": "SDWIN-200904032946",
+     "drafts": 1,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-200914080546",
+     "drafts": 0,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-200916232559",
+     "drafts": 1,
+     "fires_on_own_capture": true,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-200917174542",
+     "drafts": 1,
+     "fires_on_own_capture": true,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-200918145959",
+     "drafts": 1,
+     "fires_on_own_capture": true,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-200921001437",
+     "drafts": 1,
+     "fires_on_own_capture": true,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-200921175806",
+     "drafts": 1,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-200921230246",
+     "drafts": 1,
+     "fires_on_own_capture": true,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-200922042230",
+     "drafts": 1,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-201009173318",
+     "drafts": 1,
+     "fires_on_own_capture": true,
+     "benign_alerts": 53087,
+     "rules_over_budget": 1
+    },
+    {
+     "id": "SDWIN-201009183000",
+     "drafts": 1,
+     "fires_on_own_capture": true,
+     "benign_alerts": 858,
+     "rules_over_budget": 1
+    },
+    {
+     "id": "SDWIN-201012183248",
+     "drafts": 1,
+     "fires_on_own_capture": true,
+     "benign_alerts": 24105,
+     "rules_over_budget": 1
+    },
+    {
+     "id": "SDWIN-201017061100",
+     "drafts": 0,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-201018195009",
+     "drafts": 1,
+     "fires_on_own_capture": true,
+     "benign_alerts": 714,
+     "rules_over_budget": 1
+    },
+    {
+     "id": "SDWIN-201018225619",
+     "drafts": 1,
+     "fires_on_own_capture": true,
+     "benign_alerts": 7622,
+     "rules_over_budget": 1
+    },
+    {
+     "id": "SDWIN-201019002900",
+     "drafts": 1,
+     "fires_on_own_capture": true,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-201019033054",
+     "drafts": 1,
+     "fires_on_own_capture": true,
+     "benign_alerts": 213,
+     "rules_over_budget": 1
+    },
+    {
+     "id": "SDWIN-201019224718",
+     "drafts": 1,
+     "fires_on_own_capture": true,
+     "benign_alerts": 213,
+     "rules_over_budget": 1
+    },
+    {
+     "id": "SDWIN-201019232515",
+     "drafts": 1,
+     "fires_on_own_capture": true,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-201020013208",
+     "drafts": 0,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-201021001911",
+     "drafts": 0,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-201021204544",
+     "drafts": 0,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-201021232814",
+     "drafts": 0,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-201022002145",
+     "drafts": 1,
+     "fires_on_own_capture": true,
+     "benign_alerts": 6,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-201022013121",
+     "drafts": 1,
+     "fires_on_own_capture": true,
+     "benign_alerts": 13,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-201022015432",
+     "drafts": 1,
+     "fires_on_own_capture": true,
+     "benign_alerts": 1,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-201022022144",
+     "drafts": 1,
+     "fires_on_own_capture": true,
+     "benign_alerts": 4,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-201022025808",
+     "drafts": 1,
+     "fires_on_own_capture": true,
+     "benign_alerts": 4,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-201022035214",
+     "drafts": 1,
+     "fires_on_own_capture": true,
+     "benign_alerts": 4,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-201022042947",
+     "drafts": 1,
+     "fires_on_own_capture": true,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-201023020513",
+     "drafts": 1,
+     "fires_on_own_capture": true,
+     "benign_alerts": 1,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-201023023651",
+     "drafts": 1,
+     "fires_on_own_capture": true,
+     "benign_alerts": 1,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-201023031210",
+     "drafts": 1,
+     "fires_on_own_capture": true,
+     "benign_alerts": 149,
+     "rules_over_budget": 1
+    },
+    {
+     "id": "SDWIN-201026235835",
+     "drafts": 1,
+     "fires_on_own_capture": true,
+     "benign_alerts": 9,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-201028191914",
+     "drafts": 1,
+     "fires_on_own_capture": false,
+     "benign_alerts": 10,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-201029001615",
+     "drafts": 1,
+     "fires_on_own_capture": true,
+     "benign_alerts": 3339,
+     "rules_over_budget": 1
+    },
+    {
+     "id": "SDWIN-201029202324",
+     "drafts": 1,
+     "fires_on_own_capture": true,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-201102041306",
+     "drafts": 1,
+     "fires_on_own_capture": false,
+     "benign_alerts": 10,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-201102163918",
+     "drafts": 1,
+     "fires_on_own_capture": true,
+     "benign_alerts": 229,
+     "rules_over_budget": 1
+    },
+    {
+     "id": "SDWIN-201219070027",
+     "drafts": 1,
+     "fires_on_own_capture": true,
+     "benign_alerts": 149,
+     "rules_over_budget": 1
+    },
+    {
+     "id": "SDWIN-201219075059",
+     "drafts": 0,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-210314014019",
+     "drafts": 0,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-210427020247",
+     "drafts": 1,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-220630130349",
+     "drafts": 1,
+     "fires_on_own_capture": true,
+     "benign_alerts": 1,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-220703123711",
+     "drafts": 1,
+     "fires_on_own_capture": true,
+     "benign_alerts": 213,
+     "rules_over_budget": 1
+    },
+    {
+     "id": "SDWIN-220705170038",
+     "drafts": 1,
+     "fires_on_own_capture": true,
+     "benign_alerts": 2718,
+     "rules_over_budget": 1
+    },
+    {
+     "id": "SDWIN-220708104215",
+     "drafts": 1,
+     "fires_on_own_capture": true,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-220708104300",
+     "drafts": 1,
+     "fires_on_own_capture": true,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-220803205800",
+     "drafts": 1,
+     "fires_on_own_capture": true,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-230718151900",
+     "drafts": 0,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    },
+    {
+     "id": "SDWIN-230720004300",
+     "drafts": 1,
+     "fires_on_own_capture": false,
+     "benign_alerts": 0,
+     "rules_over_budget": 0
+    }
+   ]
+  }
+ },
+ "sigmahq_same_datasets": {
+  "datasets": 68,
+  "technique_detected": 47
+ }
+}

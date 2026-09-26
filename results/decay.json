@@ -1,0 +1,106 @@
+{
+ "benign_events_inventoried": 598829,
+ "rules_with_tp_evidence": 458,
+ "windows_rules": 2844,
+ "baseline_status": {
+  "broken": 108,
+  "ok": 2664,
+  "degraded": 24,
+  "source-missing": 48
+ },
+ "changes": {
+  "ecs_rename": {
+   "description": "SIEM pipeline migrated to ECS field names (Image -> process.executable ...)",
+   "decayed_tp_rules": 428,
+   "static_flagged_tp_rules": 425,
+   "static_recall": 0.993,
+   "static_precision": 1.0,
+   "regression_monitor_coverage": 0.161,
+   "library_flagged": 2300,
+   "library_flagged_pct": 80.9,
+   "library_worsened": 2373,
+   "missed_examples": [
+    "Potential Defense Evasion Via Rename Of Highly Relevant Binaries",
+    "HackTool - PPID Spoofing SelectMyParent Tool Execution",
+    "HackTool - Bloodhound/Sharphound Execution"
+   ],
+   "false_alarm_examples": []
+  },
+  "sysmon_to_4688": {
+   "description": "Sysmon removed; process creation only from Security 4688 (cmdline auditing on)",
+   "decayed_tp_rules": 115,
+   "static_flagged_tp_rules": 110,
+   "static_recall": 0.957,
+   "static_precision": 1.0,
+   "regression_monitor_coverage": 0.161,
+   "library_flagged": 943,
+   "library_flagged_pct": 33.2,
+   "library_worsened": 1611,
+   "missed_examples": [
+    "Csc.EXE Execution Form Potentially Suspicious Parent",
+    "PUA - AdvancedRun Execution",
+    "Suspicious Cross-User Process Spawn",
+    "Ie4uinit Lolbin Use From Invalid Path",
+    "Renamed AdFind Execution"
+   ],
+   "false_alarm_examples": []
+  },
+  "4688_no_cmdline": {
+   "description": "Sysmon removed and 4688 command-line auditing off",
+   "decayed_tp_rules": 349,
+   "static_flagged_tp_rules": 110,
+   "static_recall": 0.315,
+   "static_precision": 1.0,
+   "regression_monitor_coverage": 0.161,
+   "library_flagged": 943,
+   "library_flagged_pct": 33.2,
+   "library_worsened": 1611,
+   "missed_examples": [
+    "System Information Discovery via Registry Queries",
+    "Malicious PowerShell Commandlets - ProcessCreation",
+    "Powershell Executed From Headless ConHost Process",
+    "HackTool - CrackMapExec Execution Patterns",
+    "Mimikatz Use",
+    "Suspicious Reconnaissance Activity Via GatherNetworkInfo.VBS",
+    "Potential Reconnaissance For Cached Credentials Via Cmdkey.EXE",
+    "Regsvr32 DLL Execution With Suspicious File Extension"
+   ],
+   "false_alarm_examples": []
+  },
+  "no_commandline": {
+   "description": "Collector drops CommandLine (size limits / privacy filter)",
+   "decayed_tp_rules": 234,
+   "static_flagged_tp_rules": 220,
+   "static_recall": 0.94,
+   "static_precision": 1.0,
+   "regression_monitor_coverage": 0.161,
+   "library_flagged": 949,
+   "library_flagged_pct": 33.4,
+   "library_worsened": 1107,
+   "missed_examples": [
+    "Mimikatz Use",
+    "Script Interpreter Spawning Credential Scanner - Windows",
+    "Renamed CreateDump Utility Execution",
+    "HackTool - Hashcat Password Cracker Execution",
+    "Dism Remove Online Package",
+    "Local Accounts Discovery",
+    "HackTool - PPID Spoofing SelectMyParent Tool Execution",
+    "Suspicious Calculator Usage"
+   ],
+   "false_alarm_examples": []
+  },
+  "no_hashes": {
+   "description": "Sysmon config without file hashing",
+   "decayed_tp_rules": 0,
+   "static_flagged_tp_rules": 0,
+   "static_recall": null,
+   "static_precision": null,
+   "regression_monitor_coverage": 0.161,
+   "library_flagged": 6,
+   "library_flagged_pct": 0.2,
+   "library_worsened": 47,
+   "missed_examples": [],
+   "false_alarm_examples": []
+  }
+ }
+}

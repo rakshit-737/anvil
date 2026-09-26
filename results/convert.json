@@ -1,0 +1,42 @@
+{
+ "rules": 2861,
+ "splunk": {
+  "converted": 2857,
+  "pct": 99.9,
+  "seconds": 76.3,
+  "errors": {
+   "SigmaFeatureNotSupportedByBackendError": 2,
+   "SigmaPlaceholderError": 2
+  }
+ },
+ "elastic": {
+  "converted": 2855,
+  "pct": 99.8,
+  "seconds": 85.5,
+  "errors": {
+   "SigmaFeatureNotSupportedByBackendError": 4,
+   "SigmaPlaceholderError": 2
+  }
+ },
+ "kusto": {
+  "converted": 2074,
+  "pct": 72.5,
+  "seconds": 85.8,
+  "errors": {
+   "SigmaTransformationError": 751,
+   "InvalidHashAlgorithmError": 28,
+   "": 5,
+   "NotImplementedError": 2,
+   "SigmaValueError": 1
+  }
+ },
+ "sqlite": {
+  "converted": 2842,
+  "pct": 99.3,
+  "seconds": 73.4,
+  "errors": {
+   "SigmaFeatureNotSupportedByBackendError": 17,
+   "SigmaPlaceholderError": 2
+  }
+ }
+}
