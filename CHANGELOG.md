@@ -2,6 +2,17 @@
 
 All notable changes to this project are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses [semantic versioning](https://semver.org/).
 
+## [1.0.0] - 2026-09-26
+
+### Added
+- FP-prediction benchmark repeats stratified 5-fold CV over 10 seeds and reports mean and 95% confidence intervals (`anvil.fpmodel.repeated_cv`).
+- Documentation site (MkDocs Material) on GitHub Pages, with API reference and the static health dashboard under `/demo/`.
+- Dockerfile (slim, non-root) and a tag-driven release workflow publishing `ghcr.io/rakshit-737/anvil` plus wheel/sdist.
+
+### Changed
+- FP-model numbers corrected to the multi-seed means: logreg ROC-AUC 0.826 (was 0.836 single-seed), PR-AUC 0.188 (was 0.202); GBDT 0.817 / 0.229. The `level` heuristic still has the best precision at k.
+- Architecture diagram labels quoted so Mermaid renders them reliably.
+
 ## [0.2.0] - 2026-09-26
 
 Real-data release: ANVIL now runs the full SigmaHQ library against public attack and benign telemetry.

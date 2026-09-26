@@ -1,11 +1,14 @@
 # ANVIL: detection-as-code, measured on real telemetry
 
 [![ci](https://github.com/rakshit-737/anvil/actions/workflows/ci.yml/badge.svg)](https://github.com/rakshit-737/anvil/actions/workflows/ci.yml)
+[![docs](https://github.com/rakshit-737/anvil/actions/workflows/docs.yml/badge.svg)](https://rakshit-737.github.io/anvil/)
 ![python](https://img.shields.io/badge/python-3.10%20%7C%203.12%20%7C%203.13-3776ab)
 [![license](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 ![rules](https://img.shields.io/badge/SigmaHQ%20rules%20measured-3%2C757-2a78d6)
 
 **ANVIL lints, replays, measures, drafts and decay-monitors Sigma detections.** The rules are treated like code: every one is checked against real attack captures, real clean-host telemetry and a SOC alert budget before it ships, and re-checked when the telemetry underneath it changes.
+
+Documentation: **https://rakshit-737.github.io/anvil/** (with the static [health dashboard demo](https://rakshit-737.github.io/anvil/demo/)).
 
 It is the "factory" half of a detection pipeline: a CTI report becomes a drafted rule, a human reviews it, CI tests it on emulated and benign telemetry, the rule is versioned and deployed, and a monitor watches it decay. All of it runs offline on a laptop.
 
@@ -26,22 +29,22 @@ It is the "factory" half of a detection pipeline: a CTI report becomes a drafted
 
 ```mermaid
 flowchart LR
-  CTI[CTI report / OTRF transcript] --> DR[anvil draft<br/>heuristic or Claude]
-  DR --> RV{{Human review gate<br/>lint A114 until reviewed}}
-  RV --> LIB[(rules/ in git)]
-  SIG[SigmaHQ repo] --> LINT
-  LIB --> LINT[anvil lint<br/>Sigma spec, ATT&CK STIX tags]
-  LINT --> ENG[engine + logsource router<br/>compiled, indexed by channel/EventID]
-  TP[SigmaHQ regression captures<br/>OTRF emulations] --> ENG
-  BEN[evtx-baseline clean hosts<br/>3.0M events] --> ENG
-  ENG --> M[measure<br/>recall, FP, alerts/day vs SOC budget]
-  M --> GATE{CI gate}
-  GATE -->|pass| DEP[anvil convert<br/>Splunk / Elastic / KQL]
-  M --> COV[ATT&CK coverage<br/>claimed vs validated]
-  M --> FPM[FP-prediction model]
-  LIB --> DEC[decay monitor<br/>schema analysis + TP regression]
+  CTI["CTI report / OTRF transcript"] --> DR["anvil draft<br/>heuristic or Claude"]
+  DR --> RV{{"Human review gate<br/>lint A114 until reviewed"}}
+  RV --> LIB[("rules/ in git")]
+  SIG["SigmaHQ repo"] --> LINT
+  LIB --> LINT["anvil lint<br/>Sigma spec, ATT&CK STIX tags"]
+  LINT --> ENG["engine + logsource router<br/>compiled, indexed by channel/EventID"]
+  TP["SigmaHQ regression captures<br/>OTRF emulations"] --> ENG
+  BEN["evtx-baseline clean hosts<br/>3.0M events"] --> ENG
+  ENG --> M["measure<br/>recall, FP, alerts/day vs SOC budget"]
+  M --> GATE{"CI gate"}
+  GATE -->|pass| DEP["anvil convert<br/>Splunk / Elastic / KQL"]
+  M --> COV["ATT&CK coverage<br/>claimed vs validated"]
+  M --> FPM["FP-prediction model"]
+  LIB --> DEC["decay monitor<br/>schema analysis + TP regression"]
   DEC --> GATE
-  M --> DASH[health dashboard]
+  M --> DASH["health dashboard"]
 ```
 
 | Module | What it does |
@@ -123,7 +126,7 @@ The keyword baseline "detects" more but would flood a SOC; the heuristic drafts 
 
 pySigma conversion of the 2,861 Windows rules: Splunk 99.9%, Elastic 99.8%, SQLite 99.3%, Microsoft XDR KQL 72.5% (751 rules use fields that pipeline cannot map).
 
-FP prediction from static rule features (5-fold CV, 78 noisy of 2,803): logistic regression ROC-AUC 0.84 / PR-AUC 0.20, gradient boosting 0.81 / 0.22, against 0.50 / 0.03 for random. A one-line heuristic (rule `level`) has the same ROC-AUC and better precision at k, so the model is a review-order aid and no more than that.
+FP prediction from static rule features (5-fold CV repeated over 10 seeds, mean [95% CI], 78 noisy of 2,803): logistic regression ROC-AUC 0.826 [0.818, 0.834] / PR-AUC 0.188 [0.176, 0.199], gradient boosting 0.817 [0.808, 0.825] / 0.229 [0.211, 0.248], against 0.512 [0.487, 0.538] / 0.031 for random. The single-seed numbers published in 0.2.0 (logreg 0.84 / 0.20) were slightly optimistic. A one-line heuristic (rule `level`) scores ROC-AUC 0.837 and precision at 78 of 0.42 vs 0.25-0.29 for the models, so the models only win on PR-AUC; they are a review-order aid and no more than that.
 
 ![fp model](docs/img/fpmodel.png)
 
@@ -201,6 +204,8 @@ Stages: `lint engine fp otrf coverage decay convert fpmodel draft report`. Each 
 - **Emulation labels are coarse.** OTRF datasets are labelled at technique level and include background noise. "Technique detected" means a rule tagged with that technique (or its parent) fired on the capture, not that a human verified the alert.
 - **Drafter evaluation is optimistic by construction.** Drafts are generated from the same dataset's description and transcript that they are then tested on (report -> rule -> emulation, spec scenario 1). The LLM backend is implemented but not benchmarked here, because no API key was used for the published numbers.
 - **FP-prediction labels come from one corpus family.** The model predicts "fires on these clean hosts". It is a triage aid for review order, not a replacement for replay.
+- **No React UI / API server.** The spec's React review-gate and dashboard are replaced by git PR review and a static dashboard (ADR 0005), so there is no docker-compose; the Docker image ships the CLI.
+- **LLM drafter not benchmarked** (needs an API key and blind human review, see roadmap).
 - **Timings** were measured on a shared, heavily loaded laptop. Treat throughput numbers as indicative.
 
 ## Roadmap

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "anvil-dac"
-version = "0.2.0"
+version = "1.0.0"
 description = "Detection-as-code lifecycle: lint, test, measure, draft and monitor Sigma rules on real telemetry"
 readme = "README.md"
 license = { text = "MIT" }

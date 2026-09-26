@@ -60,7 +60,7 @@ The keyword baseline "detects" more but would flood a SOC; the heuristic drafts 
 
 pySigma conversion of the 2,861 Windows rules: Splunk 99.9%, Elastic 99.8%, SQLite 99.3%, Microsoft XDR KQL 72.5% (751 rules use fields that pipeline cannot map).
 
-FP prediction from static rule features (5-fold CV, 78 noisy of 2,803): logistic regression ROC-AUC 0.84 / PR-AUC 0.20, gradient boosting 0.81 / 0.22, against 0.50 / 0.03 for random. A one-line heuristic (rule `level`) has the same ROC-AUC and better precision at k, so the model is a review-order aid and no more than that.
+FP prediction from static rule features (5-fold CV repeated over 10 seeds, mean [95% CI], 78 noisy of 2,803): logistic regression ROC-AUC 0.826 [0.818, 0.834] / PR-AUC 0.188 [0.176, 0.199], gradient boosting 0.817 [0.808, 0.825] / 0.229 [0.211, 0.248], against 0.512 [0.487, 0.538] / 0.031 for random. The single-seed numbers published in 0.2.0 (logreg 0.84 / 0.20) were slightly optimistic. A one-line heuristic (rule `level`) scores ROC-AUC 0.837 and precision at 78 of 0.42 vs 0.25-0.29 for the models, so the models only win on PR-AUC; they are a review-order aid and no more than that.
 
 ![fp model](img/fpmodel.png)
 
