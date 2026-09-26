@@ -1,0 +1,53 @@
+site_name: ANVIL
+site_description: Detection-as-code lifecycle for Sigma rules, measured on real telemetry
+site_url: https://rakshit-737.github.io/anvil/
+repo_url: https://github.com/rakshit-737/anvil
+repo_name: rakshit-737/anvil
+edit_uri: ""
+theme:
+  name: material
+  features: [navigation.sections, content.code.copy]
+  palette:
+    - scheme: default
+      toggle: {icon: material/brightness-7, name: Dark mode}
+    - scheme: slate
+      toggle: {icon: material/brightness-4, name: Light mode}
+nav:
+  - Home: index.md
+  - Getting started: getting-started.md
+  - Architecture: architecture.md
+  - Datasets: datasets.md
+  - Benchmarks: benchmarks.md
+  - Demo dashboard: demo/index.html
+  - CLI & API reference: cli.md
+  - Prior art: prior-art.md
+  - Threat model: threat-model.md
+  - Security: security.md
+  - ADRs:
+      - adr/index.md
+      - adr/0001-own-engine-plus-pysigma.md
+      - adr/0002-logsource-routing.md
+      - adr/0003-real-public-datasets.md
+      - adr/0004-ai-proposes-human-approves.md
+      - adr/0005-static-dashboard.md
+      - adr/0006-decay-monitoring.md
+  - Changelog: changelog.md
+  - Limitations & roadmap: limitations.md
+markdown_extensions:
+  - tables
+  - admonition
+  - attr_list
+  - toc: {permalink: true}
+  - pymdownx.snippets: {base_path: ["."], check_paths: true}
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: [.]
+          options: {show_source: false, docstring_style: google, show_root_heading: true, members_order: source}
