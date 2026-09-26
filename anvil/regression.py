@@ -9,9 +9,10 @@ externally-labelled true-positive corpus for ~460 rules.
 """
 from __future__ import annotations
 
+from collections.abc import Callable
 from dataclasses import asdict, dataclass
 from pathlib import Path
-from typing import Any, Callable
+from typing import Any
 
 import yaml
 

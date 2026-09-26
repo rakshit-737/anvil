@@ -5,8 +5,7 @@ import re
 import uuid
 from dataclasses import dataclass
 
-from .engine import (MODIFIERS, UNSUPPORTED_MODS, ConditionError, UnsupportedRule, parse_condition,
-                     referenced_selections)
+from .engine import MODIFIERS, UNSUPPORTED_MODS, ConditionError, UnsupportedRule, parse_condition, referenced_selections
 from .models import ATTACK_TAG, LEVELS, STATUSES, Rule
 
 # Sigma tag namespaces (Sigma specification, appendix "Tags")

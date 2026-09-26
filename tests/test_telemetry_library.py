@@ -8,8 +8,7 @@ from anvil.logsource import applies, route
 from anvil.models import LogSource, Rule
 from anvil.regression import run_all
 from anvil.runner import Library, load_rule_dir, scan
-from anvil.telemetry import (flatten_evtx_json, flatten_otrf, ingest, iter_json_objects, iter_path,
-                             write_jsonl)
+from anvil.telemetry import flatten_evtx_json, flatten_otrf, ingest, iter_json_objects, iter_path, write_jsonl
 
 SYSMON = "Microsoft-Windows-Sysmon/Operational"
 

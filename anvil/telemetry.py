@@ -22,8 +22,9 @@ import io
 import json
 import tarfile
 import zipfile
+from collections.abc import Iterable, Iterator
 from pathlib import Path
-from typing import Any, Iterable, Iterator
+from typing import Any
 
 from .logsource import add_aliases
 

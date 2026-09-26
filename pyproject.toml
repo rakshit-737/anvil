@@ -4,13 +4,28 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "anvil-dac"
-version = "0.1.0"
-description = "Detection-as-code lifecycle: lint, test, measure and track Sigma-like rules"
+version = "0.2.0"
+description = "Detection-as-code lifecycle: lint, test, measure, draft and monitor Sigma rules on real telemetry"
+readme = "README.md"
+license = { text = "MIT" }
 requires-python = ">=3.10"
 dependencies = ["PyYAML>=6.0"]
+keywords = ["sigma", "detection-engineering", "detection-as-code", "mitre-attack", "siem", "soc"]
+classifiers = [
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+  "Topic :: Security",
+]
 
 [project.optional-dependencies]
-dev = ["pytest>=7"]
+dev = ["pytest>=7", "ruff>=0.5"]
+sigma = ["pySigma>=0.11", "pySigma-backend-splunk", "pySigma-backend-elasticsearch",
+         "pySigma-backend-kusto", "pySigma-backend-sqlite"]
+evtx = ["evtx>=0.8"]
+ml = ["scikit-learn>=1.3", "numpy>=1.24"]
+fast = ["pyahocorasick>=2.0"]
+plots = ["matplotlib>=3.7"]
+llm = ["anthropic>=0.40"]
 
 [project.scripts]
 anvil = "anvil.cli:main"
@@ -21,3 +36,15 @@ packages = ["anvil"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["."]
+markers = ["realdata: needs datasets from scripts/download_data.py (skipped when $ANVIL_DATA is absent)"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP"]
+ignore = ["E501", "E731", "B023", "B905"]
+
+[tool.ruff.lint.per-file-ignores]
+"benchmarks/baselines/*" = ["ALL"]

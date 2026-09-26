@@ -64,7 +64,7 @@ class Rule:
                        if t.startswith("attack.") and not re.match(r"^attack\.[tgs]\d{4}", t)})
 
     @classmethod
-    def from_dict(cls, d: dict[str, Any], path: str = "") -> "Rule":
+    def from_dict(cls, d: dict[str, Any], path: str = "") -> Rule:
         ls = d.get("logsource") or {}
         t = d.get("tests") or {}
         return cls(

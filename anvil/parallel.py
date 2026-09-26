@@ -9,9 +9,10 @@ from __future__ import annotations
 import concurrent.futures as cf
 import os
 from collections import Counter
+from collections.abc import Iterable
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Iterable
+from typing import Any
 
 from .runner import Library, load_rule_dir, scan
 from .telemetry import iter_path

@@ -41,7 +41,7 @@ CATALOG: dict[str, tuple[str, str]] = {
 
 
 def coverage(rules: list[Rule], passing_ids: set[str] | None = None,
-             catalog: "Catalog | None" = None, platform: str | None = None) -> dict[str, Any]:
+             catalog: Catalog | None = None, platform: str | None = None) -> dict[str, Any]:
     """Map techniques -> rules. If passing_ids is given, only those rules count as 'validated'."""
     if catalog is None:
         from .attack import fallback_catalog

@@ -3,8 +3,14 @@ import base64
 
 import pytest
 
-from anvil.engine import (UnsupportedRule, _b64_variants, compile_rule, compile_selection,
-                          parse_condition, required_event_ids)
+from anvil.engine import (
+    UnsupportedRule,
+    _b64_variants,
+    compile_rule,
+    compile_selection,
+    parse_condition,
+    required_event_ids,
+)
 from anvil.models import Rule
 
 

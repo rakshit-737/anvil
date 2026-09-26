@@ -9,17 +9,18 @@ from __future__ import annotations
 
 import time
 from collections import Counter, defaultdict
+from collections.abc import Callable, Iterable
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Callable, Iterable
+from typing import Any
 
 import yaml
-
-_Loader = getattr(yaml, "CSafeLoader", yaml.SafeLoader)  # libyaml is ~20x faster on 3k rules
 
 from .engine import CompiledRule, ConditionError, UnsupportedRule, compile_rule
 from .logsource import Route, event_key, route, where_ok
 from .models import Rule
+
+_Loader = getattr(yaml, "CSafeLoader", yaml.SafeLoader)  # libyaml is ~20x faster on 3k rules
 
 Event = dict[str, Any]
 
@@ -65,7 +66,7 @@ class Library:
     _global: list[str] = field(default_factory=list)
 
     @classmethod
-    def build(cls, rules: Iterable[Rule], include_deprecated: bool = False) -> "Library":
+    def build(cls, rules: Iterable[Rule], include_deprecated: bool = False) -> Library:
         lib = cls()
         chan_any: dict[str, list[str]] = defaultdict(list)
         index: dict[tuple[str, int], list[str]] = defaultdict(list)
@@ -142,7 +143,7 @@ class ScanResult:
 
 
 def scan(lib: Library, events: Iterable[Event], keep_keys: bool = True,
-         on_hit: "Callable[[str, Event], None] | None" = None) -> ScanResult:
+         on_hit: Callable[[str, Event], None] | None = None) -> ScanResult:
     res = ScanResult()
     t0 = time.perf_counter()
     for i, ev in enumerate(events):

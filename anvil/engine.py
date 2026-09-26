@@ -21,8 +21,9 @@ import base64
 import fnmatch
 import ipaddress
 import re
+from collections.abc import Callable
 from functools import lru_cache
-from typing import Any, Callable
+from typing import Any
 
 from .models import Rule
 
@@ -204,7 +205,7 @@ class _Literals:
     def __bool__(self) -> bool:
         return bool(self.eq or self.sw or self.ew or self.ct)
 
-    def freeze(self) -> "_Literals":
+    def freeze(self) -> _Literals:
         # NB: a regex alternation over hundreds of literals is ~50x slower than a loop of
         # C-level substring searches in CPython (no Aho-Corasick in ``re``), so keep the loop.
         self.sw, self.ew = tuple(self.sw), tuple(self.ew)  # type: ignore[assignment]
