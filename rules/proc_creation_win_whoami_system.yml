@@ -1,0 +1,33 @@
+title: Whoami Executed As SYSTEM Or With Privilege Enumeration
+id: 6f1c2a0e-3b4d-4c1a-9e7f-0a1b2c3d4e05
+status: test
+version: 1
+level: medium
+author: ANVIL demo
+description: Detects whoami run by SYSTEM or with /priv or /all, typical of post-exploitation privilege checks.
+references:
+  - https://attack.mitre.org/techniques/T1033/
+tags:
+  - attack.discovery
+  - attack.t1033
+logsource:
+  product: windows
+  category: process_creation
+detection:
+  img:
+    Image|endswith: '\whoami.exe'
+  system:
+    User|contains: 'SYSTEM'
+  flags:
+    CommandLine|contains:
+      - '/priv'
+      - '/all'
+  condition: img and (system or flags)
+falsepositives:
+  - Admin troubleshooting sessions
+tests:
+  true_positives:
+    - {Image: 'C:\Windows\System32\whoami.exe', CommandLine: 'whoami', User: 'NT AUTHORITY\SYSTEM'}
+    - {Image: 'C:\Windows\System32\whoami.exe', CommandLine: 'whoami /priv', User: 'LAB\user03'}
+  true_negatives:
+    - {Image: 'C:\Windows\System32\whoami.exe', CommandLine: 'whoami', User: 'LAB\user03'}
