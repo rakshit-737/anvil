@@ -5,7 +5,7 @@ Every source is pinned (git commit or release tag) and every file is checked
 against ``scripts/checksums.sha256``. Nothing here is executable content: the
 sources are YAML rules, JSON/EVTX *log records* and the ATT&CK STIX bundle.
 
-    python scripts/download_data.py all            # ~210 MB download
+    python scripts/download_data.py all            # ~340 MB download
     python scripts/download_data.py sigma attack   # just some sources
     python scripts/download_data.py all --record   # (maintainers) refresh checksums
 
@@ -42,9 +42,9 @@ ATTACK_COMMIT = "6cda5ad8462c79e14fbb872f4e09059b18e0cfc4"
 ATTACK_VERSION = "19.2"
 OTRF_COMMIT = "d9d40ef123d2c87d5d3df28c96bcab4f0faccc87"
 BASELINE_TAG = "v0.8.5"
-# win10-client (71 MB) is the default benign corpus; win11-client (133 MB) and
-# win2022-ad (66 MB) can be added with --baseline-assets.
-BASELINE_ASSETS = ["win10-client.tgz"]
+# Benign corpus: win10-client (71 MB), win11-client (133 MB) and win2022-ad (66 MB),
+# the same clean installs SigmaHQ uses for its own "goodlog" CI job.
+BASELINE_ASSETS = ["win10-client.tgz", "win11-client.tgz", "win2022-ad.tgz"]
 # Compound (multi-technique) OTRF host datasets, used as a noisier attack corpus.
 OTRF_COMPOUND = [
     "datasets/compound/apt29/day1/apt29_evals_day1_manual.zip",
