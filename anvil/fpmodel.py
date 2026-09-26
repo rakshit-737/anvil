@@ -1,0 +1,169 @@
+"""Predict whether a rule will be noisy *before* running it on a benign corpus.
+
+Spec item "FP-rate prediction ML": static rule features -> P(rule fires on
+clean telemetry). The model is trained on labels produced by ANVIL itself
+(did the rule fire on the evtx-baseline corpus?), restricted to rules whose
+log source actually occurs in that corpus, and evaluated with stratified
+cross-validation against simple heuristics a reviewer would otherwise use.
+
+Requires scikit-learn (``pip install anvil-dac[ml]``).
+"""
+from __future__ import annotations
+
+import re
+from typing import Any
+
+from .engine import ENCODING_MODS, UNSUPPORTED_MODS
+from .models import Rule
+
+LEVEL = {"informational": 0, "low": 1, "medium": 2, "high": 3, "critical": 4}
+STATUS = {"unsupported": 0, "deprecated": 0, "experimental": 1, "test": 2, "stable": 3}
+CATEGORIES = ["process_creation", "registry_set", "registry_event", "image_load", "file_event",
+              "network_connection", "process_access", "ps_script", "ps_module", "pipe_created",
+              "dns_query", "create_remote_thread", "registry_delete", "registry_add", "driver_load"]
+SERVICES = ["security", "system", "application", "powershell", "windefend", "sysmon"]
+
+
+def _walk_values(sel: Any):
+    if isinstance(sel, dict):
+        for k, v in sel.items():
+            yield str(k), v
+    elif isinstance(sel, list):
+        for s in sel:
+            if isinstance(s, dict):
+                yield from _walk_values(s)
+            else:
+                yield "", s
+
+
+def features(rule: Rule) -> dict[str, float]:
+    f: dict[str, float] = {}
+    f["level"] = LEVEL.get(rule.level, 2)
+    f["status"] = STATUS.get(rule.status, 1)
+    path = rule.path.replace("\\", "/").lower()
+    f["hunting"] = float("rules-threat-hunting" in path)
+    f["emerging"] = float("rules-emerging-threats" in path)
+    cat = rule.logsource.category.lower()
+    for c in CATEGORIES:
+        f[f"cat_{c}"] = float(cat == c)
+    f["cat_other"] = float(bool(cat) and cat not in CATEGORIES)
+    for s in SERVICES:
+        f[f"svc_{s}"] = float(rule.logsource.service.lower() == s)
+    sels = rule.selections
+    cond = rule.condition.lower()
+    f["n_selections"] = len(sels)
+    f["n_filters"] = sum(1 for n in sels if n.lower().startswith("filter"))
+    f["n_optional_filters"] = sum(1 for n in sels if n.lower().startswith("filter_optional"))
+    f["has_not"] = float(" not " in f" {cond} ")
+    f["n_or"] = cond.count(" or ")
+    f["n_and"] = cond.count(" and ")
+    f["one_of"] = float("1 of" in cond)
+    mods = {m: 0 for m in ["contains", "startswith", "endswith", "re", "all", "eq", "exists", "cidr",
+                           "windash", "enc", "expand"]}
+    lens: list[int] = []
+    fields: set[str] = set()
+    n_values = n_keywords = 0
+    for _name, sel in sels.items():
+        for key, val in _walk_values(sel):
+            vals = val if isinstance(val, list) else [val]
+            if not key:
+                n_keywords += len(vals)
+                continue
+            field, *ms = key.split("|")
+            fields.add(field)
+            n_values += len(vals)
+            if not ms or all(m == "cased" for m in ms):
+                mods["eq"] += len(vals)
+            for m in ms:
+                if m in mods:
+                    mods[m] += len(vals)
+                elif m in ENCODING_MODS:
+                    mods["enc"] += len(vals)
+                elif m in UNSUPPORTED_MODS:
+                    mods["expand"] += 1
+            lens.extend(len(str(v)) for v in vals if v is not None)
+    for m, n in mods.items():
+        f[f"mod_{m}"] = n
+    f["n_values"] = n_values
+    f["n_keywords"] = n_keywords
+    f["n_fields"] = len(fields)
+    f["min_len"] = min(lens) if lens else 0
+    f["mean_len"] = sum(lens) / len(lens) if lens else 0
+    f["short_values"] = sum(1 for n in lens if n < 5)
+    f["wildcards"] = sum(1 for _, s in sels.items() for _k, v in _walk_values(s)
+                         for x in (v if isinstance(v, list) else [v]) if isinstance(x, str) and "*" in x)
+    for fld in ("Image", "CommandLine", "ParentImage", "OriginalFileName", "TargetObject", "ImageLoaded",
+                "TargetFilename", "Hashes", "EventID"):
+        f[f"field_{fld}"] = float(fld in fields)
+    fps = " ".join(str(x) for x in rule.falsepositives).lower()
+    f["n_falsepositives"] = len(rule.falsepositives)
+    f["fp_mentions_legit"] = float(bool(re.search(r"legitimate|admin|software|installer|update", fps)))
+    f["fp_unknown"] = float(fps.strip() in ("unknown", "unlikely", ""))
+    f["n_tags"] = len(rule.tags)
+    f["desc_len"] = len(rule.description)
+    return f
+
+
+def matrix(rules: list[Rule]) -> tuple[list[str], list[list[float]]]:
+    rows = [features(r) for r in rules]
+    names = sorted(rows[0]) if rows else []
+    return names, [[row[n] for n in names] for row in rows]
+
+
+def cross_validate(rules: list[Rule], labels: list[int], seed: int = 7, folds: int = 5,
+                   importance: bool = True) -> dict[str, Any]:
+    """Stratified k-fold CV for the ML models vs. reviewer heuristics. Returns metrics."""
+    import numpy as np
+    from sklearn.ensemble import HistGradientBoostingClassifier
+    from sklearn.linear_model import LogisticRegression
+    from sklearn.metrics import average_precision_score, roc_auc_score
+    from sklearn.model_selection import StratifiedKFold
+    from sklearn.pipeline import make_pipeline
+    from sklearn.preprocessing import StandardScaler
+
+    names, X = matrix(rules)
+    Xa, y = np.asarray(X, dtype=float), np.asarray(labels)
+    skf = StratifiedKFold(n_splits=folds, shuffle=True, random_state=seed)
+    models = {
+        "logreg": lambda: make_pipeline(StandardScaler(), LogisticRegression(max_iter=2000, C=0.5,
+                                                                             class_weight="balanced")),
+        "gbdt": lambda: HistGradientBoostingClassifier(max_depth=3, learning_rate=0.05, max_iter=300,
+                                                       class_weight="balanced", random_state=seed),
+    }
+    oof = {k: np.zeros(len(y)) for k in models}
+    for tr, te in skf.split(Xa, y):
+        for k, mk in models.items():
+            m = mk().fit(Xa[tr], y[tr])
+            oof[k][te] = m.predict_proba(Xa[te])[:, 1]
+    col = {n: i for i, n in enumerate(names)}
+    heur = {
+        # what a reviewer would use without a model
+        "heuristic_level": -Xa[:, col["level"]],                          # low/info = noisy
+        "heuristic_hunting": Xa[:, col["hunting"]] - 0.1 * Xa[:, col["level"]],
+        "heuristic_no_filter": -(Xa[:, col["n_filters"]]) - 0.1 * Xa[:, col["level"]],
+    }
+    scores = {**oof, **heur}
+    k = max(1, int(y.sum()))
+    out: dict[str, Any] = {"n_rules": int(len(y)), "positives": int(y.sum()), "features": len(names),
+                           "models": {}}
+    rng = np.random.default_rng(seed)
+    scores["random"] = rng.random(len(y))
+    for name, s in scores.items():
+        top = np.argsort(-s)[:k]
+        out["models"][name] = {
+            "roc_auc": round(float(roc_auc_score(y, s)), 3),
+            "pr_auc": round(float(average_precision_score(y, s)), 3),
+            f"precision_at_{k}": round(float(y[top].mean()), 3),
+            "recall_at_top10pct": round(float(y[np.argsort(-s)[:max(1, len(y) // 10)]].sum() / max(1, y.sum())), 3),
+        }
+    if not importance:
+        return out
+    final = models["gbdt"]().fit(Xa, y)
+    try:
+        from sklearn.inspection import permutation_importance
+        imp = permutation_importance(final, Xa, y, scoring="average_precision", n_repeats=5, random_state=seed)
+        order = np.argsort(-imp.importances_mean)[:10]
+        out["top_features"] = [(names[i], round(float(imp.importances_mean[i]), 4)) for i in order]
+    except Exception:  # noqa: BLE001 - importance is a nice-to-have
+        out["top_features"] = []
+    return out
