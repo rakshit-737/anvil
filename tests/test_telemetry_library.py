@@ -134,3 +134,14 @@ def test_regression_replay(tmp_path):
     rules, _ = load_rule_dir([root / "rules"])
     (res,) = run_all(Library.build(rules), root)
     assert res.status == "pass" and res.matched == 1 and res.routed == 2 and res.exact
+
+
+def test_registry_delete_needs_delete_event_type():
+    rt = route(LogSource("windows", "registry_delete"))
+    base = {"Channel": SYSMON, "EventID": 12, "TargetObject": r"HKU\x\RunMRU"}
+    assert applies(rt, {**base, "EventType": "DeleteKey"})
+    assert not applies(rt, {**base, "EventType": "CreateKey"})
+    lib = Library.build([Rule.from_dict(_rule(9, {"product": "windows", "category": "registry_delete"},
+                                              {"s": {"TargetObject|endswith": r"\RunMRU"}, "condition": "s"}))])
+    res = scan(lib, [{**base, "EventType": "CreateKey"}, {**base, "EventType": "DeleteKey"}])
+    assert sum(res.hits.values()) == 1

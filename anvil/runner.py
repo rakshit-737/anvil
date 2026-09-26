@@ -18,7 +18,7 @@ import yaml
 _Loader = getattr(yaml, "CSafeLoader", yaml.SafeLoader)  # libyaml is ~20x faster on 3k rules
 
 from .engine import CompiledRule, ConditionError, UnsupportedRule, compile_rule
-from .logsource import Route, event_key, route
+from .logsource import Route, event_key, route, where_ok
 from .models import Rule
 
 Event = dict[str, Any]
@@ -81,6 +81,8 @@ class Library:
                 continue
             rt = route(r.logsource)
             lib.routes[rid] = rt
+            if rt.where is not None:
+                lib.compiled[rid].guard = (lambda rt: lambda e: where_ok(rt, e))(rt)
             if not rt.routable:
                 lib.unroutable[rid] = rt.reason
                 continue

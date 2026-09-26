@@ -586,7 +586,11 @@ class CompiledRule:
         self.event_ids: frozenset[int] | None = (
             None if any(i is None for i in ids) else frozenset().union(*ids))  # type: ignore[arg-type]
 
+    guard: Pred | None = None  # optional logsource pre-condition set by the runner
+
     def matches(self, event: Event) -> bool:
+        if self.guard is not None and not self.guard(event):
+            return False
         return self._pred(event)
 
 

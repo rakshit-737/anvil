@@ -58,6 +58,15 @@ CATEGORY_MAP: dict[str, list[tuple[str, tuple[int, ...]]]] = {
     "ps_classic_start": [(PS_CLASSIC, (400,))],
     "ps_classic_provider_start": [(PS_CLASSIC, (600,))],
     "ps_classic_script": [(PS_CLASSIC, (800,))],
+    "antivirus": [("microsoft-windows-windows defender/operational",
+                   (1006, 1007, 1008, 1009, 1010, 1011, 1012, 1017, 1018, 1019, 1115, 1116))],
+}
+
+# Categories that share an EventID with siblings need an extra field condition
+# (Sysmon EID 12 is both "registry key created" and "registry key deleted").
+CATEGORY_WHERE: dict[str, tuple[str, frozenset[str]]] = {
+    "registry_add": ("EventType", frozenset({"createkey"})),
+    "registry_delete": ("EventType", frozenset({"deletekey", "deletevalue"})),
 }
 
 # service -> channel(s) (Windows). Matching is case-insensitive.
@@ -121,6 +130,9 @@ SERVICE_MAP: dict[str, tuple[str, ...]] = {
 # Security 4688 -> Sysmon-style names (as pySigma's windows pipeline does).
 SECURITY_4688_ALIASES = {"NewProcessName": "Image", "ParentProcessName": "ParentImage",
                          "NewProcessId": "ProcessId"}
+# Defender detections -> the generic Sigma "antivirus" field names.
+DEFENDER_ALIASES = {"ThreatName": "Signature", "Path": "Filename"}
+DEFENDER = "microsoft-windows-windows defender/operational"
 
 
 @dataclass(frozen=True)
@@ -128,6 +140,7 @@ class Route:
     """Where a rule's events live. ``channels`` empty = unroutable."""
     channels: tuple[tuple[str, tuple[int, ...]], ...]
     reason: str = ""
+    where: tuple[str, frozenset[str]] | None = None  # extra (field, allowed lower-cased values)
 
     @property
     def routable(self) -> bool:
@@ -147,7 +160,7 @@ def route(ls: LogSource) -> Route:
         if ls.service:  # category + service narrows it, e.g. process_creation + security
             chans = SERVICE_MAP.get(ls.service.lower(), ())
             pairs = [p for p in pairs if p[0] in chans] or pairs
-        return Route(tuple(pairs))
+        return Route(tuple(pairs), where=CATEGORY_WHERE.get(cat))
     if ls.service:
         svc = ls.service.lower()
         if svc not in SERVICE_MAP:
@@ -167,7 +180,16 @@ def event_key(ev: dict[str, Any]) -> tuple[str, int]:
     return chan, eid
 
 
+def where_ok(r: Route, ev: dict[str, Any]) -> bool:
+    if r.where is None:
+        return True
+    field, allowed = r.where
+    return str(ev.get(field, "")).lower() in allowed
+
+
 def applies(r: Route, ev: dict[str, Any]) -> bool:
+    if not where_ok(r, ev):
+        return False
     chan, eid = event_key(ev)
     for c, ids in r.channels:
         if (c == "*" or c == chan) and (not ids or eid in ids):
@@ -180,6 +202,10 @@ def add_aliases(ev: dict[str, Any]) -> dict[str, Any]:
     chan, eid = event_key(ev)
     if chan == SECURITY and eid == 4688:
         for src, dst in SECURITY_4688_ALIASES.items():
+            if src in ev and dst not in ev:
+                ev[dst] = ev[src]
+    elif chan == DEFENDER:
+        for src, dst in DEFENDER_ALIASES.items():
             if src in ev and dst not in ev:
                 ev[dst] = ev[src]
     return ev
