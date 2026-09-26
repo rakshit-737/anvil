@@ -21,6 +21,7 @@ Real-data release: ANVIL now runs the full SigmaHQ library against public attack
 - **Static health dashboard** (`anvil report`) and the benchmark suite `benchmarks/bench.py` with results in `results/`.
 - Pinned, checksummed dataset downloader for SigmaHQ, ATT&CK STIX, OTRF Security-Datasets and NextronSystems evtx-baseline.
 - LICENSE (MIT), CONTRIBUTING, ADRs under `docs/adr`.
+- Published real-data benchmark results (`results/`, `results/SUMMARY.md`, `docs/img/`, `docs/dashboard.html`): 100% on SigmaHQ regression captures vs 90.7% for the 0.1 engine, 3.0M-event benign replay, 96 OTRF emulations, claimed vs validated ATT&CK coverage, decay, conversion, FP-model and drafter tables.
 
 ### Changed
 - `\*` in rule values is now an escaped literal star, as the Sigma spec defines (0.1 treated it as a wildcard).
