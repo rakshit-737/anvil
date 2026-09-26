@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "anvil-dac"
+version = "0.1.0"
+description = "Detection-as-code lifecycle: lint, test, measure and track Sigma-like rules"
+requires-python = ">=3.10"
+dependencies = ["PyYAML>=6.0"]
+
+[project.optional-dependencies]
+dev = ["pytest>=7"]
+
+[project.scripts]
+anvil = "anvil.cli:main"
+
+[tool.setuptools]
+packages = ["anvil"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
