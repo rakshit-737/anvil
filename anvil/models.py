@@ -6,7 +6,8 @@ from dataclasses import dataclass, field
 from typing import Any
 
 LEVELS = ("informational", "low", "medium", "high", "critical")
-STATUSES = ("experimental", "test", "stable", "deprecated")
+STATUSES = ("experimental", "test", "stable", "deprecated", "unsupported")
+NON_SELECTION_KEYS = {"condition", "timeframe"}
 ATTACK_TAG = re.compile(r"^attack\.t\d{4}(\.\d{3})?$")
 
 
@@ -39,14 +40,19 @@ class Rule:
     references: list[str] = field(default_factory=list)
     tests: RuleTests = field(default_factory=RuleTests)
     path: str = ""
+    date: str = ""
+    modified: str = ""
+    regression_tests_path: str = ""
+    raw: dict[str, Any] = field(default_factory=dict, repr=False)
 
     @property
     def condition(self) -> str:
-        return str(self.detection.get("condition", ""))
+        c = self.detection.get("condition", "")
+        return " or ".join(f"({x})" for x in c) if isinstance(c, list) else str(c)
 
     @property
     def selections(self) -> dict[str, Any]:
-        return {k: v for k, v in self.detection.items() if k != "condition"}
+        return {k: v for k, v in self.detection.items() if k not in NON_SELECTION_KEYS}
 
     @property
     def techniques(self) -> list[str]:
@@ -55,7 +61,7 @@ class Rule:
     @property
     def tactics(self) -> list[str]:
         return sorted({t.split(".", 1)[1] for t in self.tags
-                       if t.startswith("attack.") and not ATTACK_TAG.match(t)})
+                       if t.startswith("attack.") and not re.match(r"^attack\.[tgs]\d{4}", t)})
 
     @classmethod
     def from_dict(cls, d: dict[str, Any], path: str = "") -> "Rule":
@@ -72,8 +78,12 @@ class Rule:
             tags=[str(x).lower() for x in d.get("tags") or []],
             falsepositives=list(d.get("falsepositives") or []),
             author=str(d.get("author", "")),
-            version=int(d.get("version", 1)),
+            version=int(d.get("version", 1) or 1),
             references=list(d.get("references") or []),
             tests=RuleTests(list(t.get("true_positives") or []), list(t.get("true_negatives") or [])),
             path=path,
+            date=str(d.get("date", "") or ""),
+            modified=str(d.get("modified", "") or ""),
+            regression_tests_path=str(d.get("regression_tests_path", "") or ""),
+            raw=d,
         )

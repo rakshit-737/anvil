@@ -57,7 +57,8 @@ EV = {"Image": r"C:\Windows\System32\cmd.exe", "CommandLine": "cmd /c whoami /al
     ({"CommandLine|contains|all": ["whoami", "/priv"]}, False),
     ({"CommandLine|startswith": "cmd"}, True),
     ({"CommandLine|re": r"who\w+"}, True),
-    ({"Image": r"C:\Windows\*\cmd.exe"}, True),               # glob
+    ({"Image": r"C:\Windows\\*\cmd.exe"}, True),            # glob (Sigma: \\ = backslash, then *)
+    ({"Image": r"C:\Windows\*\cmd.exe"}, False),             # \* is an escaped literal star
     ({"Pid": 42}, True),
     ({"Missing|exists": False}, True),
     ({"Image|exists": True}, True),
