@@ -4,3 +4,8 @@ __pycache__/
 *.egg-info/
 telemetry/baseline.json
 telemetry/navigator_layer.json
+
+# datasets and derived corpora (fetched by scripts/download_data.py)
+data/
+*.jsonl.gz
+.ruff_cache/
