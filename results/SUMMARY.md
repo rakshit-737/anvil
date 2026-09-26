@@ -136,6 +136,17 @@ Top noisy rules:
 | heuristic_no_filter | 0.522 | 0.104 | 0.295 | 0.474 |
 | random | 0.497 | 0.03 | 0.038 | 0.09 |
 
+Repeated 5-fold CV over 10 seeds (mean [95% CI]):
+
+| scorer | ROC-AUC | PR-AUC | precision at 78 |
+|---|---|---|---|
+| logreg | 0.826 [0.818, 0.834] | 0.188 [0.176, 0.199] | 0.250 [0.235, 0.264] |
+| gbdt | 0.817 [0.808, 0.825] | 0.229 [0.211, 0.248] | 0.288 [0.271, 0.306] |
+| heuristic_level | 0.837 [0.837, 0.837] | 0.166 [0.166, 0.166] | 0.423 [0.423, 0.423] |
+| heuristic_hunting | 0.836 [0.836, 0.836] | 0.165 [0.165, 0.165] | 0.244 [0.244, 0.244] |
+| heuristic_no_filter | 0.522 [0.522, 0.522] | 0.104 [0.104, 0.104] | 0.295 [0.295, 0.295] |
+| random | 0.512 [0.487, 0.538] | 0.031 [0.028, 0.033] | 0.032 [0.021, 0.043] |
+
 ## Drafter: CTI text -> rule -> tested
 
 | backend | drafts | datasets with a draft | fires on its emulation | datasets with benign FPs | benign alerts |
