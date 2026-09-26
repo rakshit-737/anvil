@@ -27,8 +27,10 @@ Real-data release: ANVIL now runs the full SigmaHQ library against public attack
 - `\*` in rule values is now an escaped literal star, as the Sigma spec defines (0.1 treated it as a wildcard).
 - `coverage` accepts a STIX catalog and platform filter; the bundled 16-technique subset is only the offline fallback.
 - CLI `--rules` accepts several folders.
+- The synthetic demo corpora `telemetry/benign*.jsonl` (1.3-1.5 MB each) are no longer committed; `python -m anvil synth` regenerates them byte-for-byte (seeded).
 
 ### Fixed
+- README said the benign corpus held 3.1M events; the ingested corpus is 2,994,137 events.
 - Registry delete rules no longer fire on Sysmon EID 12 *CreateKey* events (found by diffing benign hits against SigmaHQ's `known-FPs.csv`).
 
 ## [0.1.0] - 2026-09-25

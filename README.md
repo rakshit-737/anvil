@@ -33,7 +33,7 @@ flowchart LR
   LIB --> LINT[anvil lint<br/>Sigma spec, ATT&CK STIX tags]
   LINT --> ENG[engine + logsource router<br/>compiled, indexed by channel/EventID]
   TP[SigmaHQ regression captures<br/>OTRF emulations] --> ENG
-  BEN[evtx-baseline clean hosts<br/>3.1M events] --> ENG
+  BEN[evtx-baseline clean hosts<br/>3.0M events] --> ENG
   ENG --> M[measure<br/>recall, FP, alerts/day vs SOC budget]
   M --> GATE{CI gate}
   GATE -->|pass| DEP[anvil convert<br/>Splunk / Elastic / KQL]
@@ -132,7 +132,7 @@ FP prediction from static rule features (5-fold CV, 78 noisy of 2,803): logistic
 | Dataset | Used for | Size | Licence / terms |
 | --- | --- | --- | --- |
 | [SigmaHQ/sigma](https://github.com/SigmaHQ/sigma) @ `07ec293` | 3,757 rules under test; `regression_data` (463 real EVTX captures with expected match counts); `known-FPs.csv` cross-check | 13 MB zip | [Detection Rule License 1.1](https://github.com/SigmaHQ/Detection-Rule-License) |
-| [NextronSystems/evtx-baseline](https://github.com/NextronSystems/evtx-baseline) v0.8.5 | Benign corpus: clean Windows 10 client, Windows 11 client, Server 2022 domain controller | 270 MB tgz, 3.1M events | Public research data (see repository) |
+| [NextronSystems/evtx-baseline](https://github.com/NextronSystems/evtx-baseline) v0.8.5 | Benign corpus: clean Windows 10 client, Windows 11 client, Server 2022 domain controller | 270 MB tgz, 2.99M events | Public research data (see repository) |
 | [OTRF Security-Datasets](https://github.com/OTRF/Security-Datasets) @ `d9d40ef` | 98 atomic Windows host emulations with ATT&CK labels and attacker transcripts; APT29 evaluation days 1-2 | 66 MB | MIT |
 | [MITRE ATT&CK Enterprise](https://github.com/mitre-attack/attack-stix-data) v19.2 STIX 2.1 | Technique catalog (697 active, 474 on Windows), revocations | 54 MB | [ATT&CK Terms of Use](https://attack.mitre.org/resources/legal-and-branding/terms-of-use/) |
 
@@ -162,7 +162,7 @@ python -m anvil lint --rules drafts --profile sigma         # A114: unreviewed d
 pip install -e ".[dev]" -r requirements-bench.txt
 export ANVIL_DATA=$PWD/data                   # PowerShell: $env:ANVIL_DATA="$PWD\data"
 python scripts/download_data.py all           # ~350 MB, pinned + checksummed
-python -m anvil ingest --benign               # EVTX -> 31 JSONL.gz shards (3.1M events)
+python -m anvil ingest --benign               # EVTX -> 31 JSONL.gz shards (2,994,137 events)
 python benchmarks/bench.py all --workers 4    # ~1-2 h on a laptop; stages can run separately
 ```
 
