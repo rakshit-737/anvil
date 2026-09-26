@@ -197,6 +197,13 @@ def summary() -> str:
               f"({fm['label']}).", "",
               _t([[n, m["roc_auc"], m["pr_auc"], m[k], m["recall_at_top10pct"]] for n, m in fm["models"].items()],
                  ["scorer", "ROC-AUC", "PR-AUC", k.replace("_", " "), "recall @ top 10%"]), ""]
+        rp = fm.get("repeated")
+        if rp:
+            def _ci(v: dict) -> str:
+                return f"{v['mean']:.3f} [{v['ci95'][0]:.3f}, {v['ci95'][1]:.3f}]"
+            s += [f"Repeated {rp['folds']}-fold CV over {len(rp['seeds'])} seeds (mean [95% CI]):", "",
+                  _t([[n, _ci(m["roc_auc"]), _ci(m["pr_auc"]), _ci(m[k])] for n, m in rp["models"].items()],
+                     ["scorer", "ROC-AUC", "PR-AUC", k.replace("_", " ")]), ""]
     dr = _j("draft.json")
     if dr:
         s += ["## Drafter: CTI text -> rule -> tested", "",

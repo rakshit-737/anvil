@@ -11,6 +11,7 @@ Requires scikit-learn (``pip install anvil-dac[ml]``).
 from __future__ import annotations
 
 import re
+from collections.abc import Iterable
 from typing import Any
 
 from .engine import ENCODING_MODS, UNSUPPORTED_MODS
@@ -166,4 +167,29 @@ def cross_validate(rules: list[Rule], labels: list[int], seed: int = 7, folds: i
         out["top_features"] = [(names[i], round(float(imp.importances_mean[i]), 4)) for i in order]
     except Exception:  # noqa: BLE001 - importance is a nice-to-have
         out["top_features"] = []
+    return out
+
+
+def repeated_cv(rules: list[Rule], labels: list[int], seeds: Iterable[int] = range(10),
+                folds: int = 5) -> dict[str, Any]:
+    """Repeat stratified CV over several seeds; report mean and a 95% t-interval per metric.
+
+    Fold assignment, GBDT and the random baseline change with the seed; the heuristics
+    are deterministic, so their interval collapses to a point.
+    """
+    import statistics
+
+    seeds = list(seeds)
+    runs = [cross_validate(rules, labels, seed=s, folds=folds, importance=False) for s in seeds]
+    t975 = {2: 12.706, 3: 4.303, 4: 3.182, 5: 2.776, 6: 2.571, 7: 2.447, 8: 2.365, 9: 2.306, 10: 2.262}
+    out: dict[str, Any] = {"seeds": seeds, "folds": folds, "models": {}}
+    for model in runs[0]["models"]:
+        out["models"][model] = {}
+        for metric in runs[0]["models"][model]:
+            vals = [r["models"][model][metric] for r in runs]
+            mean = statistics.fmean(vals)
+            sd = statistics.stdev(vals) if len(vals) > 1 else 0.0
+            half = t975.get(len(vals), 1.96) * sd / len(vals) ** 0.5
+            out["models"][model][metric] = {"mean": round(mean, 3), "ci95": [round(mean - half, 3),
+                                                                               round(mean + half, 3)]}
     return out

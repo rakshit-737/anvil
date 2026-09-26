@@ -549,12 +549,14 @@ def stage_convert() -> dict[str, Any]:
 
 # ------------------------------------------------------------------------------- FP-prediction model
 def stage_fpmodel() -> dict[str, Any]:
-    from anvil.fpmodel import cross_validate
+    from anvil.fpmodel import cross_validate, repeated_cv
     rules, _ = _rules()
     by_id = {r.id: r for r in rules}
     fp = load("fp.json")
     obs = [p for p in fp["rules"] if p["routed_events"] > 0 and p["id"] in by_id]
-    res = cross_validate([by_id[p["id"]] for p in obs], [int(p["hits"] > 0) for p in obs])
+    X, y = [by_id[p["id"]] for p in obs], [int(p["hits"] > 0) for p in obs]
+    res = cross_validate(X, y)
+    res["repeated"] = repeated_cv(X, y, seeds=range(10))
     res["label"] = "rule fires at least once on the benign evtx-baseline corpus (observable rules only)"
     save("fpmodel.json", res)
     return res

@@ -74,6 +74,22 @@ def test_fpmodel_cross_validation_runs():
     assert res["positives"] == 10 and res["models"]["logreg"]["roc_auc"] > 0.9
 
 
+
+def test_fpmodel_repeated_cv_reports_intervals():
+    pytest.importorskip("sklearn")
+    from anvil.fpmodel import repeated_cv
+    rules, labels = [], []
+    for i in range(40):
+        noisy = i % 4 == 0
+        rules.append(rule({"s": {"Image|endswith": "\a.exe" if noisy else "\tool.exe"}, "condition": "s"},
+                          level="low" if noisy else "high"))
+        labels.append(int(noisy))
+    res = repeated_cv(rules, labels, seeds=range(3), folds=4)
+    lo, hi = res["models"]["random"]["roc_auc"]["ci95"]
+    assert res["seeds"] == [0, 1, 2] and lo <= res["models"]["random"]["roc_auc"]["mean"] <= hi
+    h = res["models"]["heuristic_level"]["roc_auc"]
+    assert h["ci95"][0] == h["ci95"][1] == h["mean"]  # deterministic scorer
+
 def test_dashboard_renders(tmp_path):
     (tmp_path / "lint.json").write_text(json.dumps({"rules": 3}))
     (tmp_path / "fp.json").write_text(json.dumps({
