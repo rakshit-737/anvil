@@ -96,6 +96,7 @@ SERVICE_MAP: dict[str, tuple[str, ...]] = {
     "printservice-operational": ("microsoft-windows-printservice/operational",),
     "smbclient-security": ("microsoft-windows-smbclient/security",),
     "smbclient-connectivity": ("microsoft-windows-smbclient/connectivity",),
+    "smbserver-connectivity": ("microsoft-windows-smbserver/connectivity",),
     "terminalservices-localsessionmanager": (
         "microsoft-windows-terminalservices-localsessionmanager/operational",),
     "security-mitigations": ("microsoft-windows-security-mitigations/kernel mode",

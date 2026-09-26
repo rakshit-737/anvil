@@ -438,60 +438,74 @@ def stage_coverage() -> dict[str, Any]:
 
 
 # ------------------------------------------------------------------------------- decay
-def stage_decay(max_benign: int = 400_000) -> dict[str, Any]:
+def stage_decay(stride: int = 5) -> dict[str, Any]:
+    """Ground truth from TP captures vs. a diff-based static monitor on production-like telemetry."""
     rules, _ = _rules()
     lib = Library.build(rules)
     win = [lib.rules[r] for r in lib.active_ids if _is_windows(lib.rules[r])]
     cases = discover(sigma_root())
     base = {c["rule_id"]: run_case(lib, c) for c in cases}
     tp_ok = {rid for rid, rc in base.items() if rc.status == "pass"}
-    # field inventories per change from the benign corpus (+ the regression samples)
+    # "production" field inventory = benign corpus (every stride-th event) + the TP captures,
+    # before and after each simulated change
     changes = ["none", *SCHEMA_CHANGES]
     invs = {c: FieldInventory() for c in changes}
+
+    def feed(ev: dict[str, Any]) -> None:
+        invs["none"].add(ev)
+        for c in SCHEMA_CHANGES:
+            t = SCHEMA_CHANGES[c][1](ev)
+            if t is not None:
+                invs[c].add(t)
+
     n = 0
     for shard in benign_shards():
-        for ev in iter_path(shard):
-            invs["none"].add(ev)
-            for c in SCHEMA_CHANGES:
-                t = SCHEMA_CHANGES[c][1](ev)
-                if t is not None:
-                    invs[c].add(t)
-            n += 1
-            if n >= max_benign:
-                break
-        if n >= max_benign:
-            break
+        for i, ev in enumerate(iter_path(shard)):
+            if i % stride == 0:
+                feed(ev)
+                n += 1
+    for case in cases:
+        try:
+            for ev in iter_json_file(case["sample"]):
+                feed(ev)
+        except OSError:
+            continue
+    rank = {"ok": 0, "degraded": 1, "broken": 2, "source-missing": 3}
+    before = {r.id: analyse(r, invs["none"]) for r in win}
     res: dict[str, Any] = {"benign_events_inventoried": n, "rules_with_tp_evidence": len(tp_ok),
-                           "windows_rules": len(win), "changes": {}}
-    for c in changes:
-        # 1) ground truth: which TP-validated rules stop firing on their own samples after the change
+                           "windows_rules": len(win),
+                           "baseline_status": dict(Counter(v["status"] for v in before.values())),
+                           "changes": {}}
+    for c in SCHEMA_CHANGES:
+        # 1) ground truth: TP-validated rules that stop firing on their own captures after the change
         decayed = set()
-        if c != "none":
-            for case in cases:
-                rid = case["rule_id"]
-                if rid not in tp_ok:
-                    continue
-                evs = apply_change(iter_json_file(case["sample"]), c)
-                rc = lib.compiled[rid]
-                rt = lib.routes[rid]
-                hits = sum(1 for e in evs if applies(rt, e) and rc.matches(e))
-                if hits < (case["expected"] or 1):
-                    decayed.add(rid)
-        # 2) static analysis on the (changed) production telemetry schema, no attack data needed
-        verdict = {r.id: analyse(r, invs[c]) for r in win}
-        flagged = {rid for rid, v in verdict.items() if v["status"] in ("broken", "source-missing")}
+        for case in cases:
+            rid = case["rule_id"]
+            if rid not in tp_ok:
+                continue
+            evs = apply_change(iter_json_file(case["sample"]), c)
+            rc, rt = lib.compiled[rid], lib.routes[rid]
+            if sum(1 for e in evs if applies(rt, e) and rc.matches(e)) < (case["expected"] or 1):
+                decayed.add(rid)
+        # 2) static monitor: re-analyse against the changed schema, flag rules whose verdict worsened
+        #    to broken/source-missing (no attack data needed, works for every rule)
+        after = {r.id: analyse(r, invs[c]) for r in win}
+        flagged = {rid for rid, v in after.items()
+                   if v["status"] in ("broken", "source-missing") and rank[v["status"]] > rank[before[rid]["status"]]}
+        degraded = {rid for rid, v in after.items() if rank[v["status"]] > rank[before[rid]["status"]]}
         tp_flagged = flagged & tp_ok
-        st = Counter(v["status"] for v in verdict.values())
         res["changes"][c] = {
-            "description": SCHEMA_CHANGES[c][0] if c != "none" else "no change (false-alarm baseline)",
+            "description": SCHEMA_CHANGES[c][0],
             "decayed_tp_rules": len(decayed),
             "static_flagged_tp_rules": len(tp_flagged),
             "static_recall": round(len(decayed & flagged) / len(decayed), 3) if decayed else None,
             "static_precision": round(len(decayed & tp_flagged) / len(tp_flagged), 3) if tp_flagged else None,
-            "regression_monitor_recall": 1.0 if decayed else None,
-            "library_status": dict(st),
+            "regression_monitor_coverage": round(len(tp_ok) / len(win), 3),
+            "library_flagged": len(flagged),
             "library_flagged_pct": round(100 * len(flagged) / len(win), 1),
+            "library_worsened": len(degraded),
             "missed_examples": [lib.rules[r].title for r in sorted(decayed - flagged)][:8],
+            "false_alarm_examples": [lib.rules[r].title for r in sorted(tp_flagged - decayed)][:8],
         }
     save("decay.json", res)
     return res
@@ -536,9 +550,8 @@ def stage_fpmodel() -> dict[str, Any]:
 
 
 # ------------------------------------------------------------------------------- drafter
-def stage_draft(workers: int = 8) -> dict[str, Any]:
-    import yaml
-
+def stage_draft(workers: int = 4) -> dict[str, Any]:
+    """Draft rules from each OTRF dataset's description + attacker transcript, then test them."""
     from anvil.draft import draft
     root = data_dir() / "otrf"
     cat = [d for d in load_catalog(root) if d.available and (d.adversary_view or d.description)]
@@ -547,56 +560,57 @@ def stage_draft(workers: int = 8) -> dict[str, Any]:
     tmp = Path(tempfile.mkdtemp(prefix="anvil-drafts-"))
     backends = ["heuristic", "keywords"]
     meta: dict[str, dict[str, list[str]]] = {b: defaultdict(list) for b in backends}
-    n_drafts = Counter()
     for b in backends:
-        (tmp / b).mkdir()
         for d in cat:
-            for i, dr in enumerate(draft(d.description + "\n" + d.adversary_view, d.title, d.id, backend=b)):
+            text = f"{d.description}\n{d.adversary_view}"
+            for i, dr in enumerate(draft(text, d.title, d.id, backend=b)):
                 dr.rule["anvil"]["reviewed"] = True  # benchmark only: measure the raw drafts
-                (tmp / b / f"{d.id}-{i}.yml").write_text(dr.to_yaml(), encoding="utf-8")
+                dr.rule["id"] = f"{dr.rule['id'][:-4]}{backends.index(b)}{i:03d}"  # unique per backend
+                (tmp / f"{b}-{d.id}-{i}.yml").write_text(dr.to_yaml(), encoding="utf-8")
                 meta[b][d.id].append(dr.rule["id"])
-                n_drafts[b] += 1
     ds_files = {d.id: [str(p) for p in d.host_files if p.exists()] for d in cat}
-    all_files = sorted({f for fs in ds_files.values() for f in fs})
     readable = []
-    for f in all_files:
+    for f in sorted({f for fs in ds_files.values() for f in fs}):
         try:
             with open(f, "rb") as fh:
                 fh.read(4)
             readable.append(f)
         except OSError:
             pass
-    out: dict[str, Any] = {"datasets": len(cat), "backends": {}}
+    att = scan_files([tmp], readable, workers=workers)
+    ben = scan_files([tmp], benign_shards(), workers=workers)
+    out: dict[str, Any] = {"datasets": len(cat), "benign_events": ben.events, "backends": {}}
     for b in backends:
-        att = scan_files([tmp / b], readable, workers=workers)
-        ben = scan_files([tmp / b], benign_shards(), workers=workers)
-        tp = 0
         rows = []
         for d in cat:
             ids = set(meta[b][d.id])
             fired = any(att.per_file_hits.get(f, {}).get(rid) for f in ds_files[d.id] for rid in ids)
-            tp += fired
-            fp_alerts = sum(ben.hits.get(rid, 0) for rid in ids)
-            rows.append({"id": d.id, "drafts": len(ids), "fires_on_own_capture": fired, "benign_alerts": fp_alerts})
+            rows.append({"id": d.id, "drafts": len(ids), "fires_on_own_capture": fired,
+                         "benign_alerts": sum(ben.hits.get(rid, 0) for rid in ids),
+                         "rules_over_budget": sum(1 for rid in ids if ben.hits.get(rid, 0) / max(1e-9, _days()) > BUDGET)})
         with_drafts = [r for r in rows if r["drafts"]]
-        noisy = [r for r in with_drafts if r["benign_alerts"] > 0]
-        cross = sum(1 for rid in att.hits
-                    if not any(att.per_file_hits.get(f, {}).get(rid) for d in cat if rid in meta[b][d.id]
-                               for f in ds_files[d.id]))
+        tp = sum(r["fires_on_own_capture"] for r in with_drafts)
+        n_rules = sum(r["drafts"] for r in with_drafts)
         out["backends"][b] = {
-            "drafts": n_drafts[b], "datasets_with_drafts": len(with_drafts),
+            "drafts": n_rules, "datasets_with_drafts": len(with_drafts),
             "fires_on_own_capture": tp, "tp_rate": round(tp / max(1, len(with_drafts)), 3),
-            "datasets_with_benign_fp": len(noisy),
+            "datasets_with_benign_fp": sum(1 for r in with_drafts if r["benign_alerts"]),
             "benign_alerts_total": sum(r["benign_alerts"] for r in with_drafts),
-            "benign_alerts_median": statistics.median([r["benign_alerts"] for r in with_drafts]) if with_drafts else 0,
-            "rules_firing_only_on_other_captures": cross,
+            "rules_over_budget": sum(r["rules_over_budget"] for r in with_drafts),
+            "gate_pass_and_fires": sum(1 for r in with_drafts if r["fires_on_own_capture"] and not r["rules_over_budget"]),
             "rows": rows}
     both = [d.id for d in cat if meta["heuristic"][d.id]]
     out["sigmahq_same_datasets"] = {
         "datasets": len(both), "technique_detected": sum(bool(sigmahq_detected.get(i)) for i in both)}
     save("draft.json", out)
-    _ = yaml  # keep import for readability of drafts dumped above
     return out
+
+
+def _days() -> float:
+    try:
+        return float(load("fp.json")["corpus"]["days"]) or 1.0
+    except (OSError, KeyError, ValueError):
+        return 1.0
 
 
 STAGES = {"lint": stage_lint, "engine": stage_engine, "fp": stage_fp, "otrf": stage_otrf,

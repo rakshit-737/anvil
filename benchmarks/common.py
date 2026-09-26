@@ -34,7 +34,10 @@ def benign_shards() -> list[Path]:
 def save(name: str, obj: Any) -> Path:
     RESULTS.mkdir(parents=True, exist_ok=True)
     p = RESULTS / name
-    p.write_text(json.dumps(obj, indent=1, default=str) + "\n", encoding="utf-8")
+    text = json.dumps(obj, indent=1, default=str)
+    if len(text) > 400_000:  # keep committed result files well under 1 MB
+        text = json.dumps(obj, separators=(",", ":"), default=str)
+    p.write_text(text + "\n", encoding="utf-8")
     return p
 
 
