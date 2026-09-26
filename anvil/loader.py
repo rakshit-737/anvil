@@ -9,10 +9,12 @@ import yaml
 
 from .models import Rule
 
+_Loader = getattr(yaml, "CSafeLoader", yaml.SafeLoader)
+
 
 def load_rule(path: str | Path) -> Rule:
     p = Path(path)
-    data = yaml.safe_load(p.read_text(encoding="utf-8")) or {}
+    data = yaml.load(p.read_text(encoding="utf-8"), Loader=_Loader) or {}
     if not isinstance(data, dict):
         raise ValueError(f"{p}: rule must be a mapping")
     return Rule.from_dict(data, str(p))
