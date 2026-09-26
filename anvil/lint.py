@@ -114,6 +114,10 @@ def lint_rule(rule: Rule, profile: str = "anvil", catalog=None) -> list[Finding]
                                    f"{catalog.version}{hint}"))
     if not rule.falsepositives:
         out.append(Finding(rid, WARN, "W204", "falsepositives not documented"))
+    meta = rule.raw.get("anvil") if isinstance(rule.raw.get("anvil"), dict) else {}
+    if meta.get("draft") and not meta.get("reviewed"):
+        out.append(Finding(rid, ERROR, "A114", "unreviewed machine-drafted rule: a human must review it "
+                                                "and set anvil.reviewed: true before it can ship"))
     if profile == "sigma":
         if rule.status in ("test", "stable") and not rule.regression_tests_path:
             out.append(Finding(rid, WARN, "W209", f"status {rule.status} but no regression_tests_path"))
