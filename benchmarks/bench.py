@@ -338,7 +338,18 @@ def stage_fp(workers: int = 8) -> dict[str, Any]:
         "rules": sorted(per_rule, key=lambda p: -p["hits"]),
         "examples": {k: v for k, v in scan.examples.items() if k in {p["id"] for p in fired}},
     }
-    save("fp.json", res)
+    save("fp.json", compact_fp(res))
+    return res
+
+
+def compact_fp(res: dict[str, Any]) -> dict[str, Any]:
+    """Keep the committed fp.json under ~600 KB: silent rules lose their free-text fields, one short example each."""
+    for p in res["rules"]:
+        if not p["hits"]:
+            p.pop("title", None)
+            p.pop("category", None)
+    res["examples"] = {rid: [{k: (v[:160] if isinstance(v, str) else v) for k, v in ex[0].items()}]
+                       for rid, ex in res["examples"].items() if ex}
     return res
 
 
