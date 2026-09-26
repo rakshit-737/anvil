@@ -3,29 +3,50 @@ name: ci
 on:
   push:
   pull_request:
+  schedule:
+    - cron: "17 5 * * 1"   # weekly re-test: catches decay from dependency / rule drift
 
 permissions:
   contents: read
 
 jobs:
-  detections:
+  test:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
-        python-version: ["3.10", "3.12"]
+        python-version: ["3.10", "3.12", "3.13"]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-      - run: pip install -r requirements.txt
-      - name: Unit tests
+          cache: pip
+      - name: Install
+        run: pip install -e ".[dev,sigma,ml]"
+      - name: Ruff
+        run: ruff check anvil benchmarks tests scripts
+      - name: Unit tests (real-data tests skip without $ANVIL_DATA)
         run: python -m pytest -q
+
+  detections:
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -e .
       - name: Lint rules
         run: python -m anvil lint
       - name: Detection gate (TP/TN fixtures + FP corpus + SOC capacity)
         run: |
           python -m anvil synth --out telemetry/benign.jsonl
           python -m anvil test
+      - name: Draft gate (machine-drafted rules must be blocked until reviewed)
+        run: |
+          python -m anvil draft examples/cti/fin_x_report.md --out drafts
+          if python -m anvil lint --rules drafts --profile sigma; then echo "unreviewed drafts passed lint"; exit 1; fi
       - name: Coverage report
         run: python -m anvil coverage --corpus telemetry/benign.jsonl
