@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+*.egg-info/
+telemetry/baseline.json
+telemetry/navigator_layer.json
