@@ -35,7 +35,7 @@ CMDLET = re.compile(r"(?<![\w-])((?:Add|Clear|Compress|ConvertFrom|ConvertTo|Cop
                     r"Find|Get|Import|Install|Invoke|New|Out|Register|Remove|Rename|Resolve|Restart|Set|Start|"
                     r"Stop|Test|Write)-[A-Z][A-Za-z]+)\b")
 PROMPT = re.compile(r"^\s*(?:\(?[\w: ]+\)?\s*[>#$]\s*|PS [A-Z]:\\[^>]*>\s*|[A-Z]:\\[^>]*>\s*)"
-                    r"(?:shell|scriptcmd|execute|run|cmd)?\s*(.+)$")
+                    r"(?:(?:shell|scriptcmd|execute|run)\s+)?(.+)$")
 IOC_LIKE = re.compile(r"(?ix)^(?:\d{1,3}(?:\.\d{1,3}){3}(?::\d+)?|[0-9a-f]{16,}|\{?[0-9a-f-]{36}\}?|"
                       r"https?://.*|\\\\.*|[\w.-]+\.(?:local|com|net|org|io)|s-1-5-.*)$")
 GENERIC = {"-command", "/c", "-c", "-noprofile", "-nop", "-w", "hidden", "-windowstyle", "-exec", "bypass",

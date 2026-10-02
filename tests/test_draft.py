@@ -53,3 +53,16 @@ def test_keyword_baseline_backend():
     (d,) = draft(REPORT, "FIN-X", backend="keywords")
     assert d.rule["detection"]["condition"] == "keywords"
     assert "certutil.exe" in d.rule["detection"]["keywords"]
+
+
+def test_prompt_verbs_do_not_eat_binary_names():
+    text = "\n".join([
+        r"    C:\> rundll32.exe C:\Windows\System32\comsvcs.dll, MiniDump 624 C:\t\l.dmp full",
+        r"    C:\> cmdkey.exe /list",
+        r"    C:\> runas.exe /user:x cmd",
+        r"    C:\> cmd.exe /c whoami /priv",
+        r"    C:\> run notepad.exe",
+    ])
+    cmds = extract_commands(text)
+    for want in ("rundll32.exe", "cmdkey.exe", "runas.exe", "cmd.exe /c", "notepad.exe"):
+        assert any(c.startswith(want) for c in cmds), (want, cmds)
