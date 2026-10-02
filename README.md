@@ -18,7 +18,7 @@ Documentation: **https://rakshit-737.github.io/anvil/** · [How it works](https:
 [![Detection health dashboard](https://raw.githubusercontent.com/rakshit-737/anvil/main/docs/img/dashboard.png)](https://rakshit-737.github.io/anvil/dashboard.html)
 
 <!-- --8<-- [start:headline] -->
-| Headline (real data, one CI run; Wilson 95% CIs) | Result |
+| Headline (real data, CI runs 37016390345 and 37021246686; Wilson 95% CIs) | Result |
 | --- | --- |
 | Decay monitor: Sysmon removed, process creation from 4688 only | **109/115 broken rules flagged statically: recall 94.8% [89.1, 97.6], precision 100% [96.6, 100]**. Field presence: precision 41.9% [36.2, 47.9] |
 | Decay monitor: pipeline renamed fields to ECS | 426/430 flagged, recall 99.1% [97.6, 99.6], precision 100% |
@@ -99,7 +99,7 @@ Design decisions are recorded in [docs/adr](docs/adr).
 
 ## Results on real data
 
-All numbers come from one `bench` workflow run on a clean ubuntu runner, with fresh, checksum-verified downloads. Every results file records the git SHA, package versions and dataset pins. The full tables are in [results/SUMMARY.md](results/SUMMARY.md), and the method and definitions are on the [Evaluation](https://rakshit-737.github.io/anvil/evaluation/) page.
+All numbers come from `bench` workflow runs on clean ubuntu runners: run 37016390345 (commit 1c153a2; its bench job passed, its OpenSearch job hit a heap OOM, so the run is marked failed) for every stage except the OpenSearch cross-check, which comes from run 37021246686 (commit a37d85b, green) after the heap fix. Both use fresh, checksum-verified downloads. Every results file records the git SHA, package versions and dataset pins. The full tables are in [results/SUMMARY.md](results/SUMMARY.md), and the method and definitions are on the [Evaluation](https://rakshit-737.github.io/anvil/evaluation/) page.
 
 <!-- --8<-- [start:results] -->
 ### 1. Decay monitor (the novel part)
@@ -197,7 +197,7 @@ Only like-for-like setups are compared. Where no comparable number exists, the t
 | --- | --- | --- |
 | SigmaHQ regression CI (evtx-sigma-checker + json_matcher) at `07ec293` | all cases pass (check run green) | 463/463 |
 | SigmaHQ goodlog CI on evtx-baseline win10, win11 and 2022 DC (non-low rules; SigmaHQ applies known-FPs with MatchString filters, ANVIL per rule id only, so not like-for-like) | 0 unexcused rules (green) | 8 unexcused non-low rules (2 medium, 6 informational) |
-| GAUNTLET (sister project), OTRF recordings detected | 69.8% [60.0, 78.1] | 69/98 lenient, 62/98 strict |
+| GAUNTLET (sister project), OTRF recordings detected | 69.8% [60.0, 78.1] (67/96, lenient) | 69/98 lenient, 62/98 strict; like-for-like is the lenient column, but GAUNTLET used 96 datasets (before the 2 AV-blocked ones were added in CI) |
 | LLM Sigma generation from CTI (AutoSigma, arXiv 2608.19011; CTI-REALM, arXiv 2603.13517) | rule validity and coverage on cloud blogs / agent tasks | not comparable: different corpora and metrics; ANVIL scores drafts by execution on their own emulation |
 | AMIDES (Uetz et al., USENIX Security 2024) | evasion of process-creation rules | not comparable: it measures adversarial evasion, not benign volume or recall |
 <!-- --8<-- [end:comparison] -->
@@ -265,13 +265,15 @@ Per-stage outputs and runtimes are on the [Reproduce](https://rakshit-737.github
 ## Limitations
 
 <!-- --8<-- [start:limits] -->
-- **Engine scope.** `expand` placeholders, aggregations and correlations are not evaluated. That affects 2 of the 3,757 rules; the 23-rule `rules-placeholder` folder is excluded up front. Linux and AWS routing is new in 1.1 (ADR 0007). Azure/M365 is not routed.
+- **Engine scope.** `expand` placeholders, aggregations and correlations are not evaluated. That affects 2 of the 3,757 rules; the 23-rule `rules-placeholder` folder is excluded up front. Linux and AWS routing is new in 1.1.0 (ADR 0007). Azure/M365 is not routed.
 - **Benign corpus.** The three hosts are clean lab installs. Real fleets are noisier, so benign counts are a lower bound. Rates are per host-day. There is no benign CloudTrail corpus, and the benign Linux sample recorded on the CI runner lasts minutes: it is a parser smoke test, not an FP rate.
 - **Coarse labels.** OTRF and Splunk captures are labelled per technique and include background noise. "Technique detected" means a rule tagged with the technique or its parent fired.
 - **Drafter evaluation is optimistic by construction**, because drafts are tested on the dataset they were drafted from. The LLM backend is not benchmarked.
 - **The decay inventory is a fleet union**, which hides changes that reach only some hosts (the mixed row in the decay table).
 - **History.** Two synthetic telemetry files over 1 MB remain in early git history (removed in `c8cf57f`); history is not rewritten.
 - **Timings** come from shared machines; treat throughput as indicative.
+- **Deferred in 1.1.0, with reasons.** No scheduled decay job opens issues yet (needs a maintained real inventory source, not the lab fleet); the LLM drafter is not benchmarked (no API key); there is no benign CloudTrail corpus (no public clean one found) and no live benign command emulation; GAUNTLET integration waits on a stable GAUNTLET capture export. SigmaHQ correlation rules are not evaluated (see Engine scope). Mermaid rendering is checked by HTML presence only, not in a headless browser.
+- **Repo settings.** Secret scanning, push protection and Dependabot security updates are left to the owner to enable in GitHub settings.
 <!-- --8<-- [end:limits] -->
 
 ## Roadmap
