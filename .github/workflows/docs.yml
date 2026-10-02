@@ -26,6 +26,10 @@ jobs:
           python-version: "3.12"
       - run: pip install -r requirements-docs.txt -e .
       - run: mkdocs build --strict
+      - name: Check docs integrity
+        run: |
+          if grep -lE '^/./' docs/*.md; then echo "corrupted docs source"; exit 1; fi
+          grep -q 'class="mermaid"' site/architecture/index.html
       - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5
         with:
           path: site
