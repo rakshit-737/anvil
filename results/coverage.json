@@ -233,8 +233,22 @@
  },
  "stale_tags": {},
  "otrf_emulation": {
-  "datasets": 96,
-  "claimed": 88,
-  "detected": 67
+  "datasets": 98,
+  "claimed": 90,
+  "detected": 62
+ },
+ "provenance": {
+  "git_sha": "1c153a2012c76c1d743ffa244b849ae51190ee21",
+  "python": "3.12.14",
+  "packages": {
+   "pySigma": "1.5.1",
+   "pySigma-backend-sqlite": "2.0.0",
+   "pySigma-backend-kusto": "1.0.1",
+   "scikit-learn": "1.9.1",
+   "numpy": "2.5.3",
+   "pyahocorasick": "2.3.1",
+   "evtx": "0.13.1"
+  },
+  "ci_run": "37016390345"
  }
 }

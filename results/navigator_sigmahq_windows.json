@@ -540,7 +540,7 @@
   {
    "techniqueID": "T1003",
    "score": 2,
-   "comment": "28 rule(s), 6 validated"
+   "comment": "28 rule(s), 7 validated"
   },
   {
    "techniqueID": "T1003.001",
@@ -970,7 +970,7 @@
   {
    "techniqueID": "T1560.001",
    "score": 2,
-   "comment": "13 rule(s), 1 validated"
+   "comment": "13 rule(s), 2 validated"
   },
   {
    "techniqueID": "T1001.003",

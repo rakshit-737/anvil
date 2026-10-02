@@ -1,11 +1,20 @@
 {
- "datasets": 96,
- "events": 751973,
- "files_blocked_by_av": 2,
- "wall_seconds": 882.9,
- "any_alert": 93,
- "technique_detected": 67,
- "claimed_coverage": 88,
+ "datasets": 98,
+ "events": 754764,
+ "files_blocked_by_av": 0,
+ "wall_seconds": 189.7,
+ "any_alert": 95,
+ "technique_detected": 62,
+ "technique_detected_ci95": [
+  0.5339,
+  0.7214
+ ],
+ "technique_detected_lenient": 69,
+ "any_alert_ci95": [
+  0.9138,
+  0.9895
+ ],
+ "claimed_coverage": 90,
  "claimed_but_not_detected": [
   {
    "id": "SDWIN-190301125905",
@@ -29,6 +38,13 @@
    ]
   },
   {
+   "id": "SDWIN-190518210652",
+   "title": "Empire Invoke PsExec",
+   "techniques": [
+    "T1021"
+   ]
+  },
+  {
    "id": "SDWIN-190518211052",
    "title": "Empire Invoke DCOM ShellWindows",
    "techniques": [
@@ -36,10 +52,24 @@
    ]
   },
   {
+   "id": "SDWIN-190518235535",
+   "title": "Empire Mimikatz Backup Keys",
+   "techniques": [
+    "T1003"
+   ]
+  },
+  {
    "id": "SDWIN-190519005224",
    "title": "Empire Remote Get Session",
    "techniques": [
     "T1049"
+   ]
+  },
+  {
+   "id": "SDWIN-191027223020",
+   "title": "Covenant ShellCmd InstallUtil",
+   "techniques": [
+    "T1218.004"
    ]
   },
   {
@@ -59,6 +89,13 @@
   {
    "id": "SDWIN-200806022635",
    "title": "Covenant SharpSC Create",
+   "techniques": [
+    "T1021.002"
+   ]
+  },
+  {
+   "id": "SDWIN-200806030120",
+   "title": "Covenant SharpSC Start",
    "techniques": [
     "T1021.002"
    ]
@@ -99,6 +136,20 @@
    ]
   },
   {
+   "id": "SDWIN-200922042230",
+   "title": "Empire Powerdump Extract Hashes",
+   "techniques": [
+    "T1003.002"
+   ]
+  },
+  {
+   "id": "SDWIN-201019232515",
+   "title": "Mavinject Process DLL Injection",
+   "techniques": [
+    "T1055"
+   ]
+  },
+  {
    "id": "SDWIN-201020013208",
    "title": "UI Prompt For Credentials Function",
    "techniques": [
@@ -110,6 +161,13 @@
    "title": "Register-CimProvider Execute Dll",
    "techniques": [
     "T1218"
+   ]
+  },
+  {
+   "id": "SDWIN-201023031210",
+   "title": "PurpleSharp PE Injection CreateRemoteThread",
+   "techniques": [
+    "T1055.002"
    ]
   },
   {
@@ -155,7 +213,7 @@
    ]
   }
  ],
- "median_rules_fired": 8.0,
+ "median_rules_fired": 7.5,
  "rows": [
   {
    "id": "SDWIN-190301125905",
@@ -168,6 +226,7 @@
    "alerts": 75,
    "any_alert": true,
    "technique_detected": false,
+   "technique_detected_lenient": false,
    "technique_rules": [],
    "claimed": true,
    "top_rules": [
@@ -189,6 +248,7 @@
    "alerts": 15,
    "any_alert": true,
    "technique_detected": true,
+   "technique_detected_lenient": true,
    "technique_rules": [
     "Active Directory Replication from Non Machine Account - DcSync Indicator",
     "Mimikatz Use"
@@ -203,6 +263,51 @@
    ]
   },
   {
+   "id": "SDWIN-190319020147",
+   "title": "Empire Net Local Administrators Group",
+   "techniques": [
+    "T1069.001"
+   ],
+   "events": 884,
+   "rules_fired": 3,
+   "alerts": 12,
+   "any_alert": true,
+   "technique_detected": true,
+   "technique_detected_lenient": true,
+   "technique_rules": [
+    "Net.EXE Execution"
+   ],
+   "claimed": true,
+   "top_rules": [
+    "User Logoff Event",
+    "Suspicious Group And Account Reconnaissance Activity Using Net.EXE",
+    "Net.EXE Execution"
+   ]
+  },
+  {
+   "id": "SDWIN-190319020729",
+   "title": "Empire Net Local Users",
+   "techniques": [
+    "T1087.001"
+   ],
+   "events": 1907,
+   "rules_fired": 3,
+   "alerts": 11,
+   "any_alert": true,
+   "technique_detected": true,
+   "technique_detected_lenient": true,
+   "technique_rules": [
+    "Local Accounts Discovery",
+    "Net.EXE Execution"
+   ],
+   "claimed": true,
+   "top_rules": [
+    "Local Accounts Discovery",
+    "Net.EXE Execution",
+    "User Logoff Event"
+   ]
+  },
+  {
    "id": "SDWIN-190319021158",
    "title": "Empire Net Domain Users",
    "techniques": [
@@ -213,6 +318,7 @@
    "alerts": 10,
    "any_alert": true,
    "technique_detected": true,
+   "technique_detected_lenient": true,
    "technique_rules": [
     "Net.EXE Execution"
    ],
@@ -234,6 +340,7 @@
    "alerts": 431,
    "any_alert": true,
    "technique_detected": true,
+   "technique_detected_lenient": true,
    "technique_rules": [
     "CurrentVersion Autorun Keys Modification",
     "Suspicious PowerShell In Registry Run Keys"
@@ -258,6 +365,7 @@
    "alerts": 32,
    "any_alert": true,
    "technique_detected": true,
+   "technique_detected_lenient": true,
    "technique_rules": [
     "Scheduled Task Created - FileCreation",
     "Scheduled Task Created - Registry",
@@ -284,6 +392,7 @@
    "alerts": 196,
    "any_alert": true,
    "technique_detected": true,
+   "technique_detected_lenient": true,
    "technique_rules": [
     "Outgoing Logon with New Credentials",
     "Pass the Hash Activity 2",
@@ -309,6 +418,7 @@
    "alerts": 12,
    "any_alert": true,
    "technique_detected": true,
+   "technique_detected_lenient": true,
    "technique_rules": [
     "HackTool - Rubeus Execution"
    ],
@@ -331,6 +441,7 @@
    "alerts": 242,
    "any_alert": true,
    "technique_detected": true,
+   "technique_detected_lenient": true,
    "technique_rules": [
     "Creation Of Non-Existent System DLL",
     "Potential DLL Sideloading Of Non-Existent DLLs From System Folders"
@@ -355,15 +466,9 @@
    "alerts": 22,
    "any_alert": true,
    "technique_detected": true,
+   "technique_detected_lenient": true,
    "technique_rules": [
-    "HackTool - Empire PowerShell Launch Parameters",
-    "Net WebClient Casing Anomalies",
-    "Network Connection Initiated By PowerShell Process",
-    "New PowerShell Instance Created",
-    "Non Interactive PowerShell Process Spawned",
-    "Suspicious Execution of Powershell with Base64",
-    "Suspicious PowerShell Invocation From Script Engines",
-    "Suspicious PowerShell Invocations - Specific"
+    "WSF/JSE/JS/VBA/VBE File Execution Via Cscript/Wscript"
    ],
    "claimed": true,
    "top_rules": [
@@ -385,6 +490,7 @@
    "alerts": 670,
    "any_alert": true,
    "technique_detected": true,
+   "technique_detected_lenient": true,
    "technique_rules": [
     "WMI Event Subscription",
     "WMI Persistence",
@@ -410,6 +516,7 @@
    "alerts": 312,
    "any_alert": true,
    "technique_detected": true,
+   "technique_detected_lenient": true,
    "technique_rules": [
     "Network Connection Initiated Via Notepad.EXE",
     "Potential Shellcode Injection",
@@ -435,6 +542,7 @@
    "alerts": 20,
    "any_alert": true,
    "technique_detected": true,
+   "technique_detected_lenient": true,
    "technique_rules": [
     "Net.EXE Execution"
    ],
@@ -457,6 +565,7 @@
    "alerts": 0,
    "any_alert": false,
    "technique_detected": false,
+   "technique_detected_lenient": false,
    "technique_rules": [],
    "claimed": true,
    "top_rules": []
@@ -472,6 +581,7 @@
    "alerts": 51,
    "any_alert": true,
    "technique_detected": true,
+   "technique_detected_lenient": true,
    "technique_rules": [
     "LSASS Access From Non System Account",
     "Potential Credential Dumping Attempt Via PowerShell",
@@ -497,6 +607,7 @@
    "alerts": 0,
    "any_alert": false,
    "technique_detected": false,
+   "technique_detected_lenient": false,
    "technique_rules": [],
    "claimed": true,
    "top_rules": []
@@ -512,6 +623,7 @@
    "alerts": 53,
    "any_alert": true,
    "technique_detected": true,
+   "technique_detected_lenient": true,
    "technique_rules": [
     "CobaltStrike Service Installations - Security",
     "CobaltStrike Service Installations - System",
@@ -536,12 +648,9 @@
    "rules_fired": 27,
    "alerts": 50,
    "any_alert": true,
-   "technique_detected": true,
-   "technique_rules": [
-    "CobaltStrike Service Installations - Security",
-    "CobaltStrike Service Installations - System",
-    "Potential CobaltStrike Service Installations - Registry"
-   ],
+   "technique_detected": false,
+   "technique_detected_lenient": true,
+   "technique_rules": [],
    "claimed": true,
    "top_rules": [
     "User Logoff Event",
@@ -562,6 +671,7 @@
    "alerts": 128,
    "any_alert": true,
    "technique_detected": false,
+   "technique_detected_lenient": false,
    "technique_rules": [],
    "claimed": true,
    "top_rules": [
@@ -583,10 +693,10 @@
    "alerts": 39,
    "any_alert": true,
    "technique_detected": true,
+   "technique_detected_lenient": true,
    "technique_rules": [
     "Potential Remote PowerShell Session Initiated",
-    "Remote PowerShell Session Host Process (WinRM)",
-    "Suspicious WSMAN Provider Image Loads"
+    "Remote PowerShell Session Host Process (WinRM)"
    ],
    "claimed": true,
    "top_rules": [
@@ -608,6 +718,7 @@
    "alerts": 55,
    "any_alert": true,
    "technique_detected": true,
+   "technique_detected_lenient": true,
    "technique_rules": [
     "WmiPrvSE Spawned A Process"
    ],
@@ -631,10 +742,10 @@
    "alerts": 554,
    "any_alert": true,
    "technique_detected": true,
+   "technique_detected_lenient": true,
    "technique_rules": [
     "CreateRemoteThread API and LoadLibrary",
-    "Potential Shellcode Injection",
-    "Remote Thread Creation In Uncommon Target Image"
+    "Potential Shellcode Injection"
    ],
    "claimed": true,
    "top_rules": [
@@ -656,6 +767,7 @@
    "alerts": 81,
    "any_alert": true,
    "technique_detected": true,
+   "technique_detected_lenient": true,
    "technique_rules": [
     "Malicious PowerShell Commandlets - PoshModule"
    ],
@@ -679,6 +791,7 @@
    "alerts": 42,
    "any_alert": true,
    "technique_detected": true,
+   "technique_detected_lenient": true,
    "technique_rules": [
     "Mimikatz Use"
    ],
@@ -701,11 +814,9 @@
    "rules_fired": 6,
    "alerts": 14,
    "any_alert": true,
-   "technique_detected": true,
-   "technique_rules": [
-    "DPAPI Domain Backup Key Extraction",
-    "Mimikatz Use"
-   ],
+   "technique_detected": false,
+   "technique_detected_lenient": true,
+   "technique_rules": [],
    "claimed": true,
    "top_rules": [
     "DPAPI Domain Backup Key Extraction",
@@ -726,6 +837,7 @@
    "alerts": 308,
    "any_alert": true,
    "technique_detected": false,
+   "technique_detected_lenient": false,
    "technique_rules": [],
    "claimed": true,
    "top_rules": [
@@ -747,9 +859,9 @@
    "alerts": 1499,
    "any_alert": true,
    "technique_detected": true,
+   "technique_detected_lenient": true,
    "technique_rules": [
-    "Mimikatz Use",
-    "Potential Credential Dumping Attempt Via PowerShell"
+    "Mimikatz Use"
    ],
    "claimed": true,
    "top_rules": [
@@ -771,6 +883,7 @@
    "alerts": 3,
    "any_alert": true,
    "technique_detected": true,
+   "technique_detected_lenient": true,
    "technique_rules": [
     "Dumping of Sensitive Hives Via Reg.EXE"
    ],
@@ -791,6 +904,7 @@
    "alerts": 33,
    "any_alert": true,
    "technique_detected": true,
+   "technique_detected_lenient": true,
    "technique_rules": [
     "LSASS Access From Non System Account",
     "LSASS Process Memory Dump Creation Via Taskmgr.EXE",
@@ -816,10 +930,9 @@
    "rules_fired": 5,
    "alerts": 20,
    "any_alert": true,
-   "technique_detected": true,
-   "technique_rules": [
-    "Unsigned DLL Loaded by Windows Utility"
-   ],
+   "technique_detected": false,
+   "technique_detected_lenient": true,
+   "technique_rules": [],
    "claimed": true,
    "top_rules": [
     "User Logoff Event",
@@ -840,6 +953,7 @@
    "alerts": 226,
    "any_alert": true,
    "technique_detected": true,
+   "technique_detected_lenient": true,
    "technique_rules": [
     "NetNTLM Downgrade Attack",
     "NetNTLM Downgrade Attack - Registry"
@@ -864,6 +978,7 @@
    "alerts": 47,
    "any_alert": true,
    "technique_detected": true,
+   "technique_detected_lenient": true,
    "technique_rules": [
     "Processes Accessing the Microphone and Webcam"
    ],
@@ -887,6 +1002,7 @@
    "alerts": 38,
    "any_alert": true,
    "technique_detected": true,
+   "technique_detected_lenient": true,
    "technique_rules": [
     "Network Connection Initiated By Regsvr32.EXE",
     "Potentially Suspicious Child Process Of Regsvr32",
@@ -914,6 +1030,7 @@
    "alerts": 17,
    "any_alert": true,
    "technique_detected": true,
+   "technique_detected_lenient": true,
    "technique_rules": [
     "CurrentVersion Autorun Keys Modification",
     "Suspicious PowerShell In Registry Run Keys"
@@ -937,6 +1054,7 @@
    "alerts": 44,
    "any_alert": true,
    "technique_detected": true,
+   "technique_detected_lenient": true,
    "technique_rules": [
     "WMI Event Consumer Created Named Pipe",
     "WMI Module Loaded By Uncommon Process"
@@ -961,6 +1079,7 @@
    "alerts": 8,
    "any_alert": true,
    "technique_detected": true,
+   "technique_detected_lenient": true,
    "technique_rules": [
     "Active Directory Replication from Non Machine Account - DcSync Indicator"
    ],
@@ -981,6 +1100,7 @@
    "alerts": 4,
    "any_alert": true,
    "technique_detected": false,
+   "technique_detected_lenient": false,
    "technique_rules": [],
    "claimed": true,
    "top_rules": [
@@ -999,6 +1119,7 @@
    "alerts": 9,
    "any_alert": true,
    "technique_detected": false,
+   "technique_detected_lenient": false,
    "technique_rules": [],
    "claimed": true,
    "top_rules": [
@@ -1017,6 +1138,7 @@
    "alerts": 3,
    "any_alert": true,
    "technique_detected": true,
+   "technique_detected_lenient": true,
    "technique_rules": [
     "SMB Create Remote File Admin Share"
    ],
@@ -1037,6 +1159,7 @@
    "alerts": 26,
    "any_alert": true,
    "technique_detected": false,
+   "technique_detected_lenient": false,
    "technique_rules": [],
    "claimed": true,
    "top_rules": [
@@ -1054,10 +1177,9 @@
    "rules_fired": 7,
    "alerts": 199,
    "any_alert": true,
-   "technique_detected": true,
-   "technique_rules": [
-    "Suspicious WSMAN Provider Image Loads"
-   ],
+   "technique_detected": false,
+   "technique_detected_lenient": true,
+   "technique_rules": [],
    "claimed": true,
    "top_rules": [
     "Alternate PowerShell Hosts - PowerShell Module",
@@ -1078,6 +1200,7 @@
    "alerts": 31,
    "any_alert": true,
    "technique_detected": false,
+   "technique_detected_lenient": false,
    "technique_rules": [],
    "claimed": true,
    "top_rules": [
@@ -1099,6 +1222,7 @@
    "alerts": 23,
    "any_alert": true,
    "technique_detected": true,
+   "technique_detected_lenient": true,
    "technique_rules": [
     "WmiPrvSE Spawned A Process"
    ],
@@ -1122,11 +1246,11 @@
    "alerts": 270,
    "any_alert": true,
    "technique_detected": true,
+   "technique_detected_lenient": true,
    "technique_rules": [
     "Potential Remote PowerShell Session Initiated",
     "Remote LSASS Process Access Through Windows Remote Management",
-    "Remote PowerShell Session Host Process (WinRM)",
-    "Suspicious WSMAN Provider Image Loads"
+    "Remote PowerShell Session Host Process (WinRM)"
    ],
    "claimed": true,
    "top_rules": [
@@ -1148,6 +1272,7 @@
    "alerts": 3,
    "any_alert": true,
    "technique_detected": false,
+   "technique_detected_lenient": false,
    "technique_rules": [],
    "claimed": true,
    "top_rules": [
@@ -1166,6 +1291,7 @@
    "alerts": 69,
    "any_alert": true,
    "technique_detected": true,
+   "technique_detected_lenient": true,
    "technique_rules": [
     "LSASS Access From Non System Account",
     "Mimikatz Use",
@@ -1194,6 +1320,7 @@
    "alerts": 157,
    "any_alert": true,
    "technique_detected": true,
+   "technique_detected_lenient": true,
    "technique_rules": [
     "Bypass UAC Using DelegateExecute",
     "Bypass UAC via Fodhelper.exe",
@@ -1219,6 +1346,7 @@
    "alerts": 101,
    "any_alert": true,
    "technique_detected": true,
+   "technique_detected_lenient": true,
    "technique_rules": [
     "Process Creation Attempt via Wmic.EXE",
     "WMIC Remote Command Execution",
@@ -1244,6 +1372,7 @@
    "alerts": 15,
    "any_alert": true,
    "technique_detected": false,
+   "technique_detected_lenient": false,
    "technique_rules": [],
    "claimed": true,
    "top_rules": [
@@ -1264,6 +1393,7 @@
    "alerts": 51,
    "any_alert": true,
    "technique_detected": false,
+   "technique_detected_lenient": false,
    "technique_rules": [],
    "claimed": true,
    "top_rules": [
@@ -1285,6 +1415,7 @@
    "alerts": 214,
    "any_alert": true,
    "technique_detected": false,
+   "technique_detected_lenient": false,
    "technique_rules": [],
    "claimed": true,
    "top_rules": [
@@ -1306,6 +1437,7 @@
    "alerts": 337,
    "any_alert": true,
    "technique_detected": true,
+   "technique_detected_lenient": true,
    "technique_rules": [
     "Potential WMI Lateral Movement WmiPrvSE Spawned PowerShell",
     "WmiPrvSE Spawned A Process"
@@ -1330,6 +1462,7 @@
    "alerts": 530,
    "any_alert": true,
    "technique_detected": true,
+   "technique_detected_lenient": true,
    "technique_rules": [
     "Scheduled Task Created - FileCreation",
     "Scheduled Task Created - Registry",
@@ -1359,8 +1492,8 @@
    "alerts": 96,
    "any_alert": true,
    "technique_detected": true,
+   "technique_detected_lenient": true,
    "technique_rules": [
-    "HackTool - Generic Process Access",
     "HackTool - Rubeus Execution"
    ],
    "claimed": true,
@@ -1382,12 +1515,9 @@
    "rules_fired": 10,
    "alerts": 39,
    "any_alert": true,
-   "technique_detected": true,
-   "technique_rules": [
-    "LSASS Access From Non System Account",
-    "Potential Credential Dumping Attempt Via PowerShell",
-    "Potentially Suspicious AccessMask Requested From LSASS"
-   ],
+   "technique_detected": false,
+   "technique_detected_lenient": true,
+   "technique_rules": [],
    "claimed": true,
    "top_rules": [
     "Scheduled Task Created - Registry",
@@ -1408,6 +1538,7 @@
    "alerts": 232,
    "any_alert": true,
    "technique_detected": true,
+   "technique_detected_lenient": true,
    "technique_rules": [
     "T1047 Wmiprvse Wbemcomn DLL Hijack",
     "WMIC Remote Command Execution",
@@ -1434,11 +1565,11 @@
    "alerts": 131,
    "any_alert": true,
    "technique_detected": true,
+   "technique_detected_lenient": true,
    "technique_rules": [
     "DCOM InternetExplorer.Application Iertutil DLL Hijack - Security",
     "Potential DCOM InternetExplorer.Application DLL Hijack",
-    "Potential DCOM InternetExplorer.Application DLL Hijack - Image Load",
-    "SMB Create Remote File Admin Share"
+    "Potential DCOM InternetExplorer.Application DLL Hijack - Image Load"
    ],
    "claimed": true,
    "top_rules": [
@@ -1460,6 +1591,7 @@
    "alerts": 16,
    "any_alert": true,
    "technique_detected": true,
+   "technique_detected_lenient": true,
    "technique_rules": [
     "Proxy Execution Via Wuauclt.EXE"
    ],
@@ -1483,6 +1615,7 @@
    "alerts": 7,
    "any_alert": true,
    "technique_detected": true,
+   "technique_detected_lenient": true,
    "technique_rules": [
     "Potential Remote SquiblyTwo Technique Execution",
     "WMIC Loading Scripting Libraries"
@@ -1506,6 +1639,7 @@
    "alerts": 22,
    "any_alert": true,
    "technique_detected": true,
+   "technique_detected_lenient": true,
    "technique_rules": [
     "Dbghelp/Dbgcore DLL Loaded By Uncommon/Suspicious Process",
     "LSASS Access From Non System Account",
@@ -1536,6 +1670,7 @@
    "alerts": 13,
    "any_alert": true,
    "technique_detected": true,
+   "technique_detected_lenient": true,
    "technique_rules": [
     "HackTool - Dumpert Process Dumper Default File",
     "HackTool - Dumpert Process Dumper Execution",
@@ -1565,6 +1700,7 @@
    "alerts": 47,
    "any_alert": true,
    "technique_detected": true,
+   "technique_detected_lenient": true,
    "technique_rules": [
     "Copying Sensitive Files with Credential Data",
     "Esentutl Volume Shadow Copy Service Keys",
@@ -1592,6 +1728,7 @@
    "alerts": 19,
    "any_alert": true,
    "technique_detected": true,
+   "technique_detected_lenient": true,
    "technique_rules": [
     "Dumping of Sensitive Hives Via Reg.EXE"
    ],
@@ -1615,6 +1752,7 @@
    "alerts": 7,
    "any_alert": true,
    "technique_detected": true,
+   "technique_detected_lenient": true,
    "technique_rules": [
     "Potential Persistence Via Logon Scripts - CommandLine",
     "Potential Persistence Via Logon Scripts - Registry"
@@ -1638,13 +1776,9 @@
    "rules_fired": 8,
    "alerts": 11,
    "any_alert": true,
-   "technique_detected": true,
-   "technique_rules": [
-    "Mavinject Inject DLL Into Running Process",
-    "Remote Thread Creation In Uncommon Target Image",
-    "Renamed Mavinject.EXE Execution",
-    "Uncommon Process Access Rights For Target Image"
-   ],
+   "technique_detected": false,
+   "technique_detected_lenient": true,
+   "technique_rules": [],
    "claimed": true,
    "top_rules": [
     "Mavinject Inject DLL Into Running Process",
@@ -1665,6 +1799,7 @@
    "alerts": 2,
    "any_alert": true,
    "technique_detected": false,
+   "technique_detected_lenient": false,
    "technique_rules": [],
    "claimed": true,
    "top_rules": [
@@ -1683,6 +1818,7 @@
    "alerts": 6,
    "any_alert": true,
    "technique_detected": false,
+   "technique_detected_lenient": false,
    "technique_rules": [],
    "claimed": false,
    "top_rules": [
@@ -1703,6 +1839,7 @@
    "alerts": 14,
    "any_alert": true,
    "technique_detected": true,
+   "technique_detected_lenient": true,
    "technique_rules": [
     "Potential Persistence Attempt Via Existing Service Tampering",
     "Suspicious Service Path Modification"
@@ -1727,6 +1864,7 @@
    "alerts": 4,
    "any_alert": true,
    "technique_detected": true,
+   "technique_detected_lenient": true,
    "technique_rules": [
     "Detected Windows Software Discovery"
    ],
@@ -1748,6 +1886,7 @@
    "alerts": 16,
    "any_alert": true,
    "technique_detected": true,
+   "technique_detected_lenient": true,
    "technique_rules": [
     "HH.EXE Execution",
     "HTML Help HH.EXE Suspicious Child Process",
@@ -1773,11 +1912,9 @@
    "alerts": 22,
    "any_alert": true,
    "technique_detected": true,
+   "technique_detected_lenient": true,
    "technique_rules": [
-    "Control Panel Items",
-    "DLL Call by Ordinal Via Rundll32.EXE",
-    "Potentially Suspicious Rundll32 Activity",
-    "Unsigned DLL Loaded by Windows Utility"
+    "Control Panel Items"
    ],
    "claimed": true,
    "top_rules": [
@@ -1799,6 +1936,7 @@
    "alerts": 15,
    "any_alert": true,
    "technique_detected": true,
+   "technique_detected_lenient": true,
    "technique_rules": [
     "Bypass UAC via CMSTP",
     "CMSTP App Paths Registry Key Modification",
@@ -1825,6 +1963,7 @@
    "alerts": 21,
    "any_alert": true,
    "technique_detected": true,
+   "technique_detected_lenient": true,
    "technique_rules": [
     "Legitimate Application Writing Files In Uncommon Location",
     "Remotely Hosted HTA File Executed Via Mshta.EXE",
@@ -1850,6 +1989,7 @@
    "alerts": 23,
    "any_alert": true,
    "technique_detected": true,
+   "technique_detected_lenient": true,
    "technique_rules": [
     "MSHTA Execution with Suspicious File Extensions",
     "Suspicious MSHTA Child Process"
@@ -1874,6 +2014,7 @@
    "alerts": 32,
    "any_alert": true,
    "technique_detected": true,
+   "technique_detected_lenient": true,
    "technique_rules": [
     "Suspicious MSHTA Child Process",
     "Windows Shell/Scripting Processes Spawning Suspicious Programs"
@@ -1901,12 +2042,12 @@
    "alerts": 558,
    "any_alert": true,
    "technique_detected": true,
+   "technique_detected_lenient": true,
    "technique_rules": [
     "Kerberoasting Activity - Initial Query",
     "Potential Remote PowerShell Session Initiated",
     "Remote PowerShell Session Host Process (WinRM)",
-    "Suspicious Kerberos RC4 Ticket Encryption",
-    "Suspicious WSMAN Provider Image Loads"
+    "Suspicious Kerberos RC4 Ticket Encryption"
    ],
    "claimed": true,
    "top_rules": [
@@ -1928,6 +2069,7 @@
    "alerts": 12,
    "any_alert": true,
    "technique_detected": false,
+   "technique_detected_lenient": false,
    "technique_rules": [],
    "claimed": true,
    "top_rules": [
@@ -1949,6 +2091,7 @@
    "alerts": 12,
    "any_alert": true,
    "technique_detected": true,
+   "technique_detected_lenient": true,
    "technique_rules": [
     "BITS Client BitsProxy DLL Loaded By Uncommon Process",
     "File Download Via Bitsadmin",
@@ -1975,11 +2118,9 @@
    "rules_fired": 8,
    "alerts": 16,
    "any_alert": true,
-   "technique_detected": true,
-   "technique_rules": [
-    "Remote Thread Creation In Uncommon Target Image",
-    "Uncommon Process Access Rights For Target Image"
-   ],
+   "technique_detected": false,
+   "technique_detected_lenient": true,
+   "technique_rules": [],
    "claimed": true,
    "top_rules": [
     "Uncommon Process Access Rights For Target Image",
@@ -2000,6 +2141,7 @@
    "alerts": 5,
    "any_alert": true,
    "technique_detected": false,
+   "technique_detected_lenient": false,
    "technique_rules": [],
    "claimed": true,
    "top_rules": [
@@ -2020,6 +2162,7 @@
    "alerts": 1,
    "any_alert": true,
    "technique_detected": false,
+   "technique_detected_lenient": false,
    "technique_rules": [],
    "claimed": true,
    "top_rules": [
@@ -2037,6 +2180,7 @@
    "alerts": 5,
    "any_alert": true,
    "technique_detected": false,
+   "technique_detected_lenient": false,
    "technique_rules": [],
    "claimed": true,
    "top_rules": [
@@ -2055,6 +2199,7 @@
    "alerts": 11,
    "any_alert": true,
    "technique_detected": true,
+   "technique_detected_lenient": true,
    "technique_rules": [
     "PCRE.NET Package Image Load",
     "PCRE.NET Package Temp Files"
@@ -2079,6 +2224,7 @@
    "alerts": 1,
    "any_alert": true,
    "technique_detected": false,
+   "technique_detected_lenient": false,
    "technique_rules": [],
    "claimed": true,
    "top_rules": [
@@ -2096,6 +2242,7 @@
    "alerts": 10,
    "any_alert": true,
    "technique_detected": false,
+   "technique_detected_lenient": false,
    "technique_rules": [],
    "claimed": true,
    "top_rules": [
@@ -2116,6 +2263,7 @@
    "alerts": 30,
    "any_alert": true,
    "technique_detected": true,
+   "technique_detected_lenient": true,
    "technique_rules": [
     "Scheduled Task Created - FileCreation",
     "Scheduled Task Created - Registry",
@@ -2144,6 +2292,7 @@
    "alerts": 24,
    "any_alert": true,
    "technique_detected": true,
+   "technique_detected_lenient": true,
    "technique_rules": [
     "Scheduled Task Created - Registry"
    ],
@@ -2167,6 +2316,7 @@
    "alerts": 35,
    "any_alert": true,
    "technique_detected": true,
+   "technique_detected_lenient": true,
    "technique_rules": [
     "Suspicious Process By Web Server Process"
    ],
@@ -2190,6 +2340,7 @@
    "alerts": 0,
    "any_alert": false,
    "technique_detected": false,
+   "technique_detected_lenient": false,
    "technique_rules": [],
    "claimed": false,
    "top_rules": []
@@ -2205,6 +2356,7 @@
    "alerts": 112,
    "any_alert": true,
    "technique_detected": false,
+   "technique_detected_lenient": false,
    "technique_rules": [],
    "claimed": false,
    "top_rules": [
@@ -2226,6 +2378,7 @@
    "alerts": 30,
    "any_alert": true,
    "technique_detected": false,
+   "technique_detected_lenient": false,
    "technique_rules": [],
    "claimed": false,
    "top_rules": [
@@ -2247,6 +2400,7 @@
    "alerts": 349,
    "any_alert": true,
    "technique_detected": false,
+   "technique_detected_lenient": false,
    "technique_rules": [],
    "claimed": false,
    "top_rules": [
@@ -2268,6 +2422,7 @@
    "alerts": 88,
    "any_alert": true,
    "technique_detected": false,
+   "technique_detected_lenient": false,
    "technique_rules": [],
    "claimed": false,
    "top_rules": [
@@ -2289,6 +2444,7 @@
    "alerts": 188,
    "any_alert": true,
    "technique_detected": false,
+   "technique_detected_lenient": false,
    "technique_rules": [],
    "claimed": false,
    "top_rules": [
@@ -2310,6 +2466,7 @@
    "alerts": 264,
    "any_alert": true,
    "technique_detected": false,
+   "technique_detected_lenient": false,
    "technique_rules": [],
    "claimed": false,
    "top_rules": [
@@ -2331,13 +2488,12 @@
    "alerts": 263,
    "any_alert": true,
    "technique_detected": true,
+   "technique_detected_lenient": true,
    "technique_rules": [
     "Invocation of Active Directory Diagnostic Tool (ntdsutil.exe)",
     "NTDS.DIT Created",
     "Suspicious Process Patterns NTDS.DIT Exfil",
-    "Suspicious Usage Of Active Directory Diagnostic Tool (ntdsutil.exe)",
-    "VSSAudit Security Event Source Registration",
-    "Volume Shadow Copy Mount"
+    "Suspicious Usage Of Active Directory Diagnostic Tool (ntdsutil.exe)"
    ],
    "claimed": true,
    "top_rules": [
@@ -2359,6 +2515,7 @@
    "alerts": 73,
    "any_alert": true,
    "technique_detected": false,
+   "technique_detected_lenient": false,
    "technique_rules": [],
    "claimed": true,
    "top_rules": [
@@ -2371,11 +2528,30 @@
   }
  ],
  "compound": {
+  "syslog_auoms_auditd_log4shell_cve2021_44228_jndi_reference.zip": {
+   "events": 50,
+   "rules_fired": 0,
+   "alerts": 0,
+   "technique_tags_on_fired_rules": 0,
+   "top_rules": []
+  },
+  "syslog_sysmon_log4shell_cve2021_44228_jndi_reference.zip": {
+   "events": 93,
+   "rules_fired": 4,
+   "alerts": 5,
+   "technique_tags_on_fired_rules": 4,
+   "top_rules": [
+    "Local Groups Discovery - Linux",
+    "Suspicious Java Children Processes",
+    "Decode Base64 Encoded Text",
+    "Linux Reverse Shell Indicator"
+   ]
+  },
   "apt29_evals_day1_manual.zip": {
    "events": 196081,
    "rules_fired": 111,
    "alerts": 3765,
-   "techniques_alerted": 69,
+   "technique_tags_on_fired_rules": 69,
    "top_rules": [
     "Alternate PowerShell Hosts - PowerShell Module",
     "PowerShell Decompress Commands",
@@ -2393,7 +2569,7 @@
    "events": 587286,
    "rules_fired": 117,
    "alerts": 4723,
-   "techniques_alerted": 70,
+   "technique_tags_on_fired_rules": 70,
    "top_rules": [
     "Alternate PowerShell Hosts - PowerShell Module",
     "Scheduled Task Created - Registry",
@@ -2411,7 +2587,7 @@
  "rule_fire_counts": [
   [
    "User Logoff Event",
-   77
+   79
   ],
   [
    "Scheduled Task Created - Registry",
@@ -2439,7 +2615,7 @@
   ],
   [
    "Local Accounts Discovery",
-   19
+   20
   ],
   [
    "Potential Raspberry Robin Registry Set Internet Settings ZoneMap",
@@ -2569,5 +2745,19 @@
    "Suspicious SYSTEM User Process Creation",
    6
   ]
- ]
+ ],
+ "provenance": {
+  "git_sha": "1c153a2012c76c1d743ffa244b849ae51190ee21",
+  "python": "3.12.14",
+  "packages": {
+   "pySigma": "1.5.1",
+   "pySigma-backend-sqlite": "2.0.0",
+   "pySigma-backend-kusto": "1.0.1",
+   "scikit-learn": "1.9.1",
+   "numpy": "2.5.3",
+   "pyahocorasick": "2.3.1",
+   "evtx": "0.13.1"
+  },
+  "ci_run": "37016390345"
+ }
 }

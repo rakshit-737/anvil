@@ -3,7 +3,7 @@
  "splunk": {
   "converted": 2857,
   "pct": 99.9,
-  "seconds": 76.3,
+  "seconds": 10.2,
   "errors": {
    "SigmaFeatureNotSupportedByBackendError": 2,
    "SigmaPlaceholderError": 2
@@ -12,7 +12,7 @@
  "elastic": {
   "converted": 2855,
   "pct": 99.8,
-  "seconds": 85.5,
+  "seconds": 11.1,
   "errors": {
    "SigmaFeatureNotSupportedByBackendError": 4,
    "SigmaPlaceholderError": 2
@@ -21,9 +21,10 @@
  "kusto": {
   "converted": 2074,
   "pct": 72.5,
-  "seconds": 85.8,
+  "seconds": 11.8,
   "errors": {
-   "SigmaTransformationError": 751,
+   "SigmaTransformationError (log source has no table)": 632,
+   "SigmaTransformationError (field cannot be mapped)": 119,
    "InvalidHashAlgorithmError": 28,
    "": 5,
    "NotImplementedError": 2,
@@ -33,10 +34,24 @@
  "sqlite": {
   "converted": 2842,
   "pct": 99.3,
-  "seconds": 73.4,
+  "seconds": 12.2,
   "errors": {
    "SigmaFeatureNotSupportedByBackendError": 17,
    "SigmaPlaceholderError": 2
   }
+ },
+ "provenance": {
+  "git_sha": "1c153a2012c76c1d743ffa244b849ae51190ee21",
+  "python": "3.12.14",
+  "packages": {
+   "pySigma": "1.5.1",
+   "pySigma-backend-sqlite": "2.0.0",
+   "pySigma-backend-kusto": "1.0.1",
+   "scikit-learn": "1.9.1",
+   "numpy": "2.5.3",
+   "pyahocorasick": "2.3.1",
+   "evtx": "0.13.1"
+  },
+  "ci_run": "37016390345"
  }
 }

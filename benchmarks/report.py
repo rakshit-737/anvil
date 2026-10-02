@@ -272,14 +272,17 @@ def summary() -> str:
               f"{dr['sigmahq_same_datasets'].get('any_alert', '?')}, technique detected in "
               f"{dr['sigmahq_same_datasets']['technique_detected']}.", ""]
     nx = _j("nixcloud.json")
+
+    def _ci(n, ci):
+        return f"{n} [{100 * ci[0]:.0f}, {100 * ci[1]:.0f}]%"
     if nx:
         s += ["## Linux and AWS CloudTrail (SigmaHQ linux + cloud/aws rules)", "",
               f"{nx['rules']['routed']} of {nx['rules']['linux_aws']} Linux/AWS rules routed; "
               f"{nx['labelled']} labelled captures. Wilson 95% CIs.", "",
-              _t([[k, v["datasets"], f"{v['events']:,}", f"{v['technique_detected']} {v['technique_detected_ci95']}",
-                   f"{v['any_alert']} {v['any_alert_ci95']}"] for k, v in nx["by_kind"].items()]
-                 + [["all", nx["labelled"], "", f"{nx['technique_detected']} {nx['technique_detected_ci95']}",
-                     f"{nx['any_alert']} {nx['any_alert_ci95']}"]],
+              _t([[k, v["datasets"], f"{v['events']:,}", _ci(v['technique_detected'], v['technique_detected_ci95']),
+                   _ci(v['any_alert'], v['any_alert_ci95'])] for k, v in nx["by_kind"].items()]
+                 + [["all", nx["labelled"], "", _ci(nx['technique_detected'], nx['technique_detected_ci95']),
+                     _ci(nx['any_alert'], nx['any_alert_ci95'])]],
                  ["source", "captures", "events", "technique detected", "any alert"]), ""]
         if nx.get("zero_event_datasets"):
             s += ["Captures that parsed to 0 events: " + ", ".join(nx["zero_event_datasets"]), ""]
@@ -287,7 +290,8 @@ def summary() -> str:
         if lb:
             s += [f"Benign Linux telemetry recorded on the CI runner ({lb['events']} events, "
                   f"{lb['window_hours']} h, {lb['workload']}): {lb['rules_fired']} Linux rules fired "
-                  f"{lb['alerts']} alerts; {lb['over_budget_20_per_day']} would exceed 20/day.", ""]
+                  f"{lb['alerts']} alerts. The window is too short to project a daily rate, so this is a "
+                  "smoke test of the Linux parsers and rules on benign activity, not an FP-rate estimate.", ""]
     bo = _j("backend_opensearch.json")
     if bo:
         rg, bn = bo["regression"], bo["benign"]

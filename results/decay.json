@@ -1,26 +1,78 @@
 {
  "benign_events_inventoried": 598829,
- "rules_with_tp_evidence": 458,
+ "inventory": "benign evtx-baseline only (no TP captures)",
+ "rules_with_tp_evidence": 460,
  "windows_rules": 2844,
  "baseline_status": {
-  "broken": 108,
-  "ok": 2664,
-  "degraded": 24,
-  "source-missing": 48
+  "degraded": 26,
+  "broken": 117,
+  "ok": 2635,
+  "source-missing": 66
+ },
+ "none": {
+  "description": "no change: rules flagged broken/source-missing on unchanged telemetry (the false-alarm floor; excluded from 'worsened')",
+  "library_flagged": 183,
+  "library_flagged_pct": 6.4,
+  "tp_validated_flagged": 3
  },
  "changes": {
   "ecs_rename": {
    "description": "SIEM pipeline migrated to ECS field names (Image -> process.executable ...)",
-   "decayed_tp_rules": 428,
-   "static_flagged_tp_rules": 425,
-   "static_recall": 0.993,
+   "decayed_tp_rules": 430,
+   "static_flagged_tp_rules": 426,
+   "static_recall": 0.991,
    "static_precision": 1.0,
-   "regression_monitor_coverage": 0.161,
-   "library_flagged": 2300,
-   "library_flagged_pct": 80.9,
-   "library_worsened": 2373,
+   "methods": {
+    "symbolic (ANVIL)": {
+     "flagged_tp_rules": 426,
+     "library_flagged": 2285,
+     "recall": 0.991,
+     "recall_ci95": [
+      0.9763,
+      0.9964
+     ],
+     "precision": 1.0,
+     "precision_ci95": [
+      0.9911,
+      1.0
+     ]
+    },
+    "field presence, per log source": {
+     "flagged_tp_rules": 435,
+     "library_flagged": 2365,
+     "recall": 1.0,
+     "recall_ci95": [
+      0.9911,
+      1.0
+     ],
+     "precision": 0.989,
+     "precision_ci95": [
+      0.9734,
+      0.9951
+     ]
+    },
+    "field presence, global (0.1 schema_drift)": {
+     "flagged_tp_rules": 435,
+     "library_flagged": 2396,
+     "recall": 1.0,
+     "recall_ci95": [
+      0.9911,
+      1.0
+     ],
+     "precision": 0.989,
+     "precision_ci95": [
+      0.9734,
+      0.9951
+     ]
+    }
+   },
+   "regression_monitor_coverage": 0.162,
+   "library_flagged": 2285,
+   "library_flagged_pct": 80.3,
+   "library_worsened": 2358,
    "missed_examples": [
     "Potential Defense Evasion Via Rename Of Highly Relevant Binaries",
+    "WinRAR Execution in Non-Standard Folder",
     "HackTool - PPID Spoofing SelectMyParent Tool Execution",
     "HackTool - Bloodhound/Sharphound Execution"
    ],
@@ -29,14 +81,59 @@
   "sysmon_to_4688": {
    "description": "Sysmon removed; process creation only from Security 4688 (cmdline auditing on)",
    "decayed_tp_rules": 115,
-   "static_flagged_tp_rules": 110,
-   "static_recall": 0.957,
+   "static_flagged_tp_rules": 109,
+   "static_recall": 0.948,
    "static_precision": 1.0,
-   "regression_monitor_coverage": 0.161,
-   "library_flagged": 943,
-   "library_flagged_pct": 33.2,
-   "library_worsened": 1611,
+   "methods": {
+    "symbolic (ANVIL)": {
+     "flagged_tp_rules": 109,
+     "library_flagged": 925,
+     "recall": 0.948,
+     "recall_ci95": [
+      0.8908,
+      0.9759
+     ],
+     "precision": 1.0,
+     "precision_ci95": [
+      0.966,
+      1.0
+     ]
+    },
+    "field presence, per log source": {
+     "flagged_tp_rules": 272,
+     "library_flagged": 1593,
+     "recall": 0.991,
+     "recall_ci95": [
+      0.9524,
+      0.9985
+     ],
+     "precision": 0.419,
+     "precision_ci95": [
+      0.362,
+      0.4785
+     ]
+    },
+    "field presence, global (0.1 schema_drift)": {
+     "flagged_tp_rules": 266,
+     "library_flagged": 1547,
+     "recall": 0.948,
+     "recall_ci95": [
+      0.8908,
+      0.9759
+     ],
+     "precision": 0.41,
+     "precision_ci95": [
+      0.3524,
+      0.4698
+     ]
+    }
+   },
+   "regression_monitor_coverage": 0.162,
+   "library_flagged": 925,
+   "library_flagged_pct": 32.5,
+   "library_worsened": 1593,
    "missed_examples": [
+    "WMI Event Subscription",
     "Csc.EXE Execution Form Potentially Suspicious Parent",
     "PUA - AdvancedRun Execution",
     "Suspicious Cross-User Process Spawn",
@@ -46,15 +143,125 @@
    "false_alarm_examples": []
   },
   "4688_no_cmdline": {
-   "description": "Sysmon removed and 4688 command-line auditing off",
+   "description": "Sysmon removed and 4688 command-line auditing off on every host",
    "decayed_tp_rules": 349,
-   "static_flagged_tp_rules": 110,
-   "static_recall": 0.315,
+   "static_flagged_tp_rules": 333,
+   "static_recall": 0.954,
    "static_precision": 1.0,
-   "regression_monitor_coverage": 0.161,
-   "library_flagged": 943,
-   "library_flagged_pct": 33.2,
-   "library_worsened": 1611,
+   "methods": {
+    "symbolic (ANVIL)": {
+     "flagged_tp_rules": 333,
+     "library_flagged": 1865,
+     "recall": 0.954,
+     "recall_ci95": [
+      0.9268,
+      0.9716
+     ],
+     "precision": 1.0,
+     "precision_ci95": [
+      0.9886,
+      1.0
+     ]
+    },
+    "field presence, per log source": {
+     "flagged_tp_rules": 369,
+     "library_flagged": 2090,
+     "recall": 0.994,
+     "recall_ci95": [
+      0.9793,
+      0.9984
+     ],
+     "precision": 0.94,
+     "precision_ci95": [
+      0.9114,
+      0.9603
+     ]
+    },
+    "field presence, global (0.1 schema_drift)": {
+     "flagged_tp_rules": 363,
+     "library_flagged": 2061,
+     "recall": 0.98,
+     "recall_ci95": [
+      0.9592,
+      0.9903
+     ],
+     "precision": 0.942,
+     "precision_ci95": [
+      0.9132,
+      0.9619
+     ]
+    }
+   },
+   "regression_monitor_coverage": 0.162,
+   "library_flagged": 1865,
+   "library_flagged_pct": 65.6,
+   "library_worsened": 2090,
+   "missed_examples": [
+    "Mimikatz Use",
+    "WMI Event Subscription",
+    "Script Interpreter Spawning Credential Scanner - Windows",
+    "HackTool - Hashcat Password Cracker Execution",
+    "Local Accounts Discovery",
+    "HackTool - PPID Spoofing SelectMyParent Tool Execution",
+    "Suspicious Calculator Usage",
+    "Suspicious Process Patterns NTDS.DIT Exfil"
+   ],
+   "false_alarm_examples": []
+  },
+  "4688_no_cmdline_mixed": {
+   "description": "As above, but hosts that already logged 4688 keep CommandLine (mixed pre/post-change inventory window)",
+   "decayed_tp_rules": 349,
+   "static_flagged_tp_rules": 109,
+   "static_recall": 0.312,
+   "static_precision": 1.0,
+   "methods": {
+    "symbolic (ANVIL)": {
+     "flagged_tp_rules": 109,
+     "library_flagged": 925,
+     "recall": 0.312,
+     "recall_ci95": [
+      0.266,
+      0.3628
+     ],
+     "precision": 1.0,
+     "precision_ci95": [
+      0.966,
+      1.0
+     ]
+    },
+    "field presence, per log source": {
+     "flagged_tp_rules": 272,
+     "library_flagged": 1593,
+     "recall": 0.722,
+     "recall_ci95": [
+      0.6728,
+      0.7665
+     ],
+     "precision": 0.926,
+     "precision_ci95": [
+      0.8892,
+      0.9519
+     ]
+    },
+    "field presence, global (0.1 schema_drift)": {
+     "flagged_tp_rules": 266,
+     "library_flagged": 1547,
+     "recall": 0.708,
+     "recall_ci95": [
+      0.658,
+      0.753
+     ],
+     "precision": 0.929,
+     "precision_ci95": [
+      0.8911,
+      0.9538
+     ]
+    }
+   },
+   "regression_monitor_coverage": 0.162,
+   "library_flagged": 925,
+   "library_flagged_pct": 32.5,
+   "library_worsened": 1593,
    "missed_examples": [
     "System Information Discovery via Registry Queries",
     "Malicious PowerShell Commandlets - ProcessCreation",
@@ -73,7 +280,51 @@
    "static_flagged_tp_rules": 220,
    "static_recall": 0.94,
    "static_precision": 1.0,
-   "regression_monitor_coverage": 0.161,
+   "methods": {
+    "symbolic (ANVIL)": {
+     "flagged_tp_rules": 220,
+     "library_flagged": 949,
+     "recall": 0.94,
+     "recall_ci95": [
+      0.9021,
+      0.964
+     ],
+     "precision": 1.0,
+     "precision_ci95": [
+      0.9828,
+      1.0
+     ]
+    },
+    "field presence, per log source": {
+     "flagged_tp_rules": 246,
+     "library_flagged": 1107,
+     "recall": 0.996,
+     "recall_ci95": [
+      0.9762,
+      0.9992
+     ],
+     "precision": 0.947,
+     "precision_ci95": [
+      0.9117,
+      0.9689
+     ]
+    },
+    "field presence, global (0.1 schema_drift)": {
+     "flagged_tp_rules": 246,
+     "library_flagged": 1118,
+     "recall": 0.996,
+     "recall_ci95": [
+      0.9762,
+      0.9992
+     ],
+     "precision": 0.947,
+     "precision_ci95": [
+      0.9117,
+      0.9689
+     ]
+    }
+   },
+   "regression_monitor_coverage": 0.162,
    "library_flagged": 949,
    "library_flagged_pct": 33.4,
    "library_worsened": 1107,
@@ -95,12 +346,70 @@
    "static_flagged_tp_rules": 0,
    "static_recall": null,
    "static_precision": null,
-   "regression_monitor_coverage": 0.161,
+   "methods": {
+    "symbolic (ANVIL)": {
+     "flagged_tp_rules": 0,
+     "library_flagged": 6,
+     "recall": null,
+     "recall_ci95": [
+      0.0,
+      0.0
+     ],
+     "precision": null,
+     "precision_ci95": [
+      0.0,
+      0.0
+     ]
+    },
+    "field presence, per log source": {
+     "flagged_tp_rules": 7,
+     "library_flagged": 47,
+     "recall": null,
+     "recall_ci95": [
+      0.0,
+      0.0
+     ],
+     "precision": 0.0,
+     "precision_ci95": [
+      0.0,
+      0.3543
+     ]
+    },
+    "field presence, global (0.1 schema_drift)": {
+     "flagged_tp_rules": 7,
+     "library_flagged": 54,
+     "recall": null,
+     "recall_ci95": [
+      0.0,
+      0.0
+     ],
+     "precision": 0.0,
+     "precision_ci95": [
+      0.0,
+      0.3543
+     ]
+    }
+   },
+   "regression_monitor_coverage": 0.162,
    "library_flagged": 6,
    "library_flagged_pct": 0.2,
    "library_worsened": 47,
    "missed_examples": [],
    "false_alarm_examples": []
   }
+ },
+ "provenance": {
+  "git_sha": "1c153a2012c76c1d743ffa244b849ae51190ee21",
+  "python": "3.12.14",
+  "packages": {
+   "pySigma": "1.5.1",
+   "pySigma-backend-sqlite": "2.0.0",
+   "pySigma-backend-kusto": "1.0.1",
+   "scikit-learn": "1.9.1",
+   "numpy": "2.5.3",
+   "pyahocorasick": "2.3.1",
+   "evtx": "0.13.1"
+  },
+  "ci_run": "37016390345"
  }
 }

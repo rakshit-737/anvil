@@ -1,7 +1,7 @@
 {
  "rules": 3757,
  "parse_errors": 0,
- "lint_seconds": 0.4,
+ "lint_seconds": 0.14,
  "rules_with_errors": 0,
  "rules_with_warnings": 3121,
  "findings_by_code": {
@@ -47,13 +47,26 @@
  "unsupported_reasons": {
   "modifier ['expand'] not supported": 2
  },
- "routable_windows": 2843,
+ "routable_windows": 2844,
  "unroutable_windows": {
-  "service 'smbserver-connectivity' not mapped": 1,
   "category 'file_access' not mapped": 13,
   "category 'file_rename' not mapped": 2
  },
  "with_regression_test": 460,
  "test_or_stable_without_regression": 3029,
- "attack_version": "19.2"
+ "attack_version": "19.2",
+ "provenance": {
+  "git_sha": "1c153a2012c76c1d743ffa244b849ae51190ee21",
+  "python": "3.12.14",
+  "packages": {
+   "pySigma": "1.5.1",
+   "pySigma-backend-sqlite": "2.0.0",
+   "pySigma-backend-kusto": "1.0.1",
+   "scikit-learn": "1.9.1",
+   "numpy": "2.5.3",
+   "pyahocorasick": "2.3.1",
+   "evtx": "0.13.1"
+  },
+  "ci_run": "37016390345"
+ }
 }

@@ -1,51 +1,35 @@
 {
  "cases": 463,
- "sample_events": 497,
+ "sample_events": 499,
  "anvil": {
-  "pass": 461,
-  "unreadable": 2,
-  "evaluable": 461,
+  "pass": 463,
+  "evaluable": 463,
   "pass_rate": 1.0,
-  "exact_count": 461,
-  "seconds": 1.55
+  "exact_count": 463,
+  "seconds": 0.05
  },
  "anvil_v01": {
-  "pass": 418,
+  "pass": 420,
   "error": 29,
   "fail": 14,
-  "unreadable": 2,
-  "pass_rate": 0.9067,
-  "seconds": 1.0
+  "pass_rate": 0.9071,
+  "seconds": 0.07
  },
  "pysigma_sqlite": {
   "available": true,
-  "seconds": 16.9,
-  "pass": 457,
-  "agree": 457,
-  "fail": 2,
-  "disagree": 2,
+  "seconds": 2.5,
+  "pass": 461,
+  "agree": 461,
   "convert-error": 1,
-  "skipped": 2,
-  "exec-error": 1,
+  "fail": 1,
+  "disagree": 1,
   "disagreements": [
-   {
-    "rule": "e54279c7-4910-4e2c-902c-c56a25b549f6",
-    "title": "Windows AppX Deployment Full Trust Package Installation",
-    "anvil": 1,
-    "oracle": 0,
-    "expected": 1
-   },
    {
     "rule": "08249dc0-a28d-4555-8ba5-9255a198e08c",
     "title": "Local Network Connection Initiated By Script Interpreter",
     "anvil": 1,
     "oracle": 0,
     "expected": 1
-   },
-   {
-    "rule": "bae7c70b-8569-44e9-accf-b30073da8a5d",
-    "title": "Shai-Hulud 2.0 Malicious NPM Package Installation",
-    "why": "oracle error: Expression tree is too large (maximum depth 1000)"
    }
   ]
  },
@@ -54,14 +38,14 @@
   "anvil": {
    "alerts": 15,
    "rules_fired": 2,
-   "evaluations": 44143,
-   "seconds": 0.9
+   "evaluations": 44084,
+   "seconds": 0.14
   },
   "anvil_v01": {
-   "alerts": 164,
+   "alerts": 163,
    "rules_fired": 16,
    "evaluations": 5149800,
-   "seconds": 270.34
+   "seconds": 55.07
   }
  },
  "failures": [],
@@ -104,6 +88,7 @@
   "162e69a7-7981-4344-84a9-0f1c9a217a52",
   "164eda96-11b2-430b-85ff-6a265c15bf32",
   "17a1be64-8d88-40bf-b5ff-a4f7a50ebcc8",
+  "189e3b02-82b2-4b90-9662-411eb64486d4",
   "19b08b1c-861d-4e75-a1ef-ea0c1baf202b",
   "1a1ed54a-2ba4-4221-94d5-01dee560d71e",
   "1a5fefe6-734f-452e-a07d-fc1c35bce4b2",
@@ -186,6 +171,7 @@
   "4b046706-5789-4673-b111-66f25fe99534",
   "4d07b1f4-cb00-4470-b9f8-b0191d48ff52",
   "4e485d01-e18a-43f6-a46b-ef20496fa9d3",
+  "4ede543c-e098-43d9-a28f-dd784a13132f",
   "4f73421b-5a0b-4bbf-a892-5a7fb99bea66",
   "4fdc44df-bfe9-4fcc-b041-68f5a2d3031c",
   "4fe074b4-b833-4081-8f24-7dcfeca72b42",
@@ -524,5 +510,19 @@
   "fecfd1a1-cc78-4313-a1ea-2ee2e8ec27a7",
   "fed85bf9-e075-4280-9159-fbe8a023d6fa",
   "ffa6861c-4461-4f59-8a41-578c39f3f23e"
- ]
+ ],
+ "provenance": {
+  "git_sha": "1c153a2012c76c1d743ffa244b849ae51190ee21",
+  "python": "3.12.14",
+  "packages": {
+   "pySigma": "1.5.1",
+   "pySigma-backend-sqlite": "2.0.0",
+   "pySigma-backend-kusto": "1.0.1",
+   "scikit-learn": "1.9.1",
+   "numpy": "2.5.3",
+   "pyahocorasick": "2.3.1",
+   "evtx": "0.13.1"
+  },
+  "ci_run": "37016390345"
+ }
 }

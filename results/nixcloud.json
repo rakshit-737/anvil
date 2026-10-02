@@ -1,0 +1,2987 @@
+{
+ "rules": {
+  "linux_aws": 305,
+  "routed": 278,
+  "unrouted_reasons": {
+   "linux product-only (syslog keyword) rules have no structured source": 16,
+   "linux service": 11
+  }
+ },
+ "datasets": 169,
+ "labelled": 168,
+ "zero_event_datasets": [
+  "splunk:T1068/linux_dirtyfrag"
+ ],
+ "technique_detected": 27,
+ "technique_detected_ci95": [
+  0.1129,
+  0.2237
+ ],
+ "any_alert": 89,
+ "any_alert_ci95": [
+  0.4545,
+  0.6037
+ ],
+ "by_kind": {
+  "auditd": {
+   "datasets": 65,
+   "events": 7158,
+   "technique_detected": 8,
+   "technique_detected_ci95": [
+    0.0637,
+    0.2245
+   ],
+   "any_alert": 19,
+   "any_alert_ci95": [
+    0.1958,
+    0.412
+   ],
+   "median_alerts": 0
+  },
+  "cloudtrail": {
+   "datasets": 40,
+   "events": 27793,
+   "technique_detected": 6,
+   "technique_detected_ci95": [
+    0.0706,
+    0.2907
+   ],
+   "any_alert": 32,
+   "any_alert_ci95": [
+    0.6524,
+    0.895
+   ],
+   "median_alerts": 3
+  },
+  "sysmon-linux": {
+   "datasets": 63,
+   "events": 551655,
+   "technique_detected": 13,
+   "technique_detected_ci95": [
+    0.1248,
+    0.3217
+   ],
+   "any_alert": 38,
+   "any_alert_ci95": [
+    0.4798,
+    0.7147
+   ],
+   "median_alerts": 4
+  }
+ },
+ "rows": [
+  {
+   "id": "splunk:T1003.008/copy_file_stdoutpipe",
+   "source": "splunk/attack_data",
+   "kind": "sysmon-linux",
+   "events": 11109,
+   "techniques": [
+    "T1003.008"
+   ],
+   "rules_fired": 3,
+   "alerts": 9,
+   "any_alert": true,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": [
+    "Process Discovery",
+    "Local System Accounts Discovery - Linux",
+    "Access of Sudoers File Content"
+   ]
+  },
+  {
+   "id": "splunk:T1003.008/linux_auditd_access_credential",
+   "source": "splunk/attack_data",
+   "kind": "auditd",
+   "events": 105,
+   "techniques": [
+    "T1003.008"
+   ],
+   "rules_fired": 0,
+   "alerts": 0,
+   "any_alert": false,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": []
+  },
+  {
+   "id": "splunk:T1014/medusa_rootkit",
+   "source": "splunk/attack_data",
+   "kind": "sysmon-linux",
+   "events": 7,
+   "techniques": [
+    "T1014"
+   ],
+   "rules_fired": 0,
+   "alerts": 0,
+   "any_alert": false,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": []
+  },
+  {
+   "id": "splunk:T1016/atomic_red_team/linux_net_discovery",
+   "source": "splunk/attack_data",
+   "kind": "sysmon-linux",
+   "events": 18085,
+   "techniques": [
+    "T1016"
+   ],
+   "rules_fired": 8,
+   "alerts": 18,
+   "any_alert": true,
+   "technique_detected": true,
+   "technique_rules": [
+    "System Network Discovery - Linux"
+   ],
+   "top_rules": [
+    "System Network Discovery - Linux",
+    "Process Discovery",
+    "System Information Discovery",
+    "System Network Connections Discovery - Linux",
+    "Potential Exploitation of CVE-2024-3094 - Suspicious SSH Child Process"
+   ]
+  },
+  {
+   "id": "splunk:T1016/linux_auditd_net_tool",
+   "source": "splunk/attack_data",
+   "kind": "auditd",
+   "events": 25,
+   "techniques": [
+    "T1016"
+   ],
+   "rules_fired": 1,
+   "alerts": 1,
+   "any_alert": true,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": [
+    "Suspicious C2 Activities"
+   ]
+  },
+  {
+   "id": "splunk:T1016/linux_auditd_net_tool_new",
+   "source": "splunk/attack_data",
+   "kind": "auditd",
+   "events": 642,
+   "techniques": [
+    "T1016"
+   ],
+   "rules_fired": 1,
+   "alerts": 5,
+   "any_alert": true,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": [
+    "Suspicious C2 Activities"
+   ]
+  },
+  {
+   "id": "splunk:T1021.004/atomic_red_team",
+   "source": "splunk/attack_data",
+   "kind": "sysmon-linux",
+   "events": 1,
+   "techniques": [
+    "T1021.004"
+   ],
+   "rules_fired": 0,
+   "alerts": 0,
+   "any_alert": false,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": []
+  },
+  {
+   "id": "splunk:T1027/atomic_red_team",
+   "source": "splunk/attack_data",
+   "kind": "sysmon-linux",
+   "events": 15,
+   "techniques": [
+    "T1027"
+   ],
+   "rules_fired": 2,
+   "alerts": 10,
+   "any_alert": true,
+   "technique_detected": true,
+   "technique_rules": [
+    "Decode Base64 Encoded Text"
+   ],
+   "top_rules": [
+    "Decode Base64 Encoded Text",
+    "Execution Of Script Located In Potentially Suspicious Directory"
+   ]
+  },
+  {
+   "id": "splunk:T1027/url_encoded_curl",
+   "source": "splunk/attack_data",
+   "kind": "sysmon-linux",
+   "events": 1,
+   "techniques": [
+    "T1027"
+   ],
+   "rules_fired": 1,
+   "alerts": 1,
+   "any_alert": true,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": [
+    "Curl Usage on Linux"
+   ]
+  },
+  {
+   "id": "splunk:T1030/linux_auditd_split_b_exec",
+   "source": "splunk/attack_data",
+   "kind": "auditd",
+   "events": 4,
+   "techniques": [
+    "T1030"
+   ],
+   "rules_fired": 0,
+   "alerts": 0,
+   "any_alert": false,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": []
+  },
+  {
+   "id": "splunk:T1030/linux_auditd_split_syscall",
+   "source": "splunk/attack_data",
+   "kind": "auditd",
+   "events": 1,
+   "techniques": [
+    "T1030"
+   ],
+   "rules_fired": 1,
+   "alerts": 1,
+   "any_alert": true,
+   "technique_detected": true,
+   "technique_rules": [
+    "Split A File Into Pieces - Linux"
+   ],
+   "top_rules": [
+    "Split A File Into Pieces - Linux"
+   ]
+  },
+  {
+   "id": "splunk:T1030/linux_auditd_split_syscall_new",
+   "source": "splunk/attack_data",
+   "kind": "auditd",
+   "events": 2,
+   "techniques": [
+    "T1030"
+   ],
+   "rules_fired": 1,
+   "alerts": 2,
+   "any_alert": true,
+   "technique_detected": true,
+   "technique_rules": [
+    "Split A File Into Pieces - Linux"
+   ],
+   "top_rules": [
+    "Split A File Into Pieces - Linux"
+   ]
+  },
+  {
+   "id": "splunk:T1033/linux_auditd_whoami",
+   "source": "splunk/attack_data",
+   "kind": "auditd",
+   "events": 3,
+   "techniques": [
+    "T1033"
+   ],
+   "rules_fired": 0,
+   "alerts": 0,
+   "any_alert": false,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": []
+  },
+  {
+   "id": "splunk:T1033/linux_auditd_whoami_new",
+   "source": "splunk/attack_data",
+   "kind": "auditd",
+   "events": 3,
+   "techniques": [
+    "T1033"
+   ],
+   "rules_fired": 0,
+   "alerts": 0,
+   "any_alert": false,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": []
+  },
+  {
+   "id": "splunk:T1053.002/at_execution",
+   "source": "splunk/attack_data",
+   "kind": "sysmon-linux",
+   "events": 53954,
+   "techniques": [
+    "T1053.002"
+   ],
+   "rules_fired": 4,
+   "alerts": 16,
+   "any_alert": true,
+   "technique_detected": true,
+   "technique_rules": [
+    "Scheduled Task/Job At"
+   ],
+   "top_rules": [
+    "Process Discovery",
+    "Scheduled Task/Job At",
+    "File Deletion",
+    "Potentially Suspicious Execution From Tmp Folder"
+   ]
+  },
+  {
+   "id": "splunk:T1053.002/linux_auditd_at",
+   "source": "splunk/attack_data",
+   "kind": "auditd",
+   "events": 14,
+   "techniques": [
+    "T1053.002"
+   ],
+   "rules_fired": 0,
+   "alerts": 0,
+   "any_alert": false,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": []
+  },
+  {
+   "id": "splunk:T1053.002/linux_auditd_chown_root",
+   "source": "splunk/attack_data",
+   "kind": "auditd",
+   "events": 18,
+   "techniques": [
+    "T1053.002"
+   ],
+   "rules_fired": 0,
+   "alerts": 0,
+   "any_alert": false,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": []
+  },
+  {
+   "id": "splunk:T1053.002/linux_new_auditd_at",
+   "source": "splunk/attack_data",
+   "kind": "auditd",
+   "events": 9,
+   "techniques": [
+    "T1053.002"
+   ],
+   "rules_fired": 0,
+   "alerts": 0,
+   "any_alert": false,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": []
+  },
+  {
+   "id": "splunk:T1053.003/cronjobs_entry",
+   "source": "splunk/attack_data",
+   "kind": "sysmon-linux",
+   "events": 67214,
+   "techniques": [
+    "T1053.003"
+   ],
+   "rules_fired": 4,
+   "alerts": 46,
+   "any_alert": true,
+   "technique_detected": true,
+   "technique_rules": [
+    "New Cron File Created"
+   ],
+   "top_rules": [
+    "New Cron File Created",
+    "Process Discovery",
+    "Potentially Suspicious Execution From Tmp Folder",
+    "Potential Suspicious Change To Sensitive/Critical Files"
+   ]
+  },
+  {
+   "id": "splunk:T1053.003/crontab_edit_parameter",
+   "source": "splunk/attack_data",
+   "kind": "sysmon-linux",
+   "events": 57830,
+   "techniques": [
+    "T1053.003"
+   ],
+   "rules_fired": 5,
+   "alerts": 36,
+   "any_alert": true,
+   "technique_detected": true,
+   "technique_rules": [
+    "New Cron File Created"
+   ],
+   "top_rules": [
+    "New Cron File Created",
+    "Process Discovery",
+    "Potentially Suspicious Execution From Tmp Folder",
+    "Potential Suspicious Change To Sensitive/Critical Files",
+    "Execution Of Script Located In Potentially Suspicious Directory"
+   ]
+  },
+  {
+   "id": "splunk:T1053.003/crontab_list_parameter",
+   "source": "splunk/attack_data",
+   "kind": "sysmon-linux",
+   "events": 332,
+   "techniques": [
+    "T1053.003"
+   ],
+   "rules_fired": 3,
+   "alerts": 14,
+   "any_alert": true,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": [
+    "Process Discovery",
+    "Crontab Enumeration",
+    "File Deletion"
+   ]
+  },
+  {
+   "id": "splunk:T1053.003/linux_auditd_cron_file_audited",
+   "source": "splunk/attack_data",
+   "kind": "auditd",
+   "events": 19,
+   "techniques": [
+    "T1053.003"
+   ],
+   "rules_fired": 0,
+   "alerts": 0,
+   "any_alert": false,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": []
+  },
+  {
+   "id": "splunk:T1053.003/linux_auditd_crontab_edit",
+   "source": "splunk/attack_data",
+   "kind": "auditd",
+   "events": 3,
+   "techniques": [
+    "T1053.003"
+   ],
+   "rules_fired": 0,
+   "alerts": 0,
+   "any_alert": false,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": []
+  },
+  {
+   "id": "splunk:T1053.003/linux_auditd_crontab_edit_new",
+   "source": "splunk/attack_data",
+   "kind": "auditd",
+   "events": 3,
+   "techniques": [
+    "T1053.003"
+   ],
+   "rules_fired": 0,
+   "alerts": 0,
+   "any_alert": false,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": []
+  },
+  {
+   "id": "splunk:T1053.006/linux_services_restart",
+   "source": "splunk/attack_data",
+   "kind": "auditd",
+   "events": 127,
+   "techniques": [
+    "T1053.006"
+   ],
+   "rules_fired": 0,
+   "alerts": 0,
+   "any_alert": false,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": []
+  },
+  {
+   "id": "splunk:T1053.006/service_systemd",
+   "source": "splunk/attack_data",
+   "kind": "sysmon-linux",
+   "events": 59630,
+   "techniques": [
+    "T1053.006"
+   ],
+   "rules_fired": 2,
+   "alerts": 15,
+   "any_alert": true,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": [
+    "Process Discovery",
+    "Chmod Targeting Sensitive Directories"
+   ]
+  },
+  {
+   "id": "splunk:T1059.004/linux_discovery_tools",
+   "source": "splunk/attack_data",
+   "kind": "sysmon-linux",
+   "events": 2447,
+   "techniques": [
+    "T1059.004"
+   ],
+   "rules_fired": 6,
+   "alerts": 1230,
+   "any_alert": true,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": [
+    "Process Discovery",
+    "Local System Accounts Discovery - Linux",
+    "File and Directory Discovery - Linux",
+    "Crontab Enumeration",
+    "Access of Sudoers File Content"
+   ]
+  },
+  {
+   "id": "splunk:T1068/linux_auditd_copy_fail",
+   "source": "splunk/attack_data",
+   "kind": "auditd",
+   "events": 241,
+   "techniques": [
+    "T1068"
+   ],
+   "rules_fired": 0,
+   "alerts": 0,
+   "any_alert": false,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": []
+  },
+  {
+   "id": "splunk:T1068/linux_dirtyfrag",
+   "source": "splunk/attack_data",
+   "kind": "none",
+   "events": 0,
+   "techniques": [
+    "T1068"
+   ],
+   "rules_fired": 0,
+   "alerts": 0,
+   "any_alert": false,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": []
+  },
+  {
+   "id": "splunk:T1068/linux_pedit",
+   "source": "splunk/attack_data",
+   "kind": "auditd",
+   "events": 2,
+   "techniques": [
+    "T1068"
+   ],
+   "rules_fired": 0,
+   "alerts": 0,
+   "any_alert": false,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": []
+  },
+  {
+   "id": "splunk:T1068/pkexec",
+   "source": "splunk/attack_data",
+   "kind": "sysmon-linux",
+   "events": 1,
+   "techniques": [
+    "T1068"
+   ],
+   "rules_fired": 0,
+   "alerts": 0,
+   "any_alert": false,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": []
+  },
+  {
+   "id": "splunk:T1078/aws_create_policy_version",
+   "source": "splunk/attack_data",
+   "kind": "cloudtrail",
+   "events": 3,
+   "techniques": [
+    "T1078"
+   ],
+   "rules_fired": 0,
+   "alerts": 0,
+   "any_alert": false,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": []
+  },
+  {
+   "id": "splunk:T1078/aws_createaccesskey",
+   "source": "splunk/attack_data",
+   "kind": "cloudtrail",
+   "events": 75,
+   "techniques": [
+    "T1078"
+   ],
+   "rules_fired": 2,
+   "alerts": 93,
+   "any_alert": true,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": [
+    "AWS IAM Backdoor Users Keys",
+    "AWS STS AssumeRole Misuse"
+   ]
+  },
+  {
+   "id": "splunk:T1078/aws_createloginprofile",
+   "source": "splunk/attack_data",
+   "kind": "cloudtrail",
+   "events": 37,
+   "techniques": [
+    "T1078"
+   ],
+   "rules_fired": 2,
+   "alerts": 62,
+   "any_alert": true,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": [
+    "AWS Successful Console Login Without MFA",
+    "AWS STS AssumeRole Misuse"
+   ]
+  },
+  {
+   "id": "splunk:T1078/aws_setdefaultpolicyversion",
+   "source": "splunk/attack_data",
+   "kind": "cloudtrail",
+   "events": 4,
+   "techniques": [
+    "T1078"
+   ],
+   "rules_fired": 0,
+   "alerts": 0,
+   "any_alert": false,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": []
+  },
+  {
+   "id": "splunk:T1078/aws_updateloginprofile",
+   "source": "splunk/attack_data",
+   "kind": "cloudtrail",
+   "events": 2,
+   "techniques": [
+    "T1078"
+   ],
+   "rules_fired": 1,
+   "alerts": 2,
+   "any_alert": true,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": [
+    "AWS User Login Profile Was Modified"
+   ]
+  },
+  {
+   "id": "splunk:T1078.004/aws_login_sfa",
+   "source": "splunk/attack_data",
+   "kind": "cloudtrail",
+   "events": 2,
+   "techniques": [
+    "T1078.004"
+   ],
+   "rules_fired": 2,
+   "alerts": 4,
+   "any_alert": true,
+   "technique_detected": true,
+   "technique_rules": [
+    "AWS Root Credentials",
+    "AWS Successful Console Login Without MFA"
+   ],
+   "top_rules": [
+    "AWS Successful Console Login Without MFA",
+    "AWS Root Credentials"
+   ]
+  },
+  {
+   "id": "splunk:T1082/atomic_red_team",
+   "source": "splunk/attack_data",
+   "kind": "sysmon-linux",
+   "events": 1,
+   "techniques": [
+    "T1082"
+   ],
+   "rules_fired": 0,
+   "alerts": 0,
+   "any_alert": false,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": []
+  },
+  {
+   "id": "splunk:T1082/linux_auditd_lsmod",
+   "source": "splunk/attack_data",
+   "kind": "auditd",
+   "events": 1,
+   "techniques": [
+    "T1082"
+   ],
+   "rules_fired": 0,
+   "alerts": 0,
+   "any_alert": false,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": []
+  },
+  {
+   "id": "splunk:T1082/linux_auditd_lsmod_new",
+   "source": "splunk/attack_data",
+   "kind": "auditd",
+   "events": 1,
+   "techniques": [
+    "T1082"
+   ],
+   "rules_fired": 0,
+   "alerts": 0,
+   "any_alert": false,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": []
+  },
+  {
+   "id": "splunk:T1083/linux_auditd_find_db",
+   "source": "splunk/attack_data",
+   "kind": "auditd",
+   "events": 8,
+   "techniques": [
+    "T1083"
+   ],
+   "rules_fired": 1,
+   "alerts": 1,
+   "any_alert": true,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": [
+    "Credentials In Files - Linux"
+   ]
+  },
+  {
+   "id": "splunk:T1083/linux_auditd_find_document",
+   "source": "splunk/attack_data",
+   "kind": "auditd",
+   "events": 102,
+   "techniques": [
+    "T1083"
+   ],
+   "rules_fired": 1,
+   "alerts": 4,
+   "any_alert": true,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": [
+    "Credentials In Files - Linux"
+   ]
+  },
+  {
+   "id": "splunk:T1083/linux_auditd_find_virtual_disk",
+   "source": "splunk/attack_data",
+   "kind": "auditd",
+   "events": 8,
+   "techniques": [
+    "T1083"
+   ],
+   "rules_fired": 1,
+   "alerts": 4,
+   "any_alert": true,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": [
+    "Credentials In Files - Linux"
+   ]
+  },
+  {
+   "id": "splunk:T1083/linux_auditd_hidden_file",
+   "source": "splunk/attack_data",
+   "kind": "auditd",
+   "events": 4,
+   "techniques": [
+    "T1083"
+   ],
+   "rules_fired": 1,
+   "alerts": 2,
+   "any_alert": true,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": [
+    "Hidden Files and Directories"
+   ]
+  },
+  {
+   "id": "splunk:T1087.004/aws_invoke_model_access_denied",
+   "source": "splunk/attack_data",
+   "kind": "cloudtrail",
+   "events": 1,
+   "techniques": [
+    "T1087.004"
+   ],
+   "rules_fired": 1,
+   "alerts": 1,
+   "any_alert": true,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": [
+    "AWS STS AssumeRole Misuse"
+   ]
+  },
+  {
+   "id": "splunk:T1098.004/linux_auditd_nopasswd",
+   "source": "splunk/attack_data",
+   "kind": "auditd",
+   "events": 4,
+   "techniques": [
+    "T1098.004"
+   ],
+   "rules_fired": 0,
+   "alerts": 0,
+   "any_alert": false,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": []
+  },
+  {
+   "id": "splunk:T1098.004/ssh_authorized_keys",
+   "source": "splunk/attack_data",
+   "kind": "sysmon-linux",
+   "events": 14566,
+   "techniques": [
+    "T1098.004"
+   ],
+   "rules_fired": 1,
+   "alerts": 5,
+   "any_alert": true,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": [
+    "Process Discovery"
+   ]
+  },
+  {
+   "id": "splunk:T1105/atomic_red_team",
+   "source": "splunk/attack_data",
+   "kind": "sysmon-linux",
+   "events": 140,
+   "techniques": [
+    "T1105"
+   ],
+   "rules_fired": 2,
+   "alerts": 43,
+   "any_alert": true,
+   "technique_detected": true,
+   "technique_rules": [
+    "Curl Usage on Linux",
+    "Suspicious Curl File Upload - Linux"
+   ],
+   "top_rules": [
+    "Curl Usage on Linux",
+    "Suspicious Curl File Upload - Linux"
+   ]
+  },
+  {
+   "id": "splunk:T1110.001/aws_login_failure",
+   "source": "splunk/attack_data",
+   "kind": "cloudtrail",
+   "events": 7,
+   "techniques": [
+    "T1110.001"
+   ],
+   "rules_fired": 1,
+   "alerts": 3,
+   "any_alert": true,
+   "technique_detected": true,
+   "technique_rules": [
+    "AWS ConsoleLogin Failed Authentication"
+   ],
+   "top_rules": [
+    "AWS ConsoleLogin Failed Authentication"
+   ]
+  },
+  {
+   "id": "splunk:T1110.002/aws_rds_password_reset",
+   "source": "splunk/attack_data",
+   "kind": "cloudtrail",
+   "events": 2,
+   "techniques": [
+    "T1110.002"
+   ],
+   "rules_fired": 2,
+   "alerts": 4,
+   "any_alert": true,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": [
+    "AWS RDS Master Password Change",
+    "AWS STS AssumeRole Misuse"
+   ]
+  },
+  {
+   "id": "splunk:T1110.003/aws_mulitple_failed_console_login",
+   "source": "splunk/attack_data",
+   "kind": "cloudtrail",
+   "events": 31,
+   "techniques": [
+    "T1110.003"
+   ],
+   "rules_fired": 1,
+   "alerts": 31,
+   "any_alert": true,
+   "technique_detected": true,
+   "technique_rules": [
+    "AWS ConsoleLogin Failed Authentication"
+   ],
+   "top_rules": [
+    "AWS ConsoleLogin Failed Authentication"
+   ]
+  },
+  {
+   "id": "splunk:T1110.003/aws_multiple_login_fail_per_user",
+   "source": "splunk/attack_data",
+   "kind": "cloudtrail",
+   "events": 28,
+   "techniques": [
+    "T1110.003"
+   ],
+   "rules_fired": 1,
+   "alerts": 1,
+   "any_alert": true,
+   "technique_detected": true,
+   "technique_rules": [
+    "AWS ConsoleLogin Failed Authentication"
+   ],
+   "top_rules": [
+    "AWS ConsoleLogin Failed Authentication"
+   ]
+  },
+  {
+   "id": "splunk:T1115/atomic_red_team",
+   "source": "splunk/attack_data",
+   "kind": "sysmon-linux",
+   "events": 28,
+   "techniques": [
+    "T1115"
+   ],
+   "rules_fired": 1,
+   "alerts": 1,
+   "any_alert": true,
+   "technique_detected": true,
+   "technique_rules": [
+    "Clipboard Collection with Xclip Tool"
+   ],
+   "top_rules": [
+    "Clipboard Collection with Xclip Tool"
+   ]
+  },
+  {
+   "id": "splunk:T1115/linux_auditd_xclip",
+   "source": "splunk/attack_data",
+   "kind": "auditd",
+   "events": 6,
+   "techniques": [
+    "T1115"
+   ],
+   "rules_fired": 0,
+   "alerts": 0,
+   "any_alert": false,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": []
+  },
+  {
+   "id": "splunk:T1119/aws_exfil_datasync",
+   "source": "splunk/attack_data",
+   "kind": "cloudtrail",
+   "events": 5,
+   "techniques": [
+    "T1119"
+   ],
+   "rules_fired": 1,
+   "alerts": 3,
+   "any_alert": true,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": [
+    "AWS STS AssumeRole Misuse"
+   ]
+  },
+  {
+   "id": "splunk:T1136.001/linux_auditd_add_user",
+   "source": "splunk/attack_data",
+   "kind": "auditd",
+   "events": 179,
+   "techniques": [
+    "T1136.001"
+   ],
+   "rules_fired": 0,
+   "alerts": 0,
+   "any_alert": false,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": []
+  },
+  {
+   "id": "splunk:T1136.001/linux_auditd_add_user_type",
+   "source": "splunk/attack_data",
+   "kind": "auditd",
+   "events": 1,
+   "techniques": [
+    "T1136.001"
+   ],
+   "rules_fired": 1,
+   "alerts": 1,
+   "any_alert": true,
+   "technique_detected": true,
+   "technique_rules": [
+    "Creation Of An User Account"
+   ],
+   "top_rules": [
+    "Creation Of An User Account"
+   ]
+  },
+  {
+   "id": "splunk:T1140/linux_auditd_base64",
+   "source": "splunk/attack_data",
+   "kind": "auditd",
+   "events": 11,
+   "techniques": [
+    "T1140"
+   ],
+   "rules_fired": 0,
+   "alerts": 0,
+   "any_alert": false,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": []
+  },
+  {
+   "id": "splunk:T1185/aws_concurrent_sessions_from_different_ips",
+   "source": "splunk/attack_data",
+   "kind": "cloudtrail",
+   "events": 2,
+   "techniques": [
+    "T1185"
+   ],
+   "rules_fired": 1,
+   "alerts": 2,
+   "any_alert": true,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": [
+    "AWS Root Credentials"
+   ]
+  },
+  {
+   "id": "splunk:T1190/outbound_java",
+   "source": "splunk/attack_data",
+   "kind": "sysmon-linux",
+   "events": 12216,
+   "techniques": [
+    "T1190"
+   ],
+   "rules_fired": 4,
+   "alerts": 7,
+   "any_alert": true,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": [
+    "Process Discovery",
+    "Bash Interactive Shell",
+    "Linux Reverse Shell Indicator",
+    "System Information Discovery"
+   ]
+  },
+  {
+   "id": "splunk:T1190/spring4shell",
+   "source": "splunk/attack_data",
+   "kind": "sysmon-linux",
+   "events": 151,
+   "techniques": [
+    "T1190"
+   ],
+   "rules_fired": 3,
+   "alerts": 4,
+   "any_alert": true,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": [
+    "File Deletion",
+    "Suspicious Java Children Processes",
+    "Execution Of Script Located In Potentially Suspicious Directory"
+   ]
+  },
+  {
+   "id": "splunk:T1200/linux_auditd_swapoff",
+   "source": "splunk/attack_data",
+   "kind": "auditd",
+   "events": 2,
+   "techniques": [
+    "T1200"
+   ],
+   "rules_fired": 0,
+   "alerts": 0,
+   "any_alert": false,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": []
+  },
+  {
+   "id": "splunk:T1201/aws_password_policy",
+   "source": "splunk/attack_data",
+   "kind": "cloudtrail",
+   "events": 7,
+   "techniques": [
+    "T1201"
+   ],
+   "rules_fired": 1,
+   "alerts": 5,
+   "any_alert": true,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": [
+    "AWS Root Credentials"
+   ]
+  },
+  {
+   "id": "splunk:T1204/aws_updatelambdafunctioncode",
+   "source": "splunk/attack_data",
+   "kind": "cloudtrail",
+   "events": 2,
+   "techniques": [
+    "T1204"
+   ],
+   "rules_fired": 0,
+   "alerts": 0,
+   "any_alert": false,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": []
+  },
+  {
+   "id": "splunk:T1222.002/linux_auditd_chattr_i",
+   "source": "splunk/attack_data",
+   "kind": "auditd",
+   "events": 40,
+   "techniques": [
+    "T1222.002"
+   ],
+   "rules_fired": 0,
+   "alerts": 0,
+   "any_alert": false,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": []
+  },
+  {
+   "id": "splunk:T1222.002/linux_auditd_chmod_exec_attrib",
+   "source": "splunk/attack_data",
+   "kind": "auditd",
+   "events": 5,
+   "techniques": [
+    "T1222.002"
+   ],
+   "rules_fired": 0,
+   "alerts": 0,
+   "any_alert": false,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": []
+  },
+  {
+   "id": "splunk:T1485/aws_delete_knowledge_base",
+   "source": "splunk/attack_data",
+   "kind": "cloudtrail",
+   "events": 1,
+   "techniques": [
+    "T1485"
+   ],
+   "rules_fired": 1,
+   "alerts": 1,
+   "any_alert": true,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": [
+    "AWS STS AssumeRole Misuse"
+   ]
+  },
+  {
+   "id": "splunk:T1485/decommissioned_buckets",
+   "source": "splunk/attack_data",
+   "kind": "cloudtrail",
+   "events": 8,
+   "techniques": [
+    "T1485"
+   ],
+   "rules_fired": 1,
+   "alerts": 2,
+   "any_alert": true,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": [
+    "AWS Bucket Deleted"
+   ]
+  },
+  {
+   "id": "splunk:T1485/linux_auditd_dd_overwrite",
+   "source": "splunk/attack_data",
+   "kind": "auditd",
+   "events": 2,
+   "techniques": [
+    "T1485"
+   ],
+   "rules_fired": 0,
+   "alerts": 0,
+   "any_alert": false,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": []
+  },
+  {
+   "id": "splunk:T1485/linux_auditd_no_preserve_root",
+   "source": "splunk/attack_data",
+   "kind": "auditd",
+   "events": 4,
+   "techniques": [
+    "T1485"
+   ],
+   "rules_fired": 0,
+   "alerts": 0,
+   "any_alert": false,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": []
+  },
+  {
+   "id": "splunk:T1485/linux_auditd_shred",
+   "source": "splunk/attack_data",
+   "kind": "auditd",
+   "events": 4,
+   "techniques": [
+    "T1485"
+   ],
+   "rules_fired": 0,
+   "alerts": 0,
+   "any_alert": false,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": []
+  },
+  {
+   "id": "splunk:T1485/linux_dd_file_overwrite",
+   "source": "splunk/attack_data",
+   "kind": "sysmon-linux",
+   "events": 6911,
+   "techniques": [
+    "T1485"
+   ],
+   "rules_fired": 1,
+   "alerts": 5,
+   "any_alert": true,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": [
+    "Process Discovery"
+   ]
+  },
+  {
+   "id": "splunk:T1485/rm_boot_dir",
+   "source": "splunk/attack_data",
+   "kind": "sysmon-linux",
+   "events": 675,
+   "techniques": [
+    "T1485"
+   ],
+   "rules_fired": 2,
+   "alerts": 19,
+   "any_alert": true,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": [
+    "Process Discovery",
+    "File Deletion"
+   ]
+  },
+  {
+   "id": "splunk:T1485/rm_shred_critical_dir",
+   "source": "splunk/attack_data",
+   "kind": "sysmon-linux",
+   "events": 617,
+   "techniques": [
+    "T1485"
+   ],
+   "rules_fired": 7,
+   "alerts": 31,
+   "any_alert": true,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": [
+    "Process Discovery",
+    "File Deletion",
+    "System Information Discovery",
+    "Potential Exploitation of CVE-2024-3094 - Suspicious SSH Child Process",
+    "System Network Connections Discovery - Linux"
+   ]
+  },
+  {
+   "id": "splunk:T1486/aws_kms_key",
+   "source": "splunk/attack_data",
+   "kind": "cloudtrail",
+   "events": 674,
+   "techniques": [
+    "T1486"
+   ],
+   "rules_fired": 1,
+   "alerts": 669,
+   "any_alert": true,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": [
+    "AWS STS AssumeRole Misuse"
+   ]
+  },
+  {
+   "id": "splunk:T1486/s3_file_encryption",
+   "source": "splunk/attack_data",
+   "kind": "cloudtrail",
+   "events": 2,
+   "techniques": [
+    "T1486"
+   ],
+   "rules_fired": 0,
+   "alerts": 0,
+   "any_alert": false,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": []
+  },
+  {
+   "id": "splunk:T1489/linux_auditd_auditd_service_stop",
+   "source": "splunk/attack_data",
+   "kind": "auditd",
+   "events": 8,
+   "techniques": [
+    "T1489"
+   ],
+   "rules_fired": 0,
+   "alerts": 0,
+   "any_alert": false,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": []
+  },
+  {
+   "id": "splunk:T1489/linux_auditd_osquerd_service_stop",
+   "source": "splunk/attack_data",
+   "kind": "auditd",
+   "events": 8,
+   "techniques": [
+    "T1489"
+   ],
+   "rules_fired": 0,
+   "alerts": 0,
+   "any_alert": false,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": []
+  },
+  {
+   "id": "splunk:T1489/linux_auditd_service_stop",
+   "source": "splunk/attack_data",
+   "kind": "auditd",
+   "events": 1,
+   "techniques": [
+    "T1489"
+   ],
+   "rules_fired": 0,
+   "alerts": 0,
+   "any_alert": false,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": []
+  },
+  {
+   "id": "splunk:T1489/linux_auditd_sysmon_service_stop",
+   "source": "splunk/attack_data",
+   "kind": "auditd",
+   "events": 8,
+   "techniques": [
+    "T1489"
+   ],
+   "rules_fired": 0,
+   "alerts": 0,
+   "any_alert": false,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": []
+  },
+  {
+   "id": "splunk:T1489/linux_service_stop_disable",
+   "source": "splunk/attack_data",
+   "kind": "sysmon-linux",
+   "events": 3331,
+   "techniques": [
+    "T1489"
+   ],
+   "rules_fired": 7,
+   "alerts": 67,
+   "any_alert": true,
+   "technique_detected": true,
+   "technique_rules": [
+    "Disable Or Stop Services"
+   ],
+   "top_rules": [
+    "File and Directory Discovery - Linux",
+    "File Deletion",
+    "Process Discovery",
+    "Chmod Targeting Sensitive Directories",
+    "Local System Accounts Discovery - Linux"
+   ]
+  },
+  {
+   "id": "splunk:T1490/aws_bucket_version",
+   "source": "splunk/attack_data",
+   "kind": "cloudtrail",
+   "events": 2,
+   "techniques": [
+    "T1490"
+   ],
+   "rules_fired": 2,
+   "alerts": 4,
+   "any_alert": true,
+   "technique_detected": true,
+   "technique_rules": [
+    "AWS S3 Bucket Versioning Disable"
+   ],
+   "top_rules": [
+    "AWS S3 Bucket Versioning Disable",
+    "AWS STS AssumeRole Misuse"
+   ]
+  },
+  {
+   "id": "splunk:T1530/aws_exfil_high_no_getobject",
+   "source": "splunk/attack_data",
+   "kind": "cloudtrail",
+   "events": 100,
+   "techniques": [
+    "T1530"
+   ],
+   "rules_fired": 0,
+   "alerts": 0,
+   "any_alert": false,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": []
+  },
+  {
+   "id": "splunk:T1530/aws_s3_public_bucket",
+   "source": "splunk/attack_data",
+   "kind": "cloudtrail",
+   "events": 9,
+   "techniques": [
+    "T1530"
+   ],
+   "rules_fired": 1,
+   "alerts": 2,
+   "any_alert": true,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": [
+    "AWS STS AssumeRole Misuse"
+   ]
+  },
+  {
+   "id": "splunk:T1537/aws_ami_shared_public",
+   "source": "splunk/attack_data",
+   "kind": "cloudtrail",
+   "events": 2,
+   "techniques": [
+    "T1537"
+   ],
+   "rules_fired": 1,
+   "alerts": 2,
+   "any_alert": true,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": [
+    "AWS STS AssumeRole Misuse"
+   ]
+  },
+  {
+   "id": "splunk:T1537/aws_snapshot_exfil",
+   "source": "splunk/attack_data",
+   "kind": "cloudtrail",
+   "events": 9,
+   "techniques": [
+    "T1537"
+   ],
+   "rules_fired": 2,
+   "alerts": 12,
+   "any_alert": true,
+   "technique_detected": true,
+   "technique_rules": [
+    "AWS Snapshot Backup Exfiltration"
+   ],
+   "top_rules": [
+    "AWS Snapshot Backup Exfiltration",
+    "AWS STS AssumeRole Misuse"
+   ]
+  },
+  {
+   "id": "splunk:T1546.004/linux_auditd_unix_shell_mod_config",
+   "source": "splunk/attack_data",
+   "kind": "auditd",
+   "events": 7,
+   "techniques": [
+    "T1546.004"
+   ],
+   "rules_fired": 0,
+   "alerts": 0,
+   "any_alert": false,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": []
+  },
+  {
+   "id": "splunk:T1546.004/linux_init_profile",
+   "source": "splunk/attack_data",
+   "kind": "sysmon-linux",
+   "events": 42342,
+   "techniques": [
+    "T1546.004"
+   ],
+   "rules_fired": 3,
+   "alerts": 19,
+   "any_alert": true,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": [
+    "Process Discovery",
+    "File Deletion",
+    "Potentially Suspicious Shell Script Creation in Profile Folder"
+   ]
+  },
+  {
+   "id": "splunk:T1547.006/linux_auditd_insmod",
+   "source": "splunk/attack_data",
+   "kind": "auditd",
+   "events": 2,
+   "techniques": [
+    "T1547.006"
+   ],
+   "rules_fired": 1,
+   "alerts": 2,
+   "any_alert": true,
+   "technique_detected": true,
+   "technique_rules": [
+    "Loading of Kernel Module via Insmod"
+   ],
+   "top_rules": [
+    "Loading of Kernel Module via Insmod"
+   ]
+  },
+  {
+   "id": "splunk:T1547.006/linux_auditd_insmod_new",
+   "source": "splunk/attack_data",
+   "kind": "auditd",
+   "events": 1,
+   "techniques": [
+    "T1547.006"
+   ],
+   "rules_fired": 1,
+   "alerts": 1,
+   "any_alert": true,
+   "technique_detected": true,
+   "technique_rules": [
+    "Loading of Kernel Module via Insmod"
+   ],
+   "top_rules": [
+    "Loading of Kernel Module via Insmod"
+   ]
+  },
+  {
+   "id": "splunk:T1547.006/linux_auditd_modprobe",
+   "source": "splunk/attack_data",
+   "kind": "auditd",
+   "events": 3,
+   "techniques": [
+    "T1547.006"
+   ],
+   "rules_fired": 0,
+   "alerts": 0,
+   "any_alert": false,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": []
+  },
+  {
+   "id": "splunk:T1547.006/linux_auditd_modprobe_new",
+   "source": "splunk/attack_data",
+   "kind": "auditd",
+   "events": 1,
+   "techniques": [
+    "T1547.006"
+   ],
+   "rules_fired": 0,
+   "alerts": 0,
+   "any_alert": false,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": []
+  },
+  {
+   "id": "splunk:T1547.006/linux_auditd_modprobe_unload_module",
+   "source": "splunk/attack_data",
+   "kind": "auditd",
+   "events": 10,
+   "techniques": [
+    "T1547.006"
+   ],
+   "rules_fired": 0,
+   "alerts": 0,
+   "any_alert": false,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": []
+  },
+  {
+   "id": "splunk:T1547.006/linux_auditd_rmmod",
+   "source": "splunk/attack_data",
+   "kind": "auditd",
+   "events": 2,
+   "techniques": [
+    "T1547.006"
+   ],
+   "rules_fired": 0,
+   "alerts": 0,
+   "any_alert": false,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": []
+  },
+  {
+   "id": "splunk:T1547.006/linux_auditd_rmmod_new",
+   "source": "splunk/attack_data",
+   "kind": "auditd",
+   "events": 1,
+   "techniques": [
+    "T1547.006"
+   ],
+   "rules_fired": 0,
+   "alerts": 0,
+   "any_alert": false,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": []
+  },
+  {
+   "id": "splunk:T1547.006/loading_linux_kernel_module",
+   "source": "splunk/attack_data",
+   "kind": "sysmon-linux",
+   "events": 15640,
+   "techniques": [
+    "T1547.006"
+   ],
+   "rules_fired": 3,
+   "alerts": 6,
+   "any_alert": true,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": [
+    "Process Discovery",
+    "System Information Discovery",
+    "File and Directory Discovery - Linux"
+   ]
+  },
+  {
+   "id": "splunk:T1548/apt",
+   "source": "splunk/attack_data",
+   "kind": "sysmon-linux",
+   "events": 44,
+   "techniques": [
+    "T1548"
+   ],
+   "rules_fired": 1,
+   "alerts": 1,
+   "any_alert": true,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": [
+    "Shell Invocation via Apt - Linux"
+   ]
+  },
+  {
+   "id": "splunk:T1548/apt_get",
+   "source": "splunk/attack_data",
+   "kind": "sysmon-linux",
+   "events": 2,
+   "techniques": [
+    "T1548"
+   ],
+   "rules_fired": 1,
+   "alerts": 1,
+   "any_alert": true,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": [
+    "Shell Invocation via Apt - Linux"
+   ]
+  },
+  {
+   "id": "splunk:T1548/awk",
+   "source": "splunk/attack_data",
+   "kind": "sysmon-linux",
+   "events": 18,
+   "techniques": [
+    "T1548"
+   ],
+   "rules_fired": 1,
+   "alerts": 1,
+   "any_alert": true,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": [
+    "Suspicious Invocation of Shell via AWK - Linux"
+   ]
+  },
+  {
+   "id": "splunk:T1548/busybox",
+   "source": "splunk/attack_data",
+   "kind": "sysmon-linux",
+   "events": 2,
+   "techniques": [
+    "T1548"
+   ],
+   "rules_fired": 0,
+   "alerts": 0,
+   "any_alert": false,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": []
+  },
+  {
+   "id": "splunk:T1548/c89",
+   "source": "splunk/attack_data",
+   "kind": "sysmon-linux",
+   "events": 10,
+   "techniques": [
+    "T1548"
+   ],
+   "rules_fired": 0,
+   "alerts": 0,
+   "any_alert": false,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": []
+  },
+  {
+   "id": "splunk:T1548/c99",
+   "source": "splunk/attack_data",
+   "kind": "sysmon-linux",
+   "events": 3,
+   "techniques": [
+    "T1548"
+   ],
+   "rules_fired": 0,
+   "alerts": 0,
+   "any_alert": false,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": []
+  },
+  {
+   "id": "splunk:T1548/composer",
+   "source": "splunk/attack_data",
+   "kind": "sysmon-linux",
+   "events": 6,
+   "techniques": [
+    "T1548"
+   ],
+   "rules_fired": 0,
+   "alerts": 0,
+   "any_alert": false,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": []
+  },
+  {
+   "id": "splunk:T1548/cpulimit",
+   "source": "splunk/attack_data",
+   "kind": "sysmon-linux",
+   "events": 9,
+   "techniques": [
+    "T1548"
+   ],
+   "rules_fired": 0,
+   "alerts": 0,
+   "any_alert": false,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": []
+  },
+  {
+   "id": "splunk:T1548/csvtool",
+   "source": "splunk/attack_data",
+   "kind": "sysmon-linux",
+   "events": 4,
+   "techniques": [
+    "T1548"
+   ],
+   "rules_fired": 0,
+   "alerts": 0,
+   "any_alert": false,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": []
+  },
+  {
+   "id": "splunk:T1548/docker",
+   "source": "splunk/attack_data",
+   "kind": "sysmon-linux",
+   "events": 598,
+   "techniques": [
+    "T1548"
+   ],
+   "rules_fired": 2,
+   "alerts": 6,
+   "any_alert": true,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": [
+    "Potentially Suspicious Shell Script Creation in Profile Folder",
+    "New Cron File Created"
+   ]
+  },
+  {
+   "id": "splunk:T1548/emacs",
+   "source": "splunk/attack_data",
+   "kind": "sysmon-linux",
+   "events": 22,
+   "techniques": [
+    "T1548"
+   ],
+   "rules_fired": 0,
+   "alerts": 0,
+   "any_alert": false,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": []
+  },
+  {
+   "id": "splunk:T1548/find",
+   "source": "splunk/attack_data",
+   "kind": "sysmon-linux",
+   "events": 6,
+   "techniques": [
+    "T1548"
+   ],
+   "rules_fired": 2,
+   "alerts": 6,
+   "any_alert": true,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": [
+    "File and Directory Discovery - Linux",
+    "Shell Execution via Find - Linux"
+   ]
+  },
+  {
+   "id": "splunk:T1548/gawk",
+   "source": "splunk/attack_data",
+   "kind": "sysmon-linux",
+   "events": 4,
+   "techniques": [
+    "T1548"
+   ],
+   "rules_fired": 1,
+   "alerts": 2,
+   "any_alert": true,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": [
+    "Suspicious Invocation of Shell via AWK - Linux"
+   ]
+  },
+  {
+   "id": "splunk:T1548/gdb",
+   "source": "splunk/attack_data",
+   "kind": "sysmon-linux",
+   "events": 13,
+   "techniques": [
+    "T1548"
+   ],
+   "rules_fired": 0,
+   "alerts": 0,
+   "any_alert": false,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": []
+  },
+  {
+   "id": "splunk:T1548/gem",
+   "source": "splunk/attack_data",
+   "kind": "sysmon-linux",
+   "events": 4,
+   "techniques": [
+    "T1548"
+   ],
+   "rules_fired": 0,
+   "alerts": 0,
+   "any_alert": false,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": []
+  },
+  {
+   "id": "splunk:T1548/make",
+   "source": "splunk/attack_data",
+   "kind": "sysmon-linux",
+   "events": 5,
+   "techniques": [
+    "T1548"
+   ],
+   "rules_fired": 0,
+   "alerts": 0,
+   "any_alert": false,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": []
+  },
+  {
+   "id": "splunk:T1548/mysql",
+   "source": "splunk/attack_data",
+   "kind": "sysmon-linux",
+   "events": 8,
+   "techniques": [
+    "T1548"
+   ],
+   "rules_fired": 0,
+   "alerts": 0,
+   "any_alert": false,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": []
+  },
+  {
+   "id": "splunk:T1548/node",
+   "source": "splunk/attack_data",
+   "kind": "sysmon-linux",
+   "events": 17,
+   "techniques": [
+    "T1548"
+   ],
+   "rules_fired": 0,
+   "alerts": 0,
+   "any_alert": false,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": []
+  },
+  {
+   "id": "splunk:T1548/octave",
+   "source": "splunk/attack_data",
+   "kind": "sysmon-linux",
+   "events": 6,
+   "techniques": [
+    "T1548"
+   ],
+   "rules_fired": 0,
+   "alerts": 0,
+   "any_alert": false,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": []
+  },
+  {
+   "id": "splunk:T1548/openvpn",
+   "source": "splunk/attack_data",
+   "kind": "sysmon-linux",
+   "events": 8,
+   "techniques": [
+    "T1548"
+   ],
+   "rules_fired": 0,
+   "alerts": 0,
+   "any_alert": false,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": []
+  },
+  {
+   "id": "splunk:T1548/php",
+   "source": "splunk/attack_data",
+   "kind": "sysmon-linux",
+   "events": 10,
+   "techniques": [
+    "T1548"
+   ],
+   "rules_fired": 0,
+   "alerts": 0,
+   "any_alert": false,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": []
+  },
+  {
+   "id": "splunk:T1548/puppet",
+   "source": "splunk/attack_data",
+   "kind": "sysmon-linux",
+   "events": 4,
+   "techniques": [
+    "T1548"
+   ],
+   "rules_fired": 0,
+   "alerts": 0,
+   "any_alert": false,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": []
+  },
+  {
+   "id": "splunk:T1548/rpm",
+   "source": "splunk/attack_data",
+   "kind": "sysmon-linux",
+   "events": 2,
+   "techniques": [
+    "T1548"
+   ],
+   "rules_fired": 0,
+   "alerts": 0,
+   "any_alert": false,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": []
+  },
+  {
+   "id": "splunk:T1548/ruby",
+   "source": "splunk/attack_data",
+   "kind": "sysmon-linux",
+   "events": 6,
+   "techniques": [
+    "T1548"
+   ],
+   "rules_fired": 0,
+   "alerts": 0,
+   "any_alert": false,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": []
+  },
+  {
+   "id": "splunk:T1548/sqlite3",
+   "source": "splunk/attack_data",
+   "kind": "sysmon-linux",
+   "events": 8,
+   "techniques": [
+    "T1548"
+   ],
+   "rules_fired": 0,
+   "alerts": 0,
+   "any_alert": false,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": []
+  },
+  {
+   "id": "splunk:T1548/telnet",
+   "source": "splunk/attack_data",
+   "kind": "sysmon-linux",
+   "events": 1,
+   "techniques": [
+    "T1548"
+   ],
+   "rules_fired": 0,
+   "alerts": 0,
+   "any_alert": false,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": []
+  },
+  {
+   "id": "splunk:T1548.001/chmod_uid",
+   "source": "splunk/attack_data",
+   "kind": "sysmon-linux",
+   "events": 23649,
+   "techniques": [
+    "T1548.001"
+   ],
+   "rules_fired": 2,
+   "alerts": 9,
+   "any_alert": true,
+   "technique_detected": true,
+   "technique_rules": [
+    "Linux Setuid Capability Set on a Binary via Setcap Utility"
+   ],
+   "top_rules": [
+    "Process Discovery",
+    "Linux Setuid Capability Set on a Binary via Setcap Utility"
+   ]
+  },
+  {
+   "id": "splunk:T1548.001/linux_auditd_setuid",
+   "source": "splunk/attack_data",
+   "kind": "auditd",
+   "events": 53,
+   "techniques": [
+    "T1548.001"
+   ],
+   "rules_fired": 0,
+   "alerts": 0,
+   "any_alert": false,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": []
+  },
+  {
+   "id": "splunk:T1548.001/linux_setcap",
+   "source": "splunk/attack_data",
+   "kind": "sysmon-linux",
+   "events": 16016,
+   "techniques": [
+    "T1548.001"
+   ],
+   "rules_fired": 2,
+   "alerts": 9,
+   "any_alert": true,
+   "technique_detected": true,
+   "technique_rules": [
+    "Linux Setuid Capability Set on a Binary via Setcap Utility"
+   ],
+   "top_rules": [
+    "Process Discovery",
+    "Linux Setuid Capability Set on a Binary via Setcap Utility"
+   ]
+  },
+  {
+   "id": "splunk:T1548.003/doas",
+   "source": "splunk/attack_data",
+   "kind": "sysmon-linux",
+   "events": 7577,
+   "techniques": [
+    "T1548.003"
+   ],
+   "rules_fired": 3,
+   "alerts": 8,
+   "any_alert": true,
+   "technique_detected": true,
+   "technique_rules": [
+    "Linux Doas Conf File Creation"
+   ],
+   "top_rules": [
+    "Process Discovery",
+    "Local Groups Discovery - Linux",
+    "Linux Doas Conf File Creation"
+   ]
+  },
+  {
+   "id": "splunk:T1548.003/doas_exec",
+   "source": "splunk/attack_data",
+   "kind": "sysmon-linux",
+   "events": 14878,
+   "techniques": [
+    "T1548.003"
+   ],
+   "rules_fired": 2,
+   "alerts": 6,
+   "any_alert": true,
+   "technique_detected": true,
+   "technique_rules": [
+    "Linux Doas Tool Execution"
+   ],
+   "top_rules": [
+    "Process Discovery",
+    "Linux Doas Tool Execution"
+   ]
+  },
+  {
+   "id": "splunk:T1548.003/linux_adduser",
+   "source": "splunk/attack_data",
+   "kind": "sysmon-linux",
+   "events": 11436,
+   "techniques": [
+    "T1548.003"
+   ],
+   "rules_fired": 2,
+   "alerts": 5,
+   "any_alert": true,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": [
+    "Process Discovery",
+    "File and Directory Discovery - Linux"
+   ]
+  },
+  {
+   "id": "splunk:T1548.003/linux_auditd_doas",
+   "source": "splunk/attack_data",
+   "kind": "auditd",
+   "events": 11,
+   "techniques": [
+    "T1548.003"
+   ],
+   "rules_fired": 0,
+   "alerts": 0,
+   "any_alert": false,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": []
+  },
+  {
+   "id": "splunk:T1548.003/linux_auditd_doas_new",
+   "source": "splunk/attack_data",
+   "kind": "auditd",
+   "events": 8,
+   "techniques": [
+    "T1548.003"
+   ],
+   "rules_fired": 0,
+   "alerts": 0,
+   "any_alert": false,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": []
+  },
+  {
+   "id": "splunk:T1548.003/linux_auditd_nopasswd",
+   "source": "splunk/attack_data",
+   "kind": "auditd",
+   "events": 3,
+   "techniques": [
+    "T1548.003"
+   ],
+   "rules_fired": 0,
+   "alerts": 0,
+   "any_alert": false,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": []
+  },
+  {
+   "id": "splunk:T1548.003/linux_auditd_sudo_su",
+   "source": "splunk/attack_data",
+   "kind": "auditd",
+   "events": 4548,
+   "techniques": [
+    "T1548.003"
+   ],
+   "rules_fired": 0,
+   "alerts": 0,
+   "any_alert": false,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": []
+  },
+  {
+   "id": "splunk:T1548.003/linux_auditd_sudoers_access",
+   "source": "splunk/attack_data",
+   "kind": "auditd",
+   "events": 1,
+   "techniques": [
+    "T1548.003"
+   ],
+   "rules_fired": 0,
+   "alerts": 0,
+   "any_alert": false,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": []
+  },
+  {
+   "id": "splunk:T1548.003/nopasswd_sudoers",
+   "source": "splunk/attack_data",
+   "kind": "sysmon-linux",
+   "events": 33731,
+   "techniques": [
+    "T1548.003"
+   ],
+   "rules_fired": 4,
+   "alerts": 15,
+   "any_alert": true,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": [
+    "Process Discovery",
+    "System Information Discovery",
+    "Potential Exploitation of CVE-2024-3094 - Suspicious SSH Child Process",
+    "System Network Connections Discovery - Linux"
+   ]
+  },
+  {
+   "id": "splunk:T1548.003/sudo_su",
+   "source": "splunk/attack_data",
+   "kind": "sysmon-linux",
+   "events": 12227,
+   "techniques": [
+    "T1548.003"
+   ],
+   "rules_fired": 5,
+   "alerts": 11,
+   "any_alert": true,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": [
+    "Process Discovery",
+    "System Information Discovery",
+    "Potential Exploitation of CVE-2024-3094 - Suspicious SSH Child Process",
+    "System Network Connections Discovery - Linux",
+    "Local Groups Discovery - Linux"
+   ]
+  },
+  {
+   "id": "splunk:T1548.003/sudoers_temp",
+   "source": "splunk/attack_data",
+   "kind": "sysmon-linux",
+   "events": 6743,
+   "techniques": [
+    "T1548.003"
+   ],
+   "rules_fired": 1,
+   "alerts": 5,
+   "any_alert": true,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": [
+    "Process Discovery"
+   ]
+  },
+  {
+   "id": "splunk:T1548.003/visudo",
+   "source": "splunk/attack_data",
+   "kind": "sysmon-linux",
+   "events": 29812,
+   "techniques": [
+    "T1548.003"
+   ],
+   "rules_fired": 4,
+   "alerts": 16,
+   "any_alert": true,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": [
+    "Process Discovery",
+    "Local System Accounts Discovery - Linux",
+    "Access of Sudoers File Content",
+    "Potential Suspicious Change To Sensitive/Critical Files"
+   ]
+  },
+  {
+   "id": "splunk:T1552/aws_getpassworddata",
+   "source": "splunk/attack_data",
+   "kind": "cloudtrail",
+   "events": 60,
+   "techniques": [
+    "T1552"
+   ],
+   "rules_fired": 1,
+   "alerts": 60,
+   "any_alert": true,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": [
+    "AWS STS AssumeRole Misuse"
+   ]
+  },
+  {
+   "id": "splunk:T1552.004/linux_auditd_find_gpg",
+   "source": "splunk/attack_data",
+   "kind": "auditd",
+   "events": 50,
+   "techniques": [
+    "T1552.004"
+   ],
+   "rules_fired": 1,
+   "alerts": 6,
+   "any_alert": true,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": [
+    "Credentials In Files - Linux"
+   ]
+  },
+  {
+   "id": "splunk:T1552.004/linux_auditd_find_ssh_files",
+   "source": "splunk/attack_data",
+   "kind": "auditd",
+   "events": 101,
+   "techniques": [
+    "T1552.004"
+   ],
+   "rules_fired": 2,
+   "alerts": 20,
+   "any_alert": true,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": [
+    "System Shutdown/Reboot - Linux",
+    "Credentials In Files - Linux"
+   ]
+  },
+  {
+   "id": "splunk:T1555.005/linux_auditd_find_credentials",
+   "source": "splunk/attack_data",
+   "kind": "auditd",
+   "events": 352,
+   "techniques": [
+    "T1555.005"
+   ],
+   "rules_fired": 1,
+   "alerts": 94,
+   "any_alert": true,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": [
+    "Credentials In Files - Linux"
+   ]
+  },
+  {
+   "id": "splunk:T1555.005/linux_auditd_find_password_db",
+   "source": "splunk/attack_data",
+   "kind": "auditd",
+   "events": 16,
+   "techniques": [
+    "T1555.005"
+   ],
+   "rules_fired": 1,
+   "alerts": 4,
+   "any_alert": true,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": [
+    "Credentials In Files - Linux"
+   ]
+  },
+  {
+   "id": "splunk:T1556.006/aws_new_mfa_method_registered_for_user",
+   "source": "splunk/attack_data",
+   "kind": "cloudtrail",
+   "events": 2,
+   "techniques": [
+    "T1556.006"
+   ],
+   "rules_fired": 1,
+   "alerts": 2,
+   "any_alert": true,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": [
+    "AWS Root Credentials"
+   ]
+  },
+  {
+   "id": "splunk:T1562.004/linux_auditd_disable_firewall",
+   "source": "splunk/attack_data",
+   "kind": "auditd",
+   "events": 1,
+   "techniques": [
+    "T1562.004"
+   ],
+   "rules_fired": 0,
+   "alerts": 0,
+   "any_alert": false,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": []
+  },
+  {
+   "id": "splunk:T1562.007/aws_create_acl",
+   "source": "splunk/attack_data",
+   "kind": "cloudtrail",
+   "events": 13274,
+   "techniques": [
+    "T1562.007"
+   ],
+   "rules_fired": 4,
+   "alerts": 13090,
+   "any_alert": true,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": [
+    "AWS STS AssumeRole Misuse",
+    "Ingress/Egress Security Group Modification",
+    "New Network ACL Entry Added",
+    "New Network Route Added"
+   ]
+  },
+  {
+   "id": "splunk:T1562.007/aws_delete_acl",
+   "source": "splunk/attack_data",
+   "kind": "cloudtrail",
+   "events": 13274,
+   "techniques": [
+    "T1562.007"
+   ],
+   "rules_fired": 4,
+   "alerts": 13090,
+   "any_alert": true,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": [
+    "AWS STS AssumeRole Misuse",
+    "Ingress/Egress Security Group Modification",
+    "New Network ACL Entry Added",
+    "New Network Route Added"
+   ]
+  },
+  {
+   "id": "splunk:T1562.008/aws_bedrock_delete_guardrails",
+   "source": "splunk/attack_data",
+   "kind": "cloudtrail",
+   "events": 1,
+   "techniques": [
+    "T1562.008"
+   ],
+   "rules_fired": 2,
+   "alerts": 2,
+   "any_alert": true,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": [
+    "AWS Bedrock Guardrail Deleted",
+    "AWS STS AssumeRole Misuse"
+   ]
+  },
+  {
+   "id": "splunk:T1562.008/aws_bedrock_delete_model_invocation_logging",
+   "source": "splunk/attack_data",
+   "kind": "cloudtrail",
+   "events": 1,
+   "techniques": [
+    "T1562.008"
+   ],
+   "rules_fired": 0,
+   "alerts": 0,
+   "any_alert": false,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": []
+  },
+  {
+   "id": "splunk:T1562.008/aws_delete_security_services",
+   "source": "splunk/attack_data",
+   "kind": "cloudtrail",
+   "events": 8,
+   "techniques": [
+    "T1562.008"
+   ],
+   "rules_fired": 0,
+   "alerts": 0,
+   "any_alert": false,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": []
+  },
+  {
+   "id": "splunk:T1562.008/delete_cloudwatch_log_group",
+   "source": "splunk/attack_data",
+   "kind": "cloudtrail",
+   "events": 4,
+   "techniques": [
+    "T1562.008"
+   ],
+   "rules_fired": 1,
+   "alerts": 3,
+   "any_alert": true,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": [
+    "AWS CloudTrail Important Change"
+   ]
+  },
+  {
+   "id": "splunk:T1562.008/put_bucketlifecycle",
+   "source": "splunk/attack_data",
+   "kind": "cloudtrail",
+   "events": 5,
+   "techniques": [
+    "T1562.008"
+   ],
+   "rules_fired": 1,
+   "alerts": 3,
+   "any_alert": true,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": [
+    "AWS STS AssumeRole Misuse"
+   ]
+  },
+  {
+   "id": "splunk:T1562.008/stop_delete_cloudtrail",
+   "source": "splunk/attack_data",
+   "kind": "cloudtrail",
+   "events": 3,
+   "techniques": [
+    "T1562.008"
+   ],
+   "rules_fired": 1,
+   "alerts": 3,
+   "any_alert": true,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": [
+    "AWS CloudTrail Important Change"
+   ]
+  },
+  {
+   "id": "splunk:T1562.008/update_cloudtrail",
+   "source": "splunk/attack_data",
+   "kind": "cloudtrail",
+   "events": 7,
+   "techniques": [
+    "T1562.008"
+   ],
+   "rules_fired": 2,
+   "alerts": 3,
+   "any_alert": true,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": [
+    "AWS CloudTrail Important Change",
+    "AWS Bucket Deleted"
+   ]
+  },
+  {
+   "id": "splunk:T1562.012/auditd_daemon_type",
+   "source": "splunk/attack_data",
+   "kind": "auditd",
+   "events": 68,
+   "techniques": [
+    "T1562.012"
+   ],
+   "rules_fired": 2,
+   "alerts": 5,
+   "any_alert": true,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": [
+    "Service Reload or Start - Linux",
+    "File or Folder Permissions Change"
+   ]
+  },
+  {
+   "id": "splunk:T1564.001/linux_auditd_hidden_file",
+   "source": "splunk/attack_data",
+   "kind": "auditd",
+   "events": 2,
+   "techniques": [
+    "T1564.001"
+   ],
+   "rules_fired": 1,
+   "alerts": 1,
+   "any_alert": true,
+   "technique_detected": true,
+   "technique_rules": [
+    "Hidden Files and Directories"
+   ],
+   "top_rules": [
+    "Hidden Files and Directories"
+   ]
+  },
+  {
+   "id": "splunk:T1569.002/linux_service_start",
+   "source": "splunk/attack_data",
+   "kind": "auditd",
+   "events": 211,
+   "techniques": [
+    "T1569.002"
+   ],
+   "rules_fired": 0,
+   "alerts": 0,
+   "any_alert": false,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": []
+  },
+  {
+   "id": "splunk:T1572/ngrok",
+   "source": "splunk/attack_data",
+   "kind": "sysmon-linux",
+   "events": 13,
+   "techniques": [
+    "T1572"
+   ],
+   "rules_fired": 0,
+   "alerts": 0,
+   "any_alert": false,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": []
+  },
+  {
+   "id": "splunk:T1574.006/lib_hijack",
+   "source": "splunk/attack_data",
+   "kind": "sysmon-linux",
+   "events": 27416,
+   "techniques": [
+    "T1574.006"
+   ],
+   "rules_fired": 1,
+   "alerts": 9,
+   "any_alert": true,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": [
+    "Process Discovery"
+   ]
+  },
+  {
+   "id": "splunk:T1574.006/linux_auditd_ldpreload",
+   "source": "splunk/attack_data",
+   "kind": "auditd",
+   "events": 4,
+   "techniques": [
+    "T1574.006"
+   ],
+   "rules_fired": 0,
+   "alerts": 0,
+   "any_alert": false,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": []
+  },
+  {
+   "id": "splunk:T1574.006/linux_auditd_preload_file",
+   "source": "splunk/attack_data",
+   "kind": "auditd",
+   "events": 6,
+   "techniques": [
+    "T1574.006"
+   ],
+   "rules_fired": 1,
+   "alerts": 4,
+   "any_alert": true,
+   "technique_detected": true,
+   "technique_rules": [
+    "Modification of ld.so.preload"
+   ],
+   "top_rules": [
+    "Modification of ld.so.preload"
+   ]
+  },
+  {
+   "id": "splunk:T1580/aws_bedrock_list_foundation_model_failures",
+   "source": "splunk/attack_data",
+   "kind": "cloudtrail",
+   "events": 12,
+   "techniques": [
+    "T1580"
+   ],
+   "rules_fired": 0,
+   "alerts": 0,
+   "any_alert": false,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": []
+  },
+  {
+   "id": "splunk:T1586.003/aws_console_login_multiple_ips",
+   "source": "splunk/attack_data",
+   "kind": "cloudtrail",
+   "events": 8,
+   "techniques": [
+    "T1586.003"
+   ],
+   "rules_fired": 3,
+   "alerts": 16,
+   "any_alert": true,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": [
+    "AWS Root Credentials",
+    "AWS Successful Console Login Without MFA",
+    "AWS ConsoleLogin Failed Authentication"
+   ]
+  },
+  {
+   "id": "splunk:T1621/aws_failed_mfa",
+   "source": "splunk/attack_data",
+   "kind": "cloudtrail",
+   "events": 14,
+   "techniques": [
+    "T1621"
+   ],
+   "rules_fired": 2,
+   "alerts": 28,
+   "any_alert": true,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": [
+    "AWS ConsoleLogin Failed Authentication",
+    "AWS Root Credentials"
+   ]
+  },
+  {
+   "id": "splunk:T1621/aws_mfa_disabled",
+   "source": "splunk/attack_data",
+   "kind": "cloudtrail",
+   "events": 2,
+   "techniques": [
+    "T1621"
+   ],
+   "rules_fired": 1,
+   "alerts": 2,
+   "any_alert": true,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": [
+    "AWS Root Credentials"
+   ]
+  },
+  {
+   "id": "otrf:atomic/aws/collection/ec2_proxy_s3_exfiltration.zip",
+   "source": "OTRF",
+   "kind": "cloudtrail",
+   "events": 103,
+   "techniques": [
+    "T1078",
+    "T1530"
+   ],
+   "rules_fired": 1,
+   "alerts": 11,
+   "any_alert": true,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": [
+    "AWS STS AssumeRole Misuse"
+   ]
+  },
+  {
+   "id": "otrf:atomic/linux/defense_evasion/host/sh_binary_padding_dd.zip",
+   "source": "OTRF",
+   "kind": "auditd",
+   "events": 6,
+   "techniques": [
+    "T1027",
+    "T1027.001"
+   ],
+   "rules_fired": 2,
+   "alerts": 2,
+   "any_alert": true,
+   "technique_detected": true,
+   "technique_rules": [
+    "Binary Padding - Linux"
+   ],
+   "top_rules": [
+    "Binary Padding - Linux",
+    "Overwriting the File with Dev Zero or Null"
+   ]
+  },
+  {
+   "id": "otrf:atomic/linux/discovery/host/sh_arp_cache.zip",
+   "source": "OTRF",
+   "kind": "auditd",
+   "events": 12,
+   "techniques": [
+    "T1018"
+   ],
+   "rules_fired": 0,
+   "alerts": 0,
+   "any_alert": false,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": []
+  },
+  {
+   "id": "otrf:compound/Log4Shell/syslog_auoms_auditd_log4shell_cve2021_44228_jndi_reference.zip",
+   "source": "OTRF",
+   "kind": "auditd",
+   "events": 50,
+   "techniques": [
+    "T1018",
+    "T1027",
+    "T1027.001",
+    "T1078",
+    "T1190",
+    "T1203",
+    "T1530"
+   ],
+   "rules_fired": 0,
+   "alerts": 0,
+   "any_alert": false,
+   "technique_detected": false,
+   "technique_rules": [],
+   "top_rules": []
+  },
+  {
+   "id": "otrf:compound/Log4Shell/syslog_sysmon_log4shell_cve2021_44228_jndi_reference.zip",
+   "source": "OTRF",
+   "kind": "sysmon-linux",
+   "events": 93,
+   "techniques": [
+    "T1018",
+    "T1027",
+    "T1027.001",
+    "T1078",
+    "T1190",
+    "T1203",
+    "T1530"
+   ],
+   "rules_fired": 4,
+   "alerts": 5,
+   "any_alert": true,
+   "technique_detected": true,
+   "technique_rules": [
+    "Decode Base64 Encoded Text"
+   ],
+   "top_rules": [
+    "Local Groups Discovery - Linux",
+    "Suspicious Java Children Processes",
+    "Decode Base64 Encoded Text",
+    "Linux Reverse Shell Indicator"
+   ]
+  }
+ ],
+ "seconds": 31.7,
+ "linux_benign": {
+  "events": 2821,
+  "channels": {
+   "linux-sysmon/operational": 2821
+  },
+  "window_hours": 0.005,
+  "workload": "venv + pip install + pytest + git on the runner",
+  "rules_fired": 3,
+  "alerts": 6,
+  "over_budget_20_per_day": 3,
+  "fired": [
+   {
+    "title": "System Information Discovery",
+    "level": "informational",
+    "hits": 3,
+    "alerts_per_day_projected": 15247.1
+   },
+   {
+    "title": "Python Path Configuration File Creation - Linux",
+    "level": "medium",
+    "hits": 2,
+    "alerts_per_day_projected": 10164.7
+   },
+   {
+    "title": "Potentially Suspicious Long Filename Pattern - Linux",
+    "level": "low",
+    "hits": 1,
+    "alerts_per_day_projected": 5082.4
+   }
+  ]
+ },
+ "provenance": {
+  "git_sha": "1c153a2012c76c1d743ffa244b849ae51190ee21",
+  "python": "3.12.14",
+  "packages": {
+   "pySigma": "1.5.1",
+   "pySigma-backend-sqlite": "2.0.0",
+   "pySigma-backend-kusto": "1.0.1",
+   "scikit-learn": "1.9.1",
+   "numpy": "2.5.3",
+   "pyahocorasick": "2.3.1",
+   "evtx": "0.13.1"
+  },
+  "ci_run": "37016390345"
+ }
+}
