@@ -12,29 +12,40 @@ permissions:
 jobs:
   test:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.10", "3.12", "3.13"]
+        python-version: ["3.10", "3.12", "3.13", "3.14"]
+        include:
+          - python-version: "3.12"
+            extras: ",fast,evtx"
     steps:
-      - uses: actions/checkout@v5
-      - uses: actions/setup-python@v6
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
         with:
           python-version: ${{ matrix.python-version }}
           cache: pip
       - name: Install
-        run: pip install -e ".[dev,sigma,ml]"
+        run: pip install -e ".[dev,sigma,ml${{ matrix.extras }}]"
       - name: Ruff
         run: ruff check anvil benchmarks tests scripts
       - name: Unit tests (real-data tests skip without $ANVIL_DATA)
         run: python -m pytest -q
+      - name: No tracked file over 1 MB
+        run: git ls-files -z | xargs -0 stat -c '%s %n' | awk '$1>1048576{print; bad=1} END{exit bad}'
 
   detections:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     needs: test
     steps:
-      - uses: actions/checkout@v5
-      - uses: actions/setup-python@v6
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
         with:
           python-version: "3.12"
       - run: pip install -e .
@@ -50,3 +61,37 @@ jobs:
           if python -m anvil lint --rules drafts --profile sigma; then echo "unreviewed drafts passed lint"; exit 1; fi
       - name: Coverage report
         run: python -m anvil coverage --corpus telemetry/benign.jsonl
+
+  package:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: "3.12"
+      - name: Build wheel + sdist
+        run: pip install "build==1.3.0" && python -m build
+      - name: Wheel installs into a fresh venv and the CLI runs
+        run: |
+          python -m venv /tmp/w && /tmp/w/bin/pip install dist/*.whl
+          /tmp/w/bin/anvil --help && /tmp/w/bin/anvil --version
+      - name: The sdist's own test suite passes
+        run: |
+          mkdir /tmp/s && tar -xzf dist/*.tar.gz -C /tmp/s && cd /tmp/s/*/
+          python -m venv /tmp/sv && /tmp/sv/bin/pip install ".[dev]" && /tmp/sv/bin/python -m pytest -q
+      - name: Docker image builds and runs as non-root
+        run: |
+          docker build -t anvil:ci .
+          docker run --rm anvil:ci --help
+          docker run --rm anvil:ci lint --rules rules
+          test "$(docker run --rm --entrypoint id anvil:ci -u)" != "0"
+      - name: Dependency audit (pip-audit)
+        run: |
+          python -m venv /tmp/a && /tmp/a/bin/pip install -q ".[sigma,evtx,ml,fast]" pip-audit
+          # PYSEC-2026-2447 / CVE-2025-69872: diskcache (via pySigma), no fixed release yet. Only reachable
+          # through pySigma's ~/.cache/pysigma MITRE cache, which ANVIL's conversions do not create.
+          # Re-check by 2027-01-01. See SECURITY.md.
+          /tmp/a/bin/pip-audit --ignore-vuln PYSEC-2026-2447 --ignore-vuln GHSA-w8v5-vhqr-4h9v
