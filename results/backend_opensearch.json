@@ -1,0 +1,320 @@
+{
+ "backend": {
+  "engine": "opensearch",
+  "version": "2.19.1"
+ },
+ "pipelines": "pySigma sysmon + windows logsource (independent of ANVIL routing)",
+ "documents": 2299,
+ "documents_rejected": 0,
+ "benign_events": 1800,
+ "regression": {
+  "compared": 459,
+  "anvil_pass": 459,
+  "opensearch_pass": 433,
+  "verdict_agree": 433,
+  "count_agree": 433,
+  "convert-error": 2,
+  "query-error": 2,
+  "verdict_agreement": 0.9434,
+  "verdict_agreement_ci95": [
+   0.9183,
+   0.9611
+  ],
+  "count_agreement": 0.9434,
+  "disagreements": [
+   {
+    "rule": "08249dc0-a28d-4555-8ba5-9255a198e08c",
+    "title": "Local Network Connection Initiated By Script Interpreter",
+    "anvil": 1,
+    "opensearch": 0,
+    "expected": 1,
+    "modifiers": [
+     "cidr"
+    ]
+   },
+   {
+    "rule": "63bf8794-9917-45bc-88dd-e1b5abc0ecfd",
+    "title": "Powershell Install a DLL in System Directory",
+    "anvil": 1,
+    "opensearch": 0,
+    "expected": 1,
+    "modifiers": [
+     "re"
+    ]
+   },
+   {
+    "rule": "d93129cd-1ee0-479f-bc03-ca6f129882e3",
+    "title": "Powershell Detect Virtualization Environment",
+    "anvil": 1,
+    "opensearch": 0,
+    "expected": 1,
+    "modifiers": []
+   },
+   {
+    "rule": "b29a93fb-087c-4b5b-a84d-ee3309e69d08",
+    "title": "Manipulation of User Computer or Group Security Principals Across AD",
+    "anvil": 1,
+    "opensearch": 0,
+    "expected": 1,
+    "modifiers": []
+   },
+   {
+    "rule": "ddcd88cb-7f62-4ce5-86f9-1704190feb0a",
+    "title": "Potential In-Memory Execution Using Reflection.Assembly",
+    "anvil": 1,
+    "opensearch": 0,
+    "expected": 1,
+    "modifiers": []
+   },
+   {
+    "rule": "99c49d9c-34ea-45f7-84a7-4751ae6b2cbc",
+    "title": "Dump Credentials from Windows Credential Manager With PowerShell",
+    "anvil": 1,
+    "opensearch": 0,
+    "expected": 1,
+    "modifiers": [
+     "all"
+    ]
+   },
+   {
+    "rule": "df69cb1d-b891-4cd9-90c7-d617d90100ce",
+    "title": "Suspicious FromBase64String Usage On Gzip Archive - Ps Script",
+    "anvil": 1,
+    "opensearch": 0,
+    "expected": 1,
+    "modifiers": [
+     "all"
+    ]
+   },
+   {
+    "rule": "3245cd30-e015-40ff-a31d-5cadd5f377ec",
+    "title": "HackTool - Rubeus Execution - ScriptBlock",
+    "anvil": 1,
+    "opensearch": 0,
+    "expected": 1,
+    "modifiers": []
+   },
+   {
+    "rule": "4fdc44df-bfe9-4fcc-b041-68f5a2d3031c",
+    "title": "Powershell LocalAccount Manipulation",
+    "anvil": 1,
+    "opensearch": 0,
+    "expected": 1,
+    "modifiers": []
+   },
+   {
+    "rule": "189e3b02-82b2-4b90-9662-411eb64486d4",
+    "title": "Potential Invoke-Mimikatz PowerShell Script",
+    "anvil": 1,
+    "opensearch": 0,
+    "expected": 1,
+    "modifiers": [
+     "all"
+    ]
+   },
+   {
+    "rule": "dcd74b95-3f36-4ed9-9598-0490951643aa",
+    "title": "PowerView PowerShell Cmdlets - ScriptBlock",
+    "anvil": 1,
+    "opensearch": 0,
+    "expected": 1,
+    "modifiers": []
+   },
+   {
+    "rule": "a861d835-af37-4930-bcd6-5b178bfb54df",
+    "title": "Suspicious Kerberos Ticket Request via PowerShell Script - ScriptBlock",
+    "anvil": 1,
+    "opensearch": 0,
+    "expected": 1,
+    "modifiers": [
+     "all"
+    ]
+   },
+   {
+    "rule": "7d416556-6502-45b2-9bad-9d2f05f38997",
+    "title": "Powershell Sensitive File Discovery",
+    "anvil": 1,
+    "opensearch": 0,
+    "expected": 1,
+    "modifiers": []
+   },
+   {
+    "rule": "bd5971a7-626d-46ab-8176-ed643f694f68",
+    "title": "Extracting Information with PowerShell",
+    "anvil": 1,
+    "opensearch": 0,
+    "expected": 1,
+    "modifiers": [
+     "all"
+    ]
+   },
+   {
+    "rule": "70ad982f-67c8-40e0-a955-b920c2fa05cb",
+    "title": "Suspicious IO.FileStream",
+    "anvil": 1,
+    "opensearch": 0,
+    "expected": 1,
+    "modifiers": [
+     "all"
+    ]
+   },
+   {
+    "rule": "5947497f-1aa4-41dd-9693-c9848d58727d",
+    "title": "Suspicious Unblock-File",
+    "anvil": 1,
+    "opensearch": 0,
+    "expected": 1,
+    "modifiers": [
+     "all"
+    ]
+   },
+   {
+    "rule": "313fbb0a-a341-4682-848d-6d6f8c4fab7c",
+    "title": "Suspicious PowerShell WindowStyle Option",
+    "anvil": 1,
+    "opensearch": 0,
+    "expected": 1,
+    "modifiers": [
+     "all"
+    ]
+   },
+   {
+    "rule": "c6438007-e081-42ce-9483-b067fbef33c3",
+    "title": "Powershell Timestomp",
+    "anvil": 1,
+    "opensearch": 0,
+    "expected": 1,
+    "modifiers": []
+   },
+   {
+    "rule": "03d83090-8cba-44a0-b02f-0b756a050306",
+    "title": "Potential WinAPI Calls Via PowerShell Scripts",
+    "anvil": 1,
+    "opensearch": 0,
+    "expected": 1,
+    "modifiers": [
+     "all"
+    ]
+   },
+   {
+    "rule": "85de1f22-d189-44e4-8239-dc276b45379b",
+    "title": "Curl Web Request With Potential Custom User-Agent",
+    "anvil": 1,
+    "opensearch": 0,
+    "expected": 1,
+    "modifiers": [
+     "re"
+    ]
+   },
+   {
+    "rule": "9cc85849-3b02-4cb5-b371-3a1ff54f2218",
+    "title": "File Download From IP URL Via Curl.EXE",
+    "anvil": 1,
+    "opensearch": 0,
+    "expected": 1,
+    "modifiers": [
+     "re"
+    ]
+   },
+   {
+    "rule": "5cb299fc-5fb1-4d07-b989-0644c68b6043",
+    "title": "Suspicious File Download From IP Via Curl.EXE",
+    "anvil": 1,
+    "opensearch": 0,
+    "expected": 1,
+    "modifiers": [
+     "re"
+    ]
+   },
+   {
+    "rule": "916eb839-895e-47f8-99ee-3008bf377a3e",
+    "title": "NTLM Hash Leak Via Curl NTLM Authentication",
+    "anvil": 1,
+    "opensearch": 0,
+    "expected": 1,
+    "modifiers": [
+     "re"
+    ]
+   },
+   {
+    "rule": "d7bcd677-645d-4691-a8d4-7a5602b780d1",
+    "title": "Potential PowerShell Command Line Obfuscation",
+    "anvil": 1,
+    "opensearch": 0,
+    "expected": 1,
+    "modifiers": [
+     "re"
+    ]
+   },
+   {
+    "rule": "deb9b646-a508-44ee-b7c9-d8965921c6b6",
+    "title": "Powershell Token Obfuscation - Process Creation",
+    "anvil": 1,
+    "opensearch": 0,
+    "expected": 1,
+    "modifiers": [
+     "re"
+    ]
+   },
+   {
+    "rule": "f3a98ce4-6164-4dd4-867c-4d83de7eca51",
+    "title": "Powershell Token Obfuscation - Powershell",
+    "anvil": 1,
+    "opensearch": 0,
+    "expected": 1,
+    "modifiers": [
+     "re"
+    ]
+   }
+  ]
+ },
+ "benign": {
+  "query-error": 17,
+  "compared": 2838,
+  "same_event_set": 2837,
+  "convert-error": 4,
+  "anvil-unsupported-or-unroutable": 2,
+  "fire_table": {
+   "both": 2,
+   "anvil_only": 0,
+   "opensearch_only": 1,
+   "neither": 2835
+  },
+  "fire_kappa": 0.7998,
+  "same_event_set_rate": 0.9996,
+  "same_event_set_ci95": [
+   0.998,
+   0.9999
+  ],
+  "disagreements": [
+   {
+    "rule": "c7c8aa1c-5aff-408e-828b-998e3620b341",
+    "title": "MSI Installation From Suspicious Locations",
+    "anvil": 0,
+    "opensearch": 4,
+    "both": 0,
+    "modifiers": []
+   }
+  ],
+  "disagreements_by_modifier": {
+   "(plain)": 1
+  }
+ },
+ "convert_errors": {
+  "SigmaFeatureNotSupportedByBackendError": 4
+ },
+ "seconds": 214.8,
+ "provenance": {
+  "git_sha": "a37d85b6f6a48fe534c9cb5f2fff89c4f50f5f33",
+  "python": "3.12.14",
+  "packages": {
+   "pySigma": "1.5.1",
+   "pySigma-backend-sqlite": "2.0.0",
+   "pySigma-backend-kusto": "1.0.1",
+   "pysigma-backend-opensearch": "2.0.3",
+   "pyahocorasick": "2.3.1",
+   "evtx": "0.13.1"
+  },
+  "ci_run": "37021246686"
+ }
+}

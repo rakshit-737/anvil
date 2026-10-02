@@ -234,3 +234,15 @@ SigmaHQ on the same 68 datasets: any alert in 66, technique detected in 46.
 Captures that parsed to 0 events: splunk:T1068/linux_dirtyfrag
 
 Benign Linux telemetry recorded on the CI runner (2821 events, 0.005 h, venv + pip install + pytest + git on the runner): 3 Linux rules fired 6 alerts. The window is too short to project a daily rate, so this is a smoke test of the Linux parsers and rules on benign activity, not an FP-rate estimate.
+
+## Real backend: OpenSearch 2.19.1 vs ANVIL
+
+Rules converted by pySigma's OpenSearch Lucene backend with pySigma's own Sysmon + Windows log-source pipelines (independent of ANVIL's router), executed with `_search` in an OpenSearch container in CI.
+
+| comparison | rules/cases | agree | agreement [95% CI] |
+|---|---|---|---|
+| regression captures: verdict | 459 | 433 | 94.3% [92, 96]% |
+| regression captures: exact count | 459 | 433 | 94.3% |
+| benign sample: same matching events per rule | 2838 | 2837 | 100.0% [0.998, 0.9999] |
+
+Benign fire/no-fire table: {'both': 2, 'anvil_only': 0, 'opensearch_only': 1, 'neither': 2835}, Cohen's kappa 0.7998. Disagreements by modifier: {'(plain)': 1}.

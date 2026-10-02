@@ -300,7 +300,7 @@ def summary() -> str:
               "log-source pipelines (independent of ANVIL's router), executed with `_search` in an OpenSearch "
               "container in CI.", "",
               _t([["regression captures: verdict", rg.get("compared", 0), rg.get("verdict_agree", 0),
-                   f"{100 * rg['verdict_agreement']:.1f}% {rg['verdict_agreement_ci95']}"],
+                   _ci(f"{100 * rg['verdict_agreement']:.1f}%", rg['verdict_agreement_ci95'])],
                   ["regression captures: exact count", rg.get("compared", 0), rg.get("count_agree", 0),
                    f"{100 * rg['count_agreement']:.1f}%"],
                   ["benign sample: same matching events per rule", bn.get("compared", 0),

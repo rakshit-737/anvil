@@ -156,7 +156,20 @@ SigmaHQ ships no correlation rules, either at the pinned commit `07ec293` (0 `co
 
 ### 5. Real backend: OpenSearch vs ANVIL
 
-BACKEND_PLACEHOLDER
+In the CI `backend` job, pySigma's OpenSearch Lucene backend converts each Windows rule, using pySigma's own Sysmon and Windows log-source pipelines rather than ANVIL's router. The job then runs the queries with `_search` against an OpenSearch 2.19.1 container that holds the regression captures and an 1,800-event benign sample (`results/backend_opensearch.json`).
+
+| comparison | compared | agree | agreement |
+| --- | ---: | ---: | --- |
+| regression captures: verdict | 459 | 433 | 94.3% [91.8, 96.1] |
+| benign sample: identical matching event set per rule | 2,838 | 2,837 | 99.96% [99.8, 100] |
+
+All 26 regression disagreements are captures that ANVIL and SigmaHQ's expected counts say should match, but OpenSearch returns nothing:
+
+- **8 use `|re`.** Lucene regexes must match the whole term, whereas Sigma regexes are unanchored searches, so the converted query is stricter than the rule.
+- **1 uses `|cidr`** on a field indexed as keyword.
+- **17 are PowerShell script-block and command-line wildcard rules.** Their cause is not yet diagnosed.
+
+On benign data the two engines differ on one rule (OpenSearch 4 hits, ANVIL 0). 17 rules raised query errors and 4 could not be converted.
 
 ### 6. Drafter, SIEM conversion, FP prediction
 
