@@ -111,8 +111,63 @@ def matrix(rules: list[Rule]) -> tuple[list[str], list[list[float]]]:
     return names, [[row[n] for n in names] for row in rows]
 
 
+def expected_top_k(y: Any, s: Any, k: int) -> float:
+    """Expected positives among the top-``k`` scores when ties are broken uniformly at random.
+
+    ``np.argsort`` breaks ties by row order, which flatters coarse scores (a 5-valued
+    heuristic) whenever rows happen to be sorted by label.
+    """
+    import numpy as np
+    y, s = np.asarray(y), np.asarray(s)
+    got, left = 0.0, k
+    for v in sorted(set(s.tolist()), reverse=True):
+        grp = s == v
+        n = int(grp.sum())
+        pos = float(y[grp].sum())
+        if n <= left:
+            got += pos
+            left -= n
+        else:
+            got += pos * left / n
+            left = 0
+        if left == 0:
+            break
+    return got
+
+
+def bootstrap_auc(y: Any, scores: dict[str, Any], reference: str, n_boot: int = 1000,
+                  seed: int = 7) -> dict[str, Any]:
+    """95% percentile intervals over rules (resampled with replacement) and paired deltas vs ``reference``."""
+    import numpy as np
+    from sklearn.metrics import average_precision_score, roc_auc_score
+    y = np.asarray(y)
+    rng = np.random.default_rng(seed)
+    vals: dict[str, dict[str, list[float]]] = {m: {"roc_auc": [], "pr_auc": []} for m in scores}
+    for _ in range(n_boot):
+        idx = rng.integers(0, len(y), len(y))
+        if y[idx].sum() in (0, len(idx)):
+            continue
+        for m, s in scores.items():
+            s = np.asarray(s)
+            vals[m]["roc_auc"].append(roc_auc_score(y[idx], s[idx]))
+            vals[m]["pr_auc"].append(average_precision_score(y[idx], s[idx]))
+    out: dict[str, Any] = {"n_boot": n_boot, "reference": reference, "models": {}}
+    for m in scores:
+        row: dict[str, Any] = {}
+        for metric in ("roc_auc", "pr_auc"):
+            a = np.asarray(vals[m][metric])
+            row[metric + "_ci95"] = [round(float(np.percentile(a, 2.5)), 3), round(float(np.percentile(a, 97.5)), 3)]
+            if m != reference:
+                d = a - np.asarray(vals[reference][metric])
+                row[metric + "_delta_vs_ref_ci95"] = [round(float(np.percentile(d, 2.5)), 3),
+                                                      round(float(np.percentile(d, 97.5)), 3)]
+                row[metric + "_p_delta_le_0"] = round(float((d <= 0).mean()), 3)
+        out["models"][m] = row
+    return out
+
+
 def cross_validate(rules: list[Rule], labels: list[int], seed: int = 7, folds: int = 5,
-                   importance: bool = True) -> dict[str, Any]:
+                   importance: bool = True, bootstrap: bool = False) -> dict[str, Any]:
     """Stratified k-fold CV for the ML models vs. reviewer heuristics. Returns metrics."""
     import numpy as np
     from sklearn.ensemble import HistGradientBoostingClassifier
@@ -149,14 +204,17 @@ def cross_validate(rules: list[Rule], labels: list[int], seed: int = 7, folds: i
                            "models": {}}
     rng = np.random.default_rng(seed)
     scores["random"] = rng.random(len(y))
+    k10 = max(1, len(y) // 10)
     for name, s in scores.items():
-        top = np.argsort(-s)[:k]
         out["models"][name] = {
             "roc_auc": round(float(roc_auc_score(y, s)), 3),
             "pr_auc": round(float(average_precision_score(y, s)), 3),
-            f"precision_at_{k}": round(float(y[top].mean()), 3),
-            "recall_at_top10pct": round(float(y[np.argsort(-s)[:max(1, len(y) // 10)]].sum() / max(1, y.sum())), 3),
+            f"precision_at_{k}": round(expected_top_k(y, s, k) / k, 3),
+            "recall_at_top10pct": round(expected_top_k(y, s, k10) / max(1, y.sum()), 3),
         }
+    out["tie_breaking"] = "expected value under uniformly random tie-breaking"
+    if bootstrap:
+        out["bootstrap"] = bootstrap_auc(y, scores, "heuristic_level", seed=seed)
     if not importance:
         return out
     final = models["gbdt"]().fit(Xa, y)
@@ -172,10 +230,11 @@ def cross_validate(rules: list[Rule], labels: list[int], seed: int = 7, folds: i
 
 def repeated_cv(rules: list[Rule], labels: list[int], seeds: Iterable[int] = range(10),
                 folds: int = 5) -> dict[str, Any]:
-    """Repeat stratified CV over several seeds; report mean and a 95% t-interval per metric.
+    """Repeat stratified CV over several seeds; report the mean and a 95% t-interval per metric.
 
-    Fold assignment, GBDT and the random baseline change with the seed; the heuristics
-    are deterministic, so their interval collapses to a point.
+    The interval only measures fold-assignment (CV-seed) variation on the same rules, not
+    sampling uncertainty over rules: use ``cross_validate(..., bootstrap=True)`` for that.
+    The heuristics are deterministic, so their interval collapses to a point.
     """
     import statistics
 
@@ -190,6 +249,6 @@ def repeated_cv(rules: list[Rule], labels: list[int], seeds: Iterable[int] = ran
             mean = statistics.fmean(vals)
             sd = statistics.stdev(vals) if len(vals) > 1 else 0.0
             half = t975.get(len(vals), 1.96) * sd / len(vals) ** 0.5
-            out["models"][model][metric] = {"mean": round(mean, 3), "ci95": [round(mean - half, 3),
-                                                                               round(mean + half, 3)]}
+            out["models"][model][metric] = {"mean": round(mean, 3),
+                                            "cv_repeat_interval95": [round(mean - half, 3), round(mean + half, 3)]}
     return out

@@ -85,10 +85,10 @@ def test_fpmodel_repeated_cv_reports_intervals():
                           level="low" if noisy else "high"))
         labels.append(int(noisy))
     res = repeated_cv(rules, labels, seeds=range(3), folds=4)
-    lo, hi = res["models"]["random"]["roc_auc"]["ci95"]
+    lo, hi = res["models"]["random"]["roc_auc"]["cv_repeat_interval95"]
     assert res["seeds"] == [0, 1, 2] and lo <= res["models"]["random"]["roc_auc"]["mean"] <= hi
     h = res["models"]["heuristic_level"]["roc_auc"]
-    assert h["ci95"][0] == h["ci95"][1] == h["mean"]  # deterministic scorer
+    assert h["cv_repeat_interval95"][0] == h["cv_repeat_interval95"][1] == h["mean"]  # deterministic scorer
 
 def test_dashboard_renders(tmp_path):
     (tmp_path / "lint.json").write_text(json.dumps({"rules": 3}))
