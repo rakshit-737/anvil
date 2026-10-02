@@ -16,5 +16,5 @@ Detections rot silently. A pipeline migration renames fields, Sysmon gets decomm
 - The benchmark simulates five realistic changes: ECS rename, Sysmon replaced by 4688, 4688 without command lines, CommandLine dropped, and hashes turned off. For each change it reports how many of the rules that actually stopped firing each check catches (recall) and how many of its flags are real (precision), using the regression captures as ground truth.
 
 ## Consequences
-- Static analysis can over-flag when the inventory is thin, for example a field that exists but never appeared in the sample. The benchmark's "no change" row measures that false-alarm floor.
-- Both checks are meant to run in CI on a schedule. Regression failures block the build; static findings open issues.
+- Static analysis can over-flag when the inventory is thin, for example a field that exists but never appeared in the sample. The benchmark reports that false-alarm floor as `baseline_status` in `results/decay.json` (183 rules, 6.4%, on unchanged telemetry), and compares the symbolic check with per-source and global field-presence checks.
+- Both checks are meant to run in CI on a schedule. Regression failures block the build; static findings are meant to open issues (a scheduled job is on the roadmap, not yet built).

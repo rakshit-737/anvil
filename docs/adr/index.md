@@ -6,3 +6,4 @@
 - [ADR 0004: The drafter proposes, a human approves, and the tests decide](0004-ai-proposes-human-approves.md)
 - [ADR 0005: A static HTML health dashboard instead of a React app](0005-static-dashboard.md)
 - [ADR 0006: Two decay checks: symbolic schema analysis and TP regression](0006-decay-monitoring.md)
+- [ADR 0007: Linux and AWS CloudTrail routing](0007-linux-and-cloud-routing.md)

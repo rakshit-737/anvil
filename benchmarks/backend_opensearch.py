@@ -103,7 +103,7 @@ def _create_index() -> None:
                      "index.max_result_window": 50000,
                      "analysis": {"normalizer": {"lc": {"type": "custom", "filter": ["lowercase"]}}}},
         "mappings": {"dynamic_templates": [{"s": {"match_mapping_type": "string", "mapping": {
-            "type": "keyword", "normalizer": "lc", "ignore_above": 8191}}}],
+            "type": "keyword", "normalizer": "lc", "ignore_above": 10922}}}],
             "properties": {"EventID": {"type": "long"}, "_case": {"type": "integer"},
                            "_set": {"type": "keyword"}}}})
     if "_error" in r:

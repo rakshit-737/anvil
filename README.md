@@ -1,34 +1,66 @@
 # ANVIL: detection-as-code, measured on real telemetry
 
 [![ci](https://github.com/rakshit-737/anvil/actions/workflows/ci.yml/badge.svg)](https://github.com/rakshit-737/anvil/actions/workflows/ci.yml)
+[![bench](https://github.com/rakshit-737/anvil/actions/workflows/bench.yml/badge.svg)](https://github.com/rakshit-737/anvil/actions/workflows/bench.yml)
 [![docs](https://github.com/rakshit-737/anvil/actions/workflows/docs.yml/badge.svg)](https://rakshit-737.github.io/anvil/)
-![python](https://img.shields.io/badge/python-3.10%20%7C%203.12%20%7C%203.13-3776ab)
+![python](https://img.shields.io/badge/python-3.10%20%7C%203.12%20%7C%203.13%20%7C%203.14-3776ab)
 [![license](https://img.shields.io/badge/license-MIT-green)](LICENSE)
-![rules](https://img.shields.io/badge/SigmaHQ%20rules%20measured-3%2C757-2a78d6)
+![rules](https://img.shields.io/badge/SigmaHQ%20rules-3%2C757%20linted%20%2F%202%2C844%20measured-2a78d6)
 
-**ANVIL lints, replays, measures, drafts and decay-monitors Sigma detections.** The rules are treated like code: every one is checked against real attack captures, real clean-host telemetry and a SOC alert budget before it ships, and re-checked when the telemetry underneath it changes.
+<!-- --8<-- [start:pitch] -->
+**ANVIL predicts, without attack data, which Sigma detections a telemetry change will silently break. It checks each rule's condition for satisfiability against the field inventory observed per log source. Under a Sysmon-to-Security-4688 migration it flags 95% of the rules that really stop firing at 100% precision, where field-presence (schema) validation reaches only 42% precision.**
 
-Documentation: **https://rakshit-737.github.io/anvil/** (with the static [health dashboard demo](https://rakshit-737.github.io/anvil/demo/)).
+Around that core it is an open, SIEM-free CI for Sigma: every rule is linted, replayed on real attack captures and on real clean-host telemetry, gated on a SOC alert budget, and cross-checked against a real OpenSearch backend.
+<!-- --8<-- [end:pitch] -->
 
-It is the "factory" half of a detection pipeline: a CTI report becomes a drafted rule, a human reviews it, CI tests it on emulated and benign telemetry, the rule is versioned and deployed, and a monitor watches it decay. All of it runs offline on a laptop.
+Documentation: **https://rakshit-737.github.io/anvil/** · [How it works](https://rakshit-737.github.io/anvil/how-it-works/) · [Evaluation](https://rakshit-737.github.io/anvil/evaluation/) · [Reproduce](https://rakshit-737.github.io/anvil/reproduce/)
 
-| Headline (real data) | Result |
+[![Detection health dashboard](https://raw.githubusercontent.com/rakshit-737/anvil/main/docs/img/dashboard.png)](https://rakshit-737.github.io/anvil/dashboard.html)
+
+<!-- --8<-- [start:headline] -->
+| Headline (real data, one CI run; Wilson 95% CIs) | Result |
 | --- | --- |
-| SigmaHQ regression captures replayed (463 cases, 497 real events) | **461/461 evaluable detected (100%)** vs 90.7% for the 0.1 engine baseline and 99.1% for pySigma -> SQLite |
-| Benign replay: 2,994,137 events (2.55 days, Win10 + Win11 + Server 2022 AD) x 2,803 observable Windows rules | 78 rules fire, **12 blocked** by the 20 alerts/day budget; 27 of 32 medium+ firers are on SigmaHQ's own `known-FPs.csv` |
-| OTRF emulations (96 datasets, 752k events) | technique detected in **67/96** (any alert on 93) |
-| ATT&CK Enterprise 19.2, Windows (474 techniques + sub-techniques) | **63.1% claimed** by tags, **34.6% validated** on real captures |
-| Decay monitor, "pipeline moved to ECS field names" | 425 of 428 broken TP rules flagged statically (99% recall, 100% precision) |
+| Decay monitor: Sysmon removed, process creation from 4688 only | **109/115 broken rules flagged statically: recall 94.8% [89.1, 97.6], precision 100% [96.6, 100]**. Field presence: precision 41.9% [36.2, 47.9] |
+| Decay monitor: pipeline renamed fields to ECS | 426/430 flagged, recall 99.1% [97.6, 99.6], precision 100% |
+| TP replay on SigmaHQ regression captures (463 cases) | 463/463, [99.2, 100]%, vs 90.7% for the 0.1 baseline and 99.6% for pySigma -> SQLite |
+| Benign replay: 2,994,137 events from 3 clean Windows hosts x 2,789 observable rules | 75 rules fire; **12 exceed 20 alerts per host-day** (41 at 10 hosts, all 75 at 100) |
+| OTRF Windows emulations (98 datasets) | technique detected in **62/98, 63% [53, 72]** (any alert 95/98) |
+| Linux and AWS CloudTrail captures (168 labelled; Splunk attack_data + OTRF) | technique detected 27/168, 16% [11, 22]; any alert 89/168 |
+<!-- --8<-- [end:headline] -->
 
 ---
 
 ## Contents
-[Architecture](#architecture) · [Results](#results-on-real-data) · [Datasets](#datasets) · [Quickstart](#quickstart) · [Reproduce](#reproduce-the-benchmarks) · [CLI](#cli) · [Prior art](#prior-art-and-how-anvil-differs) · [Limitations](#limitations) · [Roadmap](#roadmap) · [Safety](#safety)
+[Try it in 60 seconds](#try-it-in-60-seconds) · [Architecture](#architecture) · [Results](#results-on-real-data) · [Comparison](#comparison-with-reference-and-published-numbers) · [Datasets](#datasets) · [Reproduce](#reproduce-the-benchmarks) · [CLI](#cli) · [Prior art](#prior-art-and-how-anvil-differs) · [Limitations](#limitations) · [Roadmap](#roadmap) · [Safety](#safety)
+
+<!-- --8<-- [start:try] -->
+## Try it in 60 seconds
+
+```bash
+git clone --depth 1 https://github.com/rakshit-737/anvil && cd anvil
+python -m venv .venv && . .venv/bin/activate      # Windows: .venv\Scripts\activate
+pip install -e .                                   # core needs only PyYAML
+anvil synth                                        # synthetic benign telemetry
+anvil test                                         # -> test: 5/5 rules passed the gate
+anvil test --rules examples/noisy                  # -> FAIL ... 719 alerts/day: the SOC budget blocks it
+anvil draft examples/cti/fin_x_report.md           # -> 4 drafted rules in drafts/, reviewed: false
+anvil lint --rules drafts --profile sigma          # -> lint: 4 rule(s), 4 finding(s), FAIL (A114 review gate)
+```
+
+Or with the container image (non-root; rules and examples bundled):
+
+```bash
+docker run --rm ghcr.io/rakshit-737/anvil:latest lint --rules rules
+docker run --rm -v "$PWD:/work" -w /work ghcr.io/rakshit-737/anvil:latest lint --rules my-rules
+```
+
+Development: `pip install -e ".[dev,sigma,ml]" && python -m pytest -q` (the real-data tests skip without `$ANVIL_DATA`).
+<!-- --8<-- [end:try] -->
 
 ## Architecture
 
 ```mermaid
-flowchart LR
+flowchart TB
   CTI["CTI report / OTRF transcript"] --> DR["anvil draft<br/>heuristic or Claude"]
   DR --> RV{{"Human review gate<br/>lint A114 until reviewed"}}
   RV --> LIB[("rules/ in git")]
@@ -67,153 +99,174 @@ Design decisions are recorded in [docs/adr](docs/adr).
 
 ## Results on real data
 
-All numbers below come from `python benchmarks/bench.py all` on the pinned datasets. The full tables are in [results/SUMMARY.md](results/SUMMARY.md) and the raw JSON is in [results/](results). The dashboard is [docs/dashboard.html](docs/dashboard.html).
+All numbers come from one `bench` workflow run on a clean ubuntu runner, with fresh, checksum-verified downloads. Every results file records the git SHA, package versions and dataset pins. The full tables are in [results/SUMMARY.md](results/SUMMARY.md), and the method and definitions are on the [Evaluation](https://rakshit-737.github.io/anvil/evaluation/) page.
 
-### 1. Engine fidelity vs baselines (SigmaHQ `regression_data`)
+<!-- --8<-- [start:results] -->
+### 1. Decay monitor (the novel part)
+
+`anvil decay` checks every rule's condition for satisfiability against the field inventory observed per log source. It uses benign telemetry only, with no attack data. The ground truth is the set of TP-validated rules that really stop firing when their captures are replayed through the simulated change. The table compares it with field-presence checks (recall / precision in %, Wilson 95% CI):
+
+| change (broken TP rules) | symbolic (ANVIL) | field presence per source | field presence global (0.1) |
+| --- | --- | --- | --- |
+| Sysmon removed, 4688 only (115) | **94.8 [89.1, 97.6] / 100 [96.6, 100]** | 99.1 / 41.9 [36.2, 47.9] | 94.8 / 41.0 |
+| ... and 4688 command-line auditing off, fleet-wide (349) | 95.4 / 100 | 99.4 / 94.0 | 98.0 / 94.2 |
+| same, off only on converted hosts (mixed inventory) | 31.2 / 100 | 72.2 / 92.6 | 70.8 / 92.9 |
+| ECS field rename (430) | 99.1 / 100 | 100 / 98.9 | 100 / 98.9 |
+| CommandLine dropped (234) | 94.0 / 100 | 99.6 / 94.7 | 99.6 / 94.7 |
+| Hashes dropped (0) | 6 rules flagged | 47 flagged, all false alarms | 54 flagged |
+
+The symbolic check raised no false alarm on any TP-validated rule. Presence checks catch slightly more broken rules, but when a change removes a whole source rather than one field, most of what they flag is noise. The symbolic check's weakness is the fleet-union inventory: when only some hosts change (the mixed row), the union still contains the field. On unchanged telemetry, 183 rules (6.4%) are already broken or have no source; they are reported separately as the false-alarm floor.
+
+### 2. TP replay (recall) on SigmaHQ regression captures
 
 | engine | detected | missed | could not evaluate | detection rate |
 | --- | ---: | ---: | ---: | ---: |
-| **ANVIL 0.2** | 461 | 0 | 0 | **100.0%** |
-| ANVIL 0.1 (frozen baseline, `benchmarks/baselines/engine_v01.py`) | 418 | 14 | 29 | 90.7% |
-| pySigma -> SQLite (independent oracle) | 457 | 2 | 2 | 99.1% |
+| **ANVIL engine (1.x)** | 463 | 0 | 0 | **100% [99.2, 100]** |
+| ANVIL 0.1 (frozen baseline) | 420 | 14 | 29 | 90.7% |
+| pySigma -> SQLite (independent condition/value semantics on ANVIL-routed events) | 461 | 1 | 1 | 99.6% |
 
-2 of 463 captures were quarantined by local AV and are excluded. ANVIL and the pySigma oracle agree on 457 cases; the two disagreements are cases where SigmaHQ expects a match and only ANVIL produces it. On a 1,800-event benign sample, log-source routing cuts rule evaluations from 5.15M (0.1, every rule sees every event) to 44k and alerts from 164 to 15.
+This only measures recall, and it was the development acceptance set: most captures hold a single event, so over-matching can barely be detected here. The benign replay and the OpenSearch cross-check test the other direction. On an 1,800-event benign sample, log-source routing cuts rule evaluations from 5.15M to 44k, and alerts from 163 (16 rules) to 15 (2 rules).
 
-### 2. False positives on clean Windows hosts (evtx-baseline)
+### 3. False positives on clean Windows hosts (evtx-baseline)
 
-2,994,137 events, 2.55 days, 31 shards, 414.6M rule evaluations at ~303 events per CPU-second (pure Python). Policy: a rule may use at most 10% of a 200 alerts/day SOC, i.e. 20/day.
+The corpus has 2,994,137 events from three hosts (Win10, Win11, Server 2022 AD), covering 2.55 host-days. The budget lets a rule use 10% of a 200 alerts/day SOC, i.e. 20 alerts per **host-day**. When the per-host rate is projected to a fleet, the number of rules over budget grows:
 
-| folder | observable rules | fired | fired % | over budget |
+| hosts | 1 | 3 | 10 | 100 |
 | --- | ---: | ---: | ---: | ---: |
-| core | 2,365 | 55 | 2.3% | 5 |
-| emerging-threats | 317 | 3 | 0.9% | 1 |
-| threat-hunting | 121 | 20 | 16.5% | 6 |
+| rules over budget (of 75 firing) | 12 | 26 | 41 | 75 |
 
-Noisiest rules: *Scheduled Task Created - Registry* (2,161/day), *Shell Context Menu Command Tampering* (1,679/day), *EVTX Created In Uncommon Location* (343/day). No `critical` rule fired, and only 7 of 1,357 `high` rules did. Of the 32 medium+ rules that fired, 27 are already on SigmaHQ's own goodlog `known-FPs.csv`, which is an external check on the replay.
+No `critical` rule fired, and 5 of the 1,353 `high` rules did. SigmaHQ's reference goodlog checker is green on the same images. Against its `known-FPs.csv`, 27 of the 29 medium+ rules that fire are listed (matched per rule; the list was also used during development). Eight non-low rules fire in ANVIL without being excused: 2 medium (PowerShell-classic `HostApplication` parsing) and 6 informational. They are listed in [SUMMARY](https://github.com/rakshit-737/anvil/blob/main/results/SUMMARY.md).
 
-![fp by group](docs/img/fp_by_group.png)
+![fp by group](https://raw.githubusercontent.com/rakshit-737/anvil/main/docs/img/fp_by_group.png)
 
-### 3. Emulated attacks (OTRF Security-Datasets) and ATT&CK coverage
+### 4. Emulated attacks and ATT&CK coverage
 
-| view (Enterprise 19.2, Windows, 474 techniques) | covered | % | parent techniques |
-| --- | ---: | ---: | ---: |
-| claimed (a rule carries the tag) | 299 | 63.1% | 137/176 |
-| validated (a tagged rule fires on a real capture) | 164 | 34.6% | 89/176 |
-
-The OTRF APT29 evaluation captures raise 3,765 (day 1, 111 rules) and 4,723 (day 2, 117 rules) alerts covering 69-70 techniques. Coverage exports as an ATT&CK Navigator layer (`results/navigator_sigmahq_windows.json`).
-
-![coverage](docs/img/coverage_tactics.png)
-
-### 4. Decay monitor under realistic telemetry changes
-
-| simulated change | TP rules that stop firing | flagged statically | recall | precision |
+| corpus | captures | technique detected (exact or parent) | lenient (sibling sub-techniques credited) | any alert |
 | --- | ---: | ---: | ---: | ---: |
-| SIEM pipeline renamed fields to ECS | 428 | 425 | 99% | 100% |
-| Sysmon removed, process creation from Security 4688 only | 115 | 110 | 96% | 100% |
-| ... and 4688 command-line auditing off | 349 | 110 | 32% | 100% |
-| CommandLine field dropped | 234 | 220 | 94% | 100% |
+| OTRF Windows atomic | 98 | 62, 63% [53, 72] | 69 | 95 |
+| Linux auditd (Splunk attack_data, OTRF) | 65 | 8, 12% [6, 22] | - | 19 |
+| Sysmon for Linux | 63 | 13, 21% [12, 32] | - | 38 |
+| AWS CloudTrail | 40 | 6, 15% [7, 29] | - | 32 |
 
-The static analysis needs no attack telemetry. The 4688-without-command-line case is its known weakness: the 4688 schema still defines `CommandLine`, so the symbolic check cannot tell that auditing was switched off. The TP regression replay catches it, but only 16% of the library has TP evidence to replay, which is why both layers exist.
+On ATT&CK Enterprise 19.2 for Windows, rule tags claim 299 of 474 techniques (63.1%). Only 164 of 474 are validated by a rule that fires on a real capture: 34.6% [30.5, 39.0]. On the APT29 evaluation captures, 111 and 117 rules fire, and they carry 69-70 distinct technique tags. That counts tags on fired rules, including rules triggered by background noise, not techniques covered.
 
-### 5. Drafter (CTI text -> rule -> tested), SIEM conversion, FP prediction
+SigmaHQ ships no correlation rules, either at the pinned commit `07ec293` (0 `correlation:` documents) or on master `330d1cf` (2026-10-02). Its 87 legacy `| count()` rules sit only in `unsupported/`, so correlation is out of scope.
 
-| drafter backend on 98 OTRF descriptions + attacker transcripts | drafts | fires on its own emulation | datasets with benign FPs | benign alerts |
+![coverage](https://raw.githubusercontent.com/rakshit-737/anvil/main/docs/img/coverage_tactics.png)
+
+### 5. Real backend: OpenSearch vs ANVIL
+
+BACKEND_PLACEHOLDER
+
+### 6. Drafter, SIEM conversion, FP prediction
+
+| drafter on OTRF descriptions + transcripts | fires on its own emulation | fires and within budget | datasets with benign FPs | benign alerts |
 | --- | ---: | ---: | ---: | ---: |
-| **heuristic** (process/cmdline/registry extraction) | 90 on 68 datasets | 30 (44%) | 6 | 57 |
-| naive keywords (baseline) | 75 on 75 datasets | 55 (73%) | 33 | 126,768 |
+| heuristic (68 datasets) | 32/68, 47% [36, 59] | 32 | 6 | 57 |
+| naive keywords (baseline, 75 datasets) | 56/75, 75% [64, 83] | 35 | 33 | 126,768 |
+| hand-written SigmaHQ, same 68 (any alert / technique) | 66 / 46 | - | - | - |
 
-The keyword baseline "detects" more but would flood a SOC; the heuristic drafts are quiet but miss more often. Hand-written SigmaHQ rules detect the technique on 47 of the same 68 datasets. That gap is the case for the human review gate.
+Even after the budget gate, the keyword baseline yields more firing drafts (35 vs 32), at the cost of 126,768 benign alerts. That trade-off is why the human review gate exists. The LLM backend is implemented but not benchmarked, because no API key was used.
 
-pySigma conversion of the 2,861 Windows rules: Splunk 99.9%, Elastic 99.8%, SQLite 99.3%, Microsoft XDR KQL 72.5% (751 rules use fields that pipeline cannot map).
+pySigma conversion of the 2,861 Windows rules succeeds for 99.9% on Splunk, 99.8% on Elastic, 99.3% on SQLite and 72.5% on Microsoft XDR KQL. For KQL, 632 rules have a log source with no XDR table and 119 use fields the pipeline cannot map.
 
-FP prediction from static rule features (5-fold CV repeated over 10 seeds, mean [95% CI], 78 noisy of 2,803): logistic regression ROC-AUC 0.826 [0.818, 0.834] / PR-AUC 0.188 [0.176, 0.199], gradient boosting 0.817 [0.808, 0.825] / 0.229 [0.211, 0.248], against 0.512 [0.487, 0.538] / 0.031 for random. The single-seed numbers published in 0.2.0 (logreg 0.84 / 0.20) were slightly optimistic. A one-line heuristic (rule `level`) scores ROC-AUC 0.837 and precision at 78 of 0.42 vs 0.25-0.29 for the models, so the models only win on PR-AUC; they are a review-order aid and no more than that.
+FP prediction from static rule features (75 noisy rules of 2,789): logistic regression reaches ROC-AUC 0.831 and GBDT PR-AUC 0.209. A one-line `level` heuristic scores ROC-AUC 0.853 and PR-AUC 0.172. A paired bootstrap over rules puts the PR-AUC difference against the heuristic at [-0.051, 0.083] for logreg and [-0.037, 0.120] for GBDT. **With 75 positives, no scorer can be told apart from the heuristic.** Treat the models as a review-order aid only.
 
-![fp model](docs/img/fpmodel.png)
+![fp model](https://raw.githubusercontent.com/rakshit-737/anvil/main/docs/img/fpmodel.png)
+<!-- --8<-- [end:results] -->
+
+<!-- --8<-- [start:comparison] -->
+## Comparison with reference and published numbers
+
+Only like-for-like setups are compared. Where no comparable number exists, the table says so.
+
+| reference | their result | ANVIL on the same input |
+| --- | --- | --- |
+| SigmaHQ regression CI (evtx-sigma-checker + json_matcher) at `07ec293` | all cases pass (check run green) | 463/463 |
+| SigmaHQ goodlog CI on evtx-baseline win10, win11 and 2022 DC (non-low rules, known-FPs applied) | 0 unexcused rules (green) | 8 unexcused non-low rules (2 medium, 6 informational) |
+| GAUNTLET (sister project), OTRF recordings detected | 69.8% [60.0, 78.1] | 69/98 lenient, 62/98 strict |
+| LLM Sigma generation from CTI (AutoSigma, arXiv 2608.19011; CTI-REALM, arXiv 2603.13517) | rule validity and coverage on cloud blogs / agent tasks | not comparable: different corpora and metrics; ANVIL scores drafts by execution on their own emulation |
+| AMIDES (Uetz et al., USENIX Security 2024) | evasion of process-creation rules | not comparable: it measures adversarial evasion, not benign volume or recall |
+<!-- --8<-- [end:comparison] -->
 
 ## Datasets
 
+<!-- --8<-- [start:datasets] -->
 | Dataset | Used for | Size | Licence / terms |
 | --- | --- | --- | --- |
-| [SigmaHQ/sigma](https://github.com/SigmaHQ/sigma) @ `07ec293` | 3,757 rules under test; `regression_data` (463 real EVTX captures with expected match counts); `known-FPs.csv` cross-check | 13 MB zip | [Detection Rule License 1.1](https://github.com/SigmaHQ/Detection-Rule-License) |
-| [NextronSystems/evtx-baseline](https://github.com/NextronSystems/evtx-baseline) v0.8.5 | Benign corpus: clean Windows 10 client, Windows 11 client, Server 2022 domain controller | 270 MB tgz, 2.99M events | Public research data (see repository) |
-| [OTRF Security-Datasets](https://github.com/OTRF/Security-Datasets) @ `d9d40ef` | 98 atomic Windows host emulations with ATT&CK labels and attacker transcripts; APT29 evaluation days 1-2 | 66 MB | MIT |
-| [MITRE ATT&CK Enterprise](https://github.com/mitre-attack/attack-stix-data) v19.2 STIX 2.1 | Technique catalog (697 active, 474 on Windows), revocations | 54 MB | [ATT&CK Terms of Use](https://attack.mitre.org/resources/legal-and-branding/terms-of-use/) |
+| [SigmaHQ/sigma](https://github.com/SigmaHQ/sigma) @ `07ec293` | 3,757 rules; `regression_data` (463 captures); `known-FPs.csv` | 13 MB | [DRL 1.1](https://github.com/SigmaHQ/Detection-Rule-License) |
+| [NextronSystems/evtx-baseline](https://github.com/NextronSystems/evtx-baseline) v0.8.5 | Benign Windows corpus (3 hosts) | 270 MB, 3.1 GB extracted | public research data |
+| [OTRF Security-Datasets](https://github.com/OTRF/Security-Datasets) @ `d9d40ef` | 98 Windows atomic emulations, APT29 days 1-2 | 123 MB | MIT |
+| [MITRE ATT&CK](https://github.com/mitre-attack/attack-stix-data) v19.2 STIX | Technique catalog | 54 MB | ATT&CK Terms of Use |
+| [Splunk attack_data](https://github.com/splunk/attack_data) (opt-in `nixcloud`) | Linux auditd, Sysmon for Linux and CloudTrail captures, labelled by technique folder | ~0.74 GB | Apache-2.0 |
+| OTRF Linux / AWS / Log4Shell captures (opt-in `nixcloud`) | Linux and cloud emulations | small | MIT |
 
-Downloads are pinned and SHA-256-verified (`scripts/checksums.sha256`) and are never committed. Two OTRF archives could not be read on the development machine because endpoint AV quarantined them. They are attack *logs*, and ANVIL counts and skips such files.
-
-## Quickstart
-
-```bash
-git clone https://github.com/rakshit-737/anvil && cd anvil
-pip install -e ".[dev]"          # core needs only PyYAML
-python -m pytest -q              # offline suite; real-data tests skip without $ANVIL_DATA
-
-# the original lifecycle demo on bundled rules + synthetic telemetry
-python -m anvil synth
-python -m anvil lint
-python -m anvil test --capacity 200 --share 0.1 --save-baseline telemetry/baseline.json
-python -m anvil test --rules examples/noisy                 # FP / SOC-budget guardrail blocks this rule
-python -m anvil draft examples/cti/fin_x_report.md          # drafts land in drafts/, reviewed: false
-python -m anvil lint --rules drafts --profile sigma         # A114: unreviewed drafts cannot ship
-```
-
-`make` targets (`make test`, `make data`, `make bench`, `make demo`) wrap the same commands. On Windows without `make`, run them directly.
+`all` downloads about 0.46 GB and needs about 4 GB of free disk after extraction and ingest. `nixcloud` is opt-in and runs in CI. Every download is pinned and SHA-256-verified, failing closed (`scripts/checksums.sha256`), and nothing is committed. Endpoint AV on the development laptop quarantines two OTRF archives and two regression captures. They are skipped locally and computed in the CI benchmark run, which asserts that every input was readable.
+<!-- --8<-- [end:datasets] -->
 
 ## Reproduce the benchmarks
+
+The easiest route is `gh workflow run bench.yml` (about 25 minutes), then downloading the `bench-results` artefact. To run it locally:
 
 ```bash
 pip install -e ".[dev]" -r requirements-bench.txt
 export ANVIL_DATA=$PWD/data                   # PowerShell: $env:ANVIL_DATA="$PWD\data"
-python scripts/download_data.py all           # ~350 MB, pinned + checksummed
-python -m anvil ingest --benign               # EVTX -> 31 JSONL.gz shards (2,994,137 events)
-python benchmarks/bench.py all --workers 4    # ~1-2 h on a laptop; stages can run separately
+python scripts/download_data.py all           # ~0.46 GB, pinned + checksummed
+python -m anvil ingest --benign               # EVTX -> 31 JSONL.gz shards
+python benchmarks/bench.py all --workers 4    # stages can also run one by one
 ```
 
-Stages: `lint engine fp otrf coverage decay convert fpmodel draft report`. Each writes `results/<stage>.json`, and `report` regenerates `results/SUMMARY.md`, `docs/img/*.png` and `docs/dashboard.html`.
+Per-stage outputs and runtimes are on the [Reproduce](https://rakshit-737.github.io/anvil/reproduce/) page.
 
 ## CLI
 
+<!-- --8<-- [start:cli] -->
 | Command | Purpose |
 | --- | --- |
 | `anvil lint [--profile sigma] [--attack STIX] [--summary]` | Validate rules; SigmaHQ-style or ANVIL-style |
 | `anvil test` | Per-rule fixtures + benign FP corpus + SOC budget gate (exit 1 on failure) |
-| `anvil scan --rules DIR... --corpus PATH...` | Route a whole library over real telemetry (EVTX, JSON, OTRF zip, JSONL.gz) |
+| `anvil scan --rules DIR... --corpus PATH...` | Route a whole library over real telemetry (EVTX, JSON, OTRF zip, JSONL.gz, auditd, CloudTrail) |
 | `anvil regress --sigma PATH` | Replay SigmaHQ regression captures |
 | `anvil ingest SRC... --out DIR` / `--benign` | Normalise telemetry into sharded JSONL.gz |
-| `anvil draft REPORT [--backend heuristic\|llm\|keywords]` | Draft candidate rules from CTI (review required) |
-| `anvil convert RULE --target splunk\|elastic\|kusto\|sqlite` | Deployable SIEM queries via pySigma |
+| `anvil draft REPORT [--backend heuristic/llm/keywords]` | Draft candidate rules from CTI (review required) |
+| `anvil convert RULE --target splunk/elastic/kusto/sqlite` | Deployable SIEM queries via pySigma |
 | `anvil coverage [--attack STIX --platform Windows] [--navigator out.json]` | ATT&CK coverage, claimed vs validated |
 | `anvil decay [--routed] [--baseline b.json]` | Schema drift, symbolic breakage, regressions |
 | `anvil score` | 0-100 quality score per rule |
+| `anvil synth [--schema v1/v2] [-n N] [--seed S]` | Synthetic benign telemetry for the demo |
 | `anvil report` | Static health dashboard from `results/*.json` |
+<!-- --8<-- [end:cli] -->
 
 ## Prior art and how ANVIL differs
 
+<!-- --8<-- [start:prior] -->
 | Existing | What it gives you | What ANVIL adds |
 | --- | --- | --- |
-| [Sigma](https://github.com/SigmaHQ/sigma) + [pySigma](https://github.com/SigmaHQ/pySigma) / sigma-cli | Rule format, conversion to SIEM queries | Local evaluation without a SIEM, benign-FP and alert-budget gating, decay monitoring, drafting. ANVIL uses pySigma for conversion and as a cross-check |
-| SigmaHQ CI ([evtx-sigma-checker](https://github.com/NextronSystems/evtx-baseline), regression tests) | TP replay and goodlog checks for the SigmaHQ repo | The same idea as a reusable tool for *your* rules and *your* telemetry, plus volume budgets, coverage validation and decay analysis. ANVIL reproduces SigmaHQ's own regression verdicts (461/461 evaluable cases) and cross-checks against its known-FP list |
-| [Elastic detection-rules](https://github.com/elastic/detection-rules), Splunk ESCU + Atomic Red Team | Versioned, tested content for one platform | Backend-agnostic measurement and an alert-budget gate; emulation output is an input, not a dependency |
-| [Chainsaw](https://github.com/WithSecureLabs/chainsaw), [Hayabusa](https://github.com/Yamato-Security/hayabusa), [Zircolite](https://github.com/wagga40/Zircolite) | Fast Sigma hunting over EVTX | Lifecycle rather than hunting: gates, claimed-vs-validated coverage, decay, drafting, FP prediction |
-| Detection-as-code write-ups | Methodology | A working open reference implementation, with published numbers |
+| [Sigma](https://github.com/SigmaHQ/sigma) + [pySigma](https://github.com/SigmaHQ/pySigma) | Rule format, conversion | Local evaluation without a SIEM, benign-FP and budget gating, decay monitoring, drafting; pySigma is used for conversion and as a cross-check |
+| SigmaHQ CI (evtx-sigma-checker, regression tests) | TP replay and goodlog checks for the SigmaHQ repo | The same idea as a reusable tool for your own rules and telemetry, plus budgets, validated coverage and decay analysis |
+| [Elastic detection-rules](https://github.com/elastic/detection-rules) schema validation | Query fields validated against ECS / integration schemas | Condition-level satisfiability against the *observed* per-source inventory; on a source migration this keeps precision at 100%, where presence checks fall to 42% |
+| Splunk ESCU + Atomic Red Team | Tested content for one platform | Backend-agnostic measurement; emulation output is an input, not a dependency |
+| [Chainsaw](https://github.com/WithSecureLabs/chainsaw), [Hayabusa](https://github.com/Yamato-Security/hayabusa), [Zircolite](https://github.com/wagga40/Zircolite) | Fast Sigma hunting over EVTX | Lifecycle: gates, claimed-vs-validated coverage, decay, drafting |
+<!-- --8<-- [end:prior] -->
 
 ## Limitations
 
-- **Engine scope.** Placeholders (`expand`), aggregations and correlation rules are not evaluated. They are reported as unsupported (2 of 3,757 rules at the pinned commit). Field-name semantics follow Sysmon/Windows event logs; other products need a mapping.
-- **Benign corpus.** evtx-baseline hosts are clean lab installs. Real fleets are noisier, so treat benign alert counts as a lower bound and replay your own telemetry before trusting absolute volumes. The alerts/day figures assume the corpus's own time span.
-- **Emulation labels are coarse.** OTRF datasets are labelled at technique level and include background noise. "Technique detected" means a rule tagged with that technique (or its parent) fired on the capture, not that a human verified the alert.
-- **Drafter evaluation is optimistic by construction.** Drafts are generated from the same dataset's description and transcript that they are then tested on (report -> rule -> emulation, spec scenario 1). The LLM backend is implemented but not benchmarked here, because no API key was used for the published numbers.
-- **FP-prediction labels come from one corpus family.** The model predicts "fires on these clean hosts". It is a triage aid for review order, not a replacement for replay.
-- **No React UI / API server.** The spec's React review-gate and dashboard are replaced by git PR review and a static dashboard (ADR 0005), so there is no docker-compose; the Docker image ships the CLI.
-- **LLM drafter not benchmarked** (needs an API key and blind human review, see roadmap).
-- **Timings** were measured on a shared, heavily loaded laptop. Treat throughput numbers as indicative.
+<!-- --8<-- [start:limits] -->
+- **Engine scope.** `expand` placeholders, aggregations and correlations are not evaluated. That affects 2 of the 3,757 rules; the 23-rule `rules-placeholder` folder is excluded up front. Linux and AWS routing is new in 1.1 (ADR 0007). Azure/M365 is not routed.
+- **Benign corpus.** The three hosts are clean lab installs. Real fleets are noisier, so benign counts are a lower bound. Rates are per host-day. There is no benign CloudTrail corpus, and the benign Linux sample recorded on the CI runner lasts minutes: it is a parser smoke test, not an FP rate.
+- **Coarse labels.** OTRF and Splunk captures are labelled per technique and include background noise. "Technique detected" means a rule tagged with the technique or its parent fired.
+- **Drafter evaluation is optimistic by construction**, because drafts are tested on the dataset they were drafted from. The LLM backend is not benchmarked.
+- **The decay inventory is a fleet union**, which hides changes that reach only some hosts (the mixed row in the decay table).
+- **History.** Two synthetic telemetry files over 1 MB remain in early git history (removed in `c8cf57f`); history is not rewritten.
+- **Timings** come from shared machines; treat throughput as indicative.
+<!-- --8<-- [end:limits] -->
 
 ## Roadmap
 
-- Correlation rules and `expand` placeholders through pySigma processing pipelines
-- Linux (auditd, Sysmon for Linux) and cloud log-source routing
-- Scheduled decay job that opens issues with the symbolic diff
-- Benchmark the LLM drafter against the heuristic baseline, with blind human review
+- Scheduled decay job that opens an issue with the symbolic diff
+- Per-host field inventories for partial rollouts
+- Benchmark the LLM drafter (needs an API key) with blind human review
+- Benign CloudTrail corpus; Azure/M365 routing
 - GAUNTLET integration: pull emulation captures per technique and push validated coverage back
 
 ## Safety

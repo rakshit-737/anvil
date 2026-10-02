@@ -14,10 +14,12 @@ theme:
       toggle: {icon: material/brightness-4, name: Light mode}
 nav:
   - Home: index.md
+  - How it works: how-it-works.md
   - Getting started: getting-started.md
+  - Reproduce: reproduce.md
   - Architecture: architecture.md
   - Datasets: datasets.md
-  - Benchmarks: benchmarks.md
+  - Evaluation: evaluation.md
   - Demo dashboard: demo/index.html
   - CLI & API reference: cli.md
   - Prior art: prior-art.md
@@ -31,6 +33,7 @@ nav:
       - adr/0004-ai-proposes-human-approves.md
       - adr/0005-static-dashboard.md
       - adr/0006-decay-monitoring.md
+      - adr/0007-linux-and-cloud-routing.md
   - Changelog: changelog.md
   - Limitations & roadmap: limitations.md
 markdown_extensions:
@@ -51,3 +54,4 @@ plugins:
         python:
           paths: [.]
           options: {show_source: false, docstring_style: google, show_root_heading: true, members_order: source}
+extra_css: [stylesheets/extra.css]
