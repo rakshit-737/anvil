@@ -17,7 +17,7 @@ from typing import Any
 import yaml
 
 from .engine import CompiledRule, ConditionError, UnsupportedRule, compile_rule
-from .logsource import Route, event_key, route, where_ok
+from .logsource import NON_WINDOWS_CHANNELS, Route, event_key, route, where_ok
 from .models import Rule
 
 _Loader = getattr(yaml, "CSafeLoader", yaml.SafeLoader)  # libyaml is ~20x faster on 3k rules
@@ -113,8 +113,9 @@ class Library:
         chan, eid = event_key(ev)
         out = self._index.get((chan, eid), [])
         extra = self._chan_any.get(chan)
-        if extra or self._global:
-            out = out + (extra or []) + self._global
+        glob = self._global if chan not in NON_WINDOWS_CHANNELS else []
+        if extra or glob:
+            out = out + (extra or []) + glob
         return out
 
     def match_event(self, ev: Event) -> list[str]:

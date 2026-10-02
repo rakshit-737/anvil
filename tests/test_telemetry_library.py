@@ -61,7 +61,8 @@ def test_jsonl_roundtrip_ingest_and_zip(tmp_path):
 def test_routes():
     assert route(LogSource("windows", "process_creation")).channels[0][0].endswith("sysmon/operational")
     assert route(LogSource("windows", "", "security")).routable
-    assert not route(LogSource("linux", "process_creation")).routable
+    assert route(LogSource("linux", "process_creation")).channels == (("linux-sysmon/operational", (1,)),)
+    assert not route(LogSource("linux", "image_load")).routable
     assert not route(LogSource("windows", "file_access")).routable
     rt = route(LogSource("windows", "process_creation"))
     assert applies(rt, {"Channel": "Security", "EventID": 4688})
@@ -90,7 +91,7 @@ def test_library_routing_and_scan(tmp_path):
               {"s": {"Image|endswith": "\\powershell.exe", "CommandLine|contains": " -enc "}, "condition": "s"}),
         _rule(2, {"product": "windows", "service": "security"},
               {"s": {"EventID": 4625}, "condition": "s"}),
-        _rule(3, {"product": "linux", "category": "process_creation"}, {"s": {"Image": "/bin/sh"},
+        _rule(3, {"product": "linux", "category": "image_load"}, {"s": {"Image": "/bin/sh"},
                                                                          "condition": "s"}),
         _rule(4, {"product": "windows", "category": "process_creation"},
               {"s": {"User|expand": "%x%"}, "condition": "s"}),

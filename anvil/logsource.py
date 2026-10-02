@@ -24,6 +24,25 @@ SECURITY = "security"
 PS_OP = "microsoft-windows-powershell/operational"
 PS_CLASSIC = "windows powershell"
 
+# Non-Windows sources (1.1). Loaders stamp these pseudo-channels on events so that
+# the same (channel, EventID) index routes Linux and cloud telemetry.
+LINUX_SYSMON = "linux-sysmon/operational"
+LINUX_AUDITD = "linux-auditd"
+AWS_CLOUDTRAIL = "aws-cloudtrail"
+NON_WINDOWS_CHANNELS = frozenset({LINUX_SYSMON, LINUX_AUDITD, AWS_CLOUDTRAIL})
+
+# Sysmon for Linux uses the Windows Sysmon event ids and field names.
+LINUX_CATEGORY_MAP: dict[str, list[tuple[str, tuple[int, ...]]]] = {
+    "process_creation": [(LINUX_SYSMON, (1,))],
+    "network_connection": [(LINUX_SYSMON, (3,))],
+    "process_termination": [(LINUX_SYSMON, (5,))],
+    "raw_access_thread": [(LINUX_SYSMON, (9,))],
+    "file_event": [(LINUX_SYSMON, (11,))],
+    "file_delete": [(LINUX_SYSMON, (23,))],
+}
+LINUX_SERVICE_MAP: dict[str, tuple[str, ...]] = {"auditd": (LINUX_AUDITD,)}
+CLOUD_SERVICE_MAP: dict[tuple[str, str], tuple[str, ...]] = {("aws", "cloudtrail"): (AWS_CLOUDTRAIL,)}
+
 # category -> list of (channel, event ids). An empty id tuple means "any id".
 CATEGORY_MAP: dict[str, list[tuple[str, tuple[int, ...]]]] = {
     "process_creation": [(SYSMON, (1,)), (SECURITY, (4688,))],
@@ -151,8 +170,13 @@ class Route:
 def route(ls: LogSource) -> Route:
     """Resolve a rule logsource to (channel, event-ids) pairs."""
     product = ls.product.lower()
+    if product == "linux":
+        return _route_linux(ls)
     if product and product != "windows":
-        return Route((), f"product {product!r} has no Windows event-log route")
+        chans = CLOUD_SERVICE_MAP.get((product, ls.service.lower()))
+        if chans and not ls.category:
+            return Route(tuple((c, ()) for c in chans))
+        return Route((), f"product {product!r} has no telemetry route")
     if ls.category:
         cat = ls.category.lower()
         if cat not in CATEGORY_MAP:
@@ -170,6 +194,20 @@ def route(ls: LogSource) -> Route:
     if product == "windows":
         return Route((("*", ()),))  # product-only rule: all Windows events
     return Route((), "no product/category/service")
+
+
+def _route_linux(ls: LogSource) -> Route:
+    if ls.category:
+        cat = ls.category.lower()
+        if cat not in LINUX_CATEGORY_MAP:
+            return Route((), f"linux category {cat!r} not mapped")
+        return Route(tuple(LINUX_CATEGORY_MAP[cat]))
+    if ls.service:
+        svc = ls.service.lower()
+        if svc not in LINUX_SERVICE_MAP:
+            return Route((), f"linux service {svc!r} not in the corpus")
+        return Route(tuple((c, ()) for c in LINUX_SERVICE_MAP[svc]))
+    return Route((), "linux product-only (syslog keyword) rules have no structured source")
 
 
 def event_key(ev: dict[str, Any]) -> tuple[str, int]:
@@ -193,7 +231,7 @@ def applies(r: Route, ev: dict[str, Any]) -> bool:
         return False
     chan, eid = event_key(ev)
     for c, ids in r.channels:
-        if (c == "*" or c == chan) and (not ids or eid in ids):
+        if ((c == "*" and chan not in NON_WINDOWS_CHANNELS) or c == chan) and (not ids or eid in ids):
             return True
     return False
 

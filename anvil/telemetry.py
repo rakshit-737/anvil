@@ -27,6 +27,7 @@ from pathlib import Path
 from typing import Any
 
 from .logsource import add_aliases
+from .nixcloud import from_syslog_wrapper, is_cloudtrail, iter_text_lines, normalise_cloudtrail
 
 Event = dict[str, Any]
 
@@ -108,6 +109,12 @@ def flatten_otrf(obj: dict[str, Any]) -> Event:
 
 
 def normalise(obj: dict[str, Any]) -> Event:
+    if is_cloudtrail(obj):
+        return normalise_cloudtrail(obj)
+    if "SyslogMessage" in obj:
+        ev = from_syslog_wrapper(obj)
+        if ev is not None:
+            return ev
     if "Event" in obj and isinstance(obj["Event"], dict):
         return flatten_evtx_json(obj)
     if "SourceName" in obj or "Hostname" in obj or "@timestamp" in obj:
@@ -201,9 +208,14 @@ def iter_zip_json(path: str | Path) -> Iterator[Event]:
         return
     with zipfile.ZipFile(p) as zf:
         for name in zf.namelist():
-            if name.endswith(".json") and not name.startswith("__MACOSX"):
+            if name.startswith("__MACOSX"):
+                continue
+            if name.endswith(".json"):
                 with zf.open(name) as fh:
                     yield from _iter_lines(io.TextIOWrapper(fh, encoding="utf-8", errors="replace"))
+            elif name.endswith(".log"):  # OTRF Linux datasets: raw auditd text
+                with zf.open(name) as fh:
+                    yield from iter_text_lines(io.TextIOWrapper(fh, encoding="utf-8", errors="replace"))
 
 
 def _iter_lines(fh: Iterable[str]) -> Iterator[Event]:
@@ -224,7 +236,7 @@ def iter_path(path: str | Path) -> Iterator[Event]:
     p = Path(path)
     if p.is_dir():
         for f in sorted(p.rglob("*")):
-            if f.is_file() and f.suffix.lower() in (".evtx", ".json", ".jsonl", ".ndjson", ".gz", ".zip"):
+            if f.is_file() and f.suffix.lower() in (".evtx", ".json", ".jsonl", ".ndjson", ".gz", ".zip", ".log"):
                 yield from iter_path(f)
         return
     name = p.name.lower()
@@ -232,6 +244,10 @@ def iter_path(path: str | Path) -> Iterator[Event]:
         yield from iter_evtx(p)
     elif name.endswith((".zip", ".tar.gz")):
         yield from iter_zip_json(p)
+    elif name.endswith((".log", ".log.gz")):  # Sysmon-for-Linux XML / auditd / CloudTrail lines
+        opener = gzip.open if name.endswith(".gz") else open
+        with opener(p, "rt", encoding="utf-8", errors="replace") as fh:
+            yield from iter_text_lines(fh)
     elif name.endswith((".jsonl", ".ndjson", ".jsonl.gz")):
         opener = gzip.open if name.endswith(".gz") else open
         with opener(p, "rt", encoding="utf-8", errors="replace") as fh:
