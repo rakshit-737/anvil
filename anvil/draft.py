@@ -52,12 +52,14 @@ KNOWN_BINARIES = {"certutil", "bitsadmin", "rundll32", "regsvr32", "mshta", "wmi
 
 @dataclass
 class Draft:
+    """A drafted rule with its rationale, backend and generated TP fixtures."""
     rule: dict[str, Any]
     rationale: str
     backend: str
     tp_fixtures: list[dict[str, Any]] = field(default_factory=list)
 
     def to_yaml(self) -> str:
+        """Serialise the drafted rule to Sigma YAML."""
         return yaml.safe_dump(self.rule, sort_keys=False, allow_unicode=True, width=110)
 
 
@@ -122,6 +124,17 @@ def _base_rule(title: str, desc: str, techniques: list[str], logsource: dict[str
 # ------------------------------------------------------------------ backends
 
 def draft_heuristic(text: str, title: str = "", source: str = "", max_rules: int = 4) -> list[Draft]:
+    """Draft rules from report text with regex extraction (no LLM).
+
+    Args:
+        text: Report text.
+        title: Report title.
+        source: Reference URL or path.
+        max_rules: Upper bound on drafts.
+
+    Returns:
+        Draft rules, all marked for human review.
+    """
     techniques = sorted(set(T_ID.findall(text)))
     cmds = extract_commands(text)
     drafts: list[Draft] = []
@@ -215,6 +228,17 @@ def draft_llm(text: str, title: str = "", source: str = "", model: str = "claude
 
 
 def draft(text: str, title: str = "", source: str = "", backend: str = "heuristic") -> list[Draft]:
+    """Draft rules from report text with the chosen backend.
+
+    Args:
+        text: Report text.
+        title: Report title.
+        source: Reference URL or path.
+        backend: ``heuristic``, ``llm`` or ``keywords``.
+
+    Returns:
+        Draft rules, all marked for human review.
+    """
     if backend == "llm":
         return draft_llm(text, title, source)
     if backend == "keywords":

@@ -62,6 +62,7 @@ def _events(path: str) -> list:
 
 
 def cmd_lint(a) -> int:
+    """Handle ``anvil lint``: print findings and return 1 if any are errors."""
     rules = _load(a)
     findings = lint_rules(rules, a.profile, _catalog(a.attack))
     if a.summary:
@@ -77,6 +78,7 @@ def cmd_lint(a) -> int:
 
 
 def cmd_test(a) -> int:
+    """Handle ``anvil test``: run the TP/FP gate over a rule directory."""
     rules = _load(a)
     results = evaluate_all(rules, _events(a.corpus), _policy(a))
     if a.json:
@@ -130,6 +132,7 @@ def cmd_scan(a) -> int:
 
 
 def cmd_regress(a) -> int:
+    """Handle ``anvil regress``: replay SigmaHQ regression captures."""
     from collections import Counter
 
     from .regression import run_all
@@ -147,6 +150,7 @@ def cmd_regress(a) -> int:
 
 
 def cmd_ingest(a) -> int:
+    """Handle ``anvil ingest``: normalise raw telemetry into JSONL shards."""
     from .telemetry import ingest
     if a.benign:
         base = Path(os.environ.get("ANVIL_DATA", "data"))
@@ -166,6 +170,7 @@ def cmd_ingest(a) -> int:
 
 
 def cmd_draft(a) -> int:
+    """Handle ``anvil draft``: draft candidate rules from a CTI report."""
     from .draft import draft
     text = Path(a.report).read_text(encoding="utf-8", errors="replace")
     drafts = draft(text, a.title or Path(a.report).stem, a.source or str(a.report), a.backend)
@@ -183,6 +188,7 @@ def cmd_draft(a) -> int:
 
 
 def cmd_convert(a) -> int:
+    """Handle ``anvil convert``: convert rules to a SIEM query language via pySigma."""
     from .convert import Converter
     conv = Converter(a.target)
     p = Path(a.rule)
@@ -200,6 +206,7 @@ def cmd_convert(a) -> int:
 
 
 def cmd_coverage(a) -> int:
+    """Handle ``anvil coverage``: claimed vs validated ATT&CK coverage."""
     rules = _load(a)
     passing = None
     if a.corpus:
@@ -224,6 +231,7 @@ def cmd_coverage(a) -> int:
 
 
 def cmd_score(a) -> int:
+    """Handle ``anvil score``: print a quality score per rule."""
     rules = _load(a)
     results = {r.rule_id: r for r in evaluate_all(rules, _events(a.corpus))}
     for r in rules:
@@ -233,6 +241,7 @@ def cmd_score(a) -> int:
 
 
 def cmd_decay(a) -> int:
+    """Handle ``anvil decay``: report rules whose fields vanished from telemetry."""
     rules = _load(a)
     events = load_events(a.corpus) if a.corpus.endswith((".jsonl", ".json")) else None
     if events is None:
@@ -258,12 +267,14 @@ def cmd_decay(a) -> int:
 
 
 def cmd_synth(a) -> int:
+    """Handle ``anvil synth``: write a synthetic benign corpus."""
     write_jsonl(generate(a.n, a.seed, a.schema), a.out)
     print(f"wrote {a.n} synthetic benign events ({a.schema}) to {a.out}")
     return 0
 
 
 def cmd_report(a) -> int:
+    """Handle ``anvil report``: render the health dashboard."""
     from .dashboard import render
     out = render(Path(a.results), Path(a.out))
     print(f"wrote {out}")
@@ -271,6 +282,7 @@ def cmd_report(a) -> int:
 
 
 def build_parser() -> argparse.ArgumentParser:
+    """Build the ``anvil`` argument parser with all subcommands."""
     p = argparse.ArgumentParser(prog="anvil", description="Detection-as-code lifecycle toolkit")
     fmt = argparse.ArgumentDefaultsHelpFormatter
     p.add_argument("--version", action="version", version=__version__)
@@ -377,6 +389,14 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def main(argv: list[str] | None = None) -> int:
+    """CLI entry point.
+
+    Args:
+        argv: Arguments; defaults to ``sys.argv[1:]``.
+
+    Returns:
+        Process exit code.
+    """
     a = build_parser().parse_args(argv)
     try:
         return a.fn(a)

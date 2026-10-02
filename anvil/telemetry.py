@@ -109,6 +109,7 @@ def flatten_otrf(obj: dict[str, Any]) -> Event:
 
 
 def normalise(obj: dict[str, Any]) -> Event:
+    """Normalise a raw record (EVTX JSON, syslog, CloudTrail) to a flat event."""
     if is_cloudtrail(obj):
         return normalise_cloudtrail(obj)
     if "SyslogMessage" in obj:
@@ -139,6 +140,7 @@ def iter_json_objects(text: str) -> Iterator[dict[str, Any]]:
 
 
 def iter_json_file(path: str | Path) -> Iterator[Event]:
+    """Yield normalised events from a JSON, JSON-array or JSONL file (optionally gzipped)."""
     p = Path(path)
     opener = gzip.open if p.suffix == ".gz" else open
     with opener(p, "rt", encoding="utf-8", errors="replace") as fh:
@@ -257,6 +259,7 @@ def iter_path(path: str | Path) -> Iterator[Event]:
 
 
 def write_jsonl(events: Iterable[Event], path: str | Path) -> int:
+    """Write events as JSON lines (gzip if the path ends in .gz)."""
     p = Path(path)
     p.parent.mkdir(parents=True, exist_ok=True)
     opener = gzip.open if p.suffix == ".gz" else open

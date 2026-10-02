@@ -25,6 +25,7 @@ _Loader = getattr(yaml, "CSafeLoader", yaml.SafeLoader)
 
 @dataclass
 class RegressionCase:
+    """Outcome of replaying one SigmaHQ regression capture."""
     rule_id: str
     title: str
     sample: str
@@ -37,9 +38,11 @@ class RegressionCase:
 
     @property
     def passed(self) -> bool:
+        """True if the match count equalled the expected count."""
         return self.status == "pass"
 
     def to_dict(self) -> dict[str, Any]:
+        """Return the case as a plain dict."""
         return asdict(self)
 
 
@@ -66,6 +69,17 @@ def discover(sigma_root: str | Path) -> list[dict[str, Any]]:
 def run_case(lib: Library, case: dict[str, Any],
              matcher: Callable[[str, dict[str, Any]], bool] | None = None,
              use_routing: bool = True) -> RegressionCase:
+    """Replay one regression capture against the library.
+
+    Args:
+        lib: Compiled rule library.
+        case: Case dict from ``discover()``.
+        matcher: Optional alternative matcher ``(rule_id, event) -> bool``.
+        use_routing: Apply logsource routing before matching.
+
+    Returns:
+        The RegressionCase.
+    """
     rc = RegressionCase(case["rule_id"], case["title"], case["sample"], case["expected"])
     rid = rc.rule_id
     if rid in lib.unsupported:
@@ -98,4 +112,5 @@ def run_case(lib: Library, case: dict[str, Any],
 
 
 def run_all(lib: Library, sigma_root: str | Path, **kw: Any) -> list[RegressionCase]:
+    """Replay every regression capture under a SigmaHQ checkout."""
     return [run_case(lib, c, **kw) for c in discover(sigma_root)]

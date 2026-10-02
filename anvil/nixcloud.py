@@ -122,8 +122,10 @@ def iter_text_lines(lines: Iterable[str]) -> Iterator[Event]:
 
 
 def iter_bytes(name: str, data: bytes) -> Iterator[Event]:
-    """Parse the bytes of a ``.zip`` or text capture (JSON array, ``{"Records": ...}``
-    document, or one record per line). Callers read the bytes from a file on disk."""
+    """Parse the bytes of a ``.zip`` or text capture.
+
+    Accepts a JSON array, a ``{"Records": ...}`` document, or one record per line. Callers read the bytes from a file on disk.
+    """
     if name.lower().endswith(".zip") or data[:2] == b"PK":
         with zipfile.ZipFile(io.BytesIO(data)) as zf:
             for n in zf.namelist():

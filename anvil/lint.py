@@ -17,6 +17,7 @@ ERROR, WARN = "error", "warning"
 
 @dataclass
 class Finding:
+    """One lint finding: rule ID, severity, code and message."""
     rule_id: str
     severity: str
     code: str
@@ -129,6 +130,16 @@ def lint_rule(rule: Rule, profile: str = "anvil", catalog=None) -> list[Finding]
 
 
 def lint_rules(rules: list[Rule], profile: str = "anvil", catalog=None) -> list[Finding]:
+    """Lint a rule set, including cross-rule checks such as duplicate IDs.
+
+    Args:
+        rules: Parsed rules.
+        profile: ``anvil`` (strict) or ``sigma`` (SigmaHQ conventions).
+        catalog: Optional ATT&CK Catalog for tag validation.
+
+    Returns:
+        All findings.
+    """
     out: list[Finding] = []
     seen: dict[str, str] = {}
     for r in rules:
@@ -140,4 +151,5 @@ def lint_rules(rules: list[Rule], profile: str = "anvil", catalog=None) -> list[
 
 
 def has_errors(findings: list[Finding]) -> bool:
+    """True if any finding has error severity."""
     return any(f.severity == ERROR for f in findings)

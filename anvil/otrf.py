@@ -25,6 +25,7 @@ _Loader = getattr(yaml, "CSafeLoader", yaml.SafeLoader)
 
 @dataclass
 class Dataset:
+    """One OTRF Security-Datasets emulation with its local host files."""
     id: str
     title: str
     description: str
@@ -35,9 +36,11 @@ class Dataset:
 
     @property
     def available(self) -> bool:
+        """True if any host file exists locally."""
         return any(p.exists() for p in self.host_files)
 
     def events(self) -> Iterator[dict[str, Any]]:
+        """Yield events from the available host files, skipping unreadable ones."""
         for p in self.host_files:
             if p.exists():
                 try:

@@ -24,6 +24,7 @@ TACTIC_ORDER = ["reconnaissance", "resource-development", "initial-access", "exe
 
 @dataclass
 class Technique:
+    """One ATT&CK technique or sub-technique parsed from the STIX bundle."""
     id: str
     name: str
     tactics: list[str]
@@ -36,19 +37,31 @@ class Technique:
 
     @property
     def active(self) -> bool:
+        """True unless the technique is revoked or deprecated."""
         return not (self.revoked or self.deprecated)
 
     @property
     def parent(self) -> str:
+        """Parent technique ID (``T1059`` for ``T1059.001``)."""
         return self.id.split(".")[0]
 
 
 @dataclass
 class Catalog:
+    """ATT&CK technique catalogue keyed by technique ID, with its release version."""
     version: str
     techniques: dict[str, Technique]
 
     def active(self, platform: str | None = None, include_sub: bool = True) -> dict[str, Technique]:
+        """Return the active techniques.
+
+        Args:
+            platform: Keep only techniques for this platform (case-insensitive).
+            include_sub: Include sub-techniques.
+
+        Returns:
+            Mapping of technique ID to Technique.
+        """
         out = {}
         for tid, t in self.techniques.items():
             if not t.active or (not include_sub and t.is_subtechnique):
@@ -76,6 +89,14 @@ def _ext_id(obj: dict[str, Any]) -> str:
 
 
 def load_stix(path: str | Path) -> Catalog:
+    """Load an ATT&CK enterprise STIX 2.x bundle into a Catalog.
+
+    Args:
+        path: Path to the STIX JSON bundle.
+
+    Returns:
+        The parsed technique catalogue.
+    """
     bundle = json.loads(Path(path).read_text(encoding="utf-8"))
     objs = bundle.get("objects", [])
     by_stix: dict[str, dict[str, Any]] = {o["id"]: o for o in objs if "id" in o}

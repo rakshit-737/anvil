@@ -22,6 +22,7 @@ TARGETS = ("splunk", "elastic", "kusto", "sqlite")
 
 
 def available() -> bool:
+    """True if pySigma is installed."""
     try:
         import sigma  # noqa: F401  # type: ignore[import-not-found]
     except ImportError:
@@ -50,6 +51,7 @@ def _backend(target: str) -> Any:
 
 @dataclass
 class Conversion:
+    """Result of converting one rule: the backend queries or an error message."""
     rule_id: str
     target: str
     queries: list[str]
@@ -57,15 +59,26 @@ class Conversion:
 
     @property
     def ok(self) -> bool:
+        """True if conversion produced at least one query and no error."""
         return not self.error and bool(self.queries)
 
 
 class Converter:
+    """Wraps a pySigma backend for one target (splunk, elastic, kql, ...)."""
     def __init__(self, target: str):
         self.target = target
         self.backend = _backend(target)
 
     def convert_yaml(self, text: str, rule_id: str = "") -> Conversion:
+        """Convert one Sigma rule.
+
+        Args:
+            text: Rule YAML.
+            rule_id: ID recorded on the result.
+
+        Returns:
+            A Conversion; errors are captured, not raised.
+        """
         from sigma.collection import SigmaCollection
         try:
             coll = SigmaCollection.from_yaml(text)
@@ -92,6 +105,7 @@ class SqliteOracle:
         self.conv = Converter("sqlite")
 
     def compile(self, rule_yaml: str, rule_id: str = "") -> Conversion:
+        """Convert a rule to SQLite SQL (see Converter.convert_yaml)."""
         return self.conv.convert_yaml(rule_yaml, rule_id)
 
     @staticmethod

@@ -33,6 +33,16 @@ V2_RENAMES = {"Image": "process.executable", "CommandLine": "process.command_lin
 
 
 def generate(n: int = 5000, seed: int = 1337, schema: str = "v1") -> list[dict[str, Any]]:
+    """Generate deterministic synthetic benign events.
+
+    Args:
+        n: Number of events.
+        seed: RNG seed.
+        schema: ``v1`` or a drifted schema version.
+
+    Returns:
+        The events.
+    """
     rng = random.Random(seed)
     start = datetime(2026, 1, 1, tzinfo=timezone.utc)
     events = []
@@ -51,6 +61,7 @@ def generate(n: int = 5000, seed: int = 1337, schema: str = "v1") -> list[dict[s
 
 
 def write_jsonl(events: list[dict[str, Any]], path: str | Path) -> None:
+    """Write events as JSON lines (gzip if the path ends in .gz)."""
     Path(path).parent.mkdir(parents=True, exist_ok=True)
     with open(path, "w", encoding="utf-8") as fh:
         for e in events:

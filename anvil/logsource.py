@@ -165,6 +165,7 @@ class Route:
 
     @property
     def routable(self) -> bool:
+        """True if the logsource maps to at least one channel."""
         return bool(self.channels)
 
 
@@ -212,6 +213,7 @@ def _route_linux(ls: LogSource) -> Route:
 
 
 def event_key(ev: dict[str, Any]) -> tuple[str, int]:
+    """Return the (lower-cased channel, EventID) routing key of an event."""
     chan = str(ev.get("Channel") or "").lower()
     try:
         eid = int(ev.get("EventID") or 0)
@@ -221,6 +223,7 @@ def event_key(ev: dict[str, Any]) -> tuple[str, int]:
 
 
 def where_ok(r: Route, ev: dict[str, Any]) -> bool:
+    """True if the event passes the route's extra field guard."""
     if r.where is None:
         return True
     field, allowed = r.where
@@ -228,6 +231,7 @@ def where_ok(r: Route, ev: dict[str, Any]) -> bool:
 
 
 def applies(r: Route, ev: dict[str, Any]) -> bool:
+    """True if the route covers this event's channel, EventID and guard."""
     if not where_ok(r, ev):
         return False
     chan, eid = event_key(ev)

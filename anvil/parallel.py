@@ -45,6 +45,7 @@ def _scan_file(path: str, keep_examples: int) -> dict[str, Any]:
 
 @dataclass
 class CorpusScan:
+    """Aggregate counts and timings of a multi-process corpus scan."""
     files: int = 0
     events: int = 0
     evaluations: int = 0
@@ -59,6 +60,18 @@ class CorpusScan:
 
 def scan_files(rule_dirs: Iterable[str | Path], files: Iterable[str | Path], workers: int | None = None,
                keep_examples: int = 0, drop_rule_ids: Iterable[str] = ()) -> CorpusScan:
+    """Scan telemetry files with a rule library in worker processes.
+
+    Args:
+        rule_dirs: Rule directories to load.
+        files: Telemetry files to scan.
+        workers: Process count; defaults to CPU count minus one, at most 8.
+        keep_examples: Example events to keep per rule.
+        drop_rule_ids: Rule IDs to exclude.
+
+    Returns:
+        The merged CorpusScan.
+    """
     import time
     files = [str(f) for f in files]
     workers = workers or max(1, min(len(files), (os.cpu_count() or 2) - 1, 8))

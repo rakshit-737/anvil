@@ -10,6 +10,7 @@ from .models import Rule
 
 @dataclass
 class QualityScore:
+    """A 0-100 rule quality score, letter grade and per-component breakdown."""
     rule_id: str
     title: str
     score: int
@@ -22,6 +23,7 @@ def _grade(s: int) -> str:
 
 
 def score_rule(rule: Rule, result: RuleResult | None) -> QualityScore:
+    """Score a rule on lint, tests, gate result and metadata."""
     b: dict[str, int] = {}
     findings = lint_rule(rule)
     errs = sum(f.severity == ERROR for f in findings)

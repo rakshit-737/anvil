@@ -38,6 +38,7 @@ def _walk_values(sel: Any):
 
 
 def features(rule: Rule) -> dict[str, float]:
+    """Return the static FP-prediction features of a rule."""
     f: dict[str, float] = {}
     f["level"] = LEVEL.get(rule.level, 2)
     f["status"] = STATUS.get(rule.status, 1)
@@ -106,6 +107,7 @@ def features(rule: Rule) -> dict[str, float]:
 
 
 def matrix(rules: list[Rule]) -> tuple[list[str], list[list[float]]]:
+    """Return (feature names, feature matrix) for a list of rules."""
     rows = [features(r) for r in rules]
     names = sorted(rows[0]) if rows else []
     return names, [[row[n] for n in names] for row in rows]

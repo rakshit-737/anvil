@@ -30,6 +30,7 @@ META_FIELDS = {"EventID", "Channel", "Provider_Name", "Computer", "TimeCreated"}
 
 
 def observed_fields(events: Iterable[dict[str, Any]]) -> set[str]:
+    """Return every field path (dotted for nested dicts) seen in the events."""
     out: set[str] = set()
 
     def walk(d: dict[str, Any], prefix: str = "") -> None:
@@ -63,10 +64,12 @@ class FieldInventory:
         self.by_key: dict[tuple[str, int], set[str]] = defaultdict(set)
 
     def add(self, ev: dict[str, Any]) -> None:
+        """Record the fields of one event under its (channel, EventID) key."""
         self.by_key[event_key(ev)].update(k for k in ev if not k.startswith("__"))
 
     @classmethod
     def from_events(cls, events: Iterable[dict[str, Any]]) -> FieldInventory:
+        """Build an inventory from an event iterable."""
         inv = cls()
         for e in events:
             inv.add(e)
@@ -127,6 +130,16 @@ def _satisfiable(node, sels: dict[str, Any], present: set[str], blind: list[str]
 
 
 def analyse(rule: Rule, inventory: FieldInventory) -> dict[str, Any]:
+    """Check whether a rule's fields still exist in the telemetry.
+
+    Args:
+        rule: The rule to check.
+        inventory: Fields observed per log source.
+
+    Returns:
+        A dict with ``status``, the ``missing`` fields and ``blind_filters``
+        (filter selections whose fields are absent).
+    """
     present = inventory.fields_for(rule)
     if present is None:
         return {"status": "source-missing", "missing": [], "blind_filters": []}
@@ -230,6 +243,7 @@ SCHEMA_CHANGES: dict[str, tuple[str, Callable[[dict[str, Any]], dict[str, Any] |
 
 
 def apply_change(events: Iterable[dict[str, Any]], name: str) -> list[dict[str, Any]]:
+    """Apply the named simulated schema change from SCHEMA_CHANGES to events."""
     fn = SCHEMA_CHANGES[name][1]
     out = []
     for e in events:

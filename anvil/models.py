@@ -13,6 +13,7 @@ ATTACK_TAG = re.compile(r"^attack\.t\d{4}(\.\d{3})?$")
 
 @dataclass
 class LogSource:
+    """Sigma ``logsource`` block."""
     product: str = ""
     category: str = ""
     service: str = ""
@@ -20,12 +21,14 @@ class LogSource:
 
 @dataclass
 class RuleTests:
+    """ANVIL ``tests`` block: TP and TN fixture events."""
     true_positives: list[dict[str, Any]] = field(default_factory=list)
     true_negatives: list[dict[str, Any]] = field(default_factory=list)
 
 
 @dataclass
 class Rule:
+    """A parsed Sigma rule plus ANVIL test fixtures."""
     id: str
     title: str
     description: str
@@ -47,24 +50,29 @@ class Rule:
 
     @property
     def condition(self) -> str:
+        """Condition string; a list of conditions is OR-ed."""
         c = self.detection.get("condition", "")
         return " or ".join(f"({x})" for x in c) if isinstance(c, list) else str(c)
 
     @property
     def selections(self) -> dict[str, Any]:
+        """Named selections of the detection block (condition and timeframe excluded)."""
         return {k: v for k, v in self.detection.items() if k not in NON_SELECTION_KEYS}
 
     @property
     def techniques(self) -> list[str]:
+        """ATT&CK technique IDs from the tags, upper-cased."""
         return sorted({t.split(".", 1)[1].upper() for t in self.tags if ATTACK_TAG.match(t)})
 
     @property
     def tactics(self) -> list[str]:
+        """ATT&CK tactic names from the tags."""
         return sorted({t.split(".", 1)[1] for t in self.tags
                        if t.startswith("attack.") and not re.match(r"^attack\.[tgs]\d{4}", t)})
 
     @classmethod
     def from_dict(cls, d: dict[str, Any], path: str = "") -> Rule:
+        """Build a Rule from parsed YAML."""
         ls = d.get("logsource") or {}
         t = d.get("tests") or {}
         return cls(

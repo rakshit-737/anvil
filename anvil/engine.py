@@ -1,4 +1,4 @@
-"""Sigma matching engine.
+r"""Sigma matching engine.
 
 Rules are compiled once into a tree of small predicate closures, then applied to
 many events. Supported (covers >95% of the SigmaHQ Windows/Linux rule corpus):
@@ -46,6 +46,7 @@ DASHES = ["-", "/", "–", "—", "―"]  # windash: -, /, en dash, em dash, hor
 
 
 class ConditionError(ValueError):
+    """Raised when a Sigma condition string cannot be parsed."""
     pass
 
 
@@ -56,6 +57,7 @@ class UnsupportedRule(ValueError):
 # --------------------------------------------------------------------------- fields
 
 def get_field(event: Event, field: str) -> Any:
+    """Look up a field, falling back to dotted-path traversal of nested dicts."""
     if field in event:
         return event[field]
     if "." in field:
@@ -372,6 +374,11 @@ def _keyword_pred(values: list[Any], mods: list[str] | None = None) -> Pred:
 
 
 def compile_selection(sel: Any) -> Pred:
+    """Compile one Sigma selection (map or list) to a predicate.
+
+    Raises:
+        UnsupportedRule: If the selection uses an unsupported feature.
+    """
     if isinstance(sel, dict):
         if not sel:
             raise UnsupportedRule("empty selection")
@@ -402,10 +409,12 @@ def compile_selection(sel: Any) -> Pred:
 
 # kept for backwards compatibility with 0.1 callers
 def match_selection(event: Event, selection: Any) -> bool:
+    """Evaluate one selection against one event (compiles on each call)."""
     return compile_selection(selection)(event)
 
 
 def match_field(event: Event, key: str, expected: Any) -> bool:
+    """Evaluate one ``field|modifiers: value`` pair against an event."""
     return _field_pred(key, expected)(event)
 
 
@@ -415,6 +424,7 @@ _TOKEN = re.compile(r"\(|\)|[A-Za-z0-9_*\-.]+")
 
 
 def tokenize(cond: str) -> list[str]:
+    """Split a Sigma condition into tokens."""
     out, pos = [], 0
     while pos < len(cond):
         if cond[pos].isspace():
@@ -495,12 +505,26 @@ class _Parser:
 
 
 def parse_condition(cond: str, names: list[str]):
+    """Parse a Sigma condition into an AST.
+
+    Args:
+        cond: Condition string, e.g. ``selection and not 1 of filter_*``.
+        names: Selection names defined in the rule.
+
+    Returns:
+        A nested-tuple AST.
+
+    Raises:
+        UnsupportedRule: For aggregation conditions.
+        ConditionError: For malformed conditions.
+    """
     if "|" in cond:
         raise UnsupportedRule("aggregation conditions (| count() ...) are not supported")
     return _Parser(tokenize(cond), names).parse()
 
 
 def referenced_selections(node) -> set[str]:
+    """Return the selection names a condition AST refers to."""
     op = node[0]
     if op == "sel":
         return {node[1]}
@@ -574,6 +598,14 @@ def required_event_ids(node, sels_raw: dict[str, Any]) -> frozenset[int] | None:
 
 
 class CompiledRule:
+    """A rule compiled to a single predicate, with an optional logsource guard.
+
+    Args:
+        rule: The parsed rule.
+
+    Raises:
+        UnsupportedRule: If the rule uses an unsupported feature.
+    """
     def __init__(self, rule: Rule):
         self.rule = rule
         self.sels_raw = rule.selections
@@ -590,16 +622,19 @@ class CompiledRule:
     guard: Pred | None = None  # optional logsource pre-condition set by the runner
 
     def matches(self, event: Event) -> bool:
+        """True if the event satisfies the guard and the rule condition."""
         if self.guard is not None and not self.guard(event):
             return False
         return self._pred(event)
 
 
 def compile_rule(rule: Rule) -> CompiledRule:
+    """Compile a rule; see CompiledRule."""
     return CompiledRule(rule)
 
 
 def run(rule: Rule, events: list[Event]) -> list[int]:
+    """Return the indices of events that the rule matches."""
     cr = compile_rule(rule)
     return [i for i, e in enumerate(events) if cr.matches(e)]
 

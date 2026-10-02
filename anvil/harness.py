@@ -10,6 +10,7 @@ from .models import Rule
 
 @dataclass
 class GatePolicy:
+    """Thresholds for the CI gate: FP rate and per-rule share of SOC capacity."""
     max_fp_rate: float = 0.001          # fraction of benign corpus events
     soc_capacity_per_day: float = 200.0  # alerts/day the SOC can triage
     capacity_share: float = 0.10         # one rule may use at most this share
@@ -18,6 +19,7 @@ class GatePolicy:
 
 @dataclass
 class RuleResult:
+    """Per-rule gate result: TP recall, benign hits, projected alerts/day, verdict."""
     rule_id: str
     title: str
     tp_total: int
@@ -35,10 +37,21 @@ class RuleResult:
     missed_tps: list[int] = field(default_factory=list)
 
     def to_dict(self) -> dict[str, Any]:
+        """Return the result as a plain dict."""
         return asdict(self)
 
 
 def evaluate(rule: Rule, corpus: list[dict[str, Any]], policy: GatePolicy | None = None) -> RuleResult:
+    """Run one rule against its fixtures and a benign corpus.
+
+    Args:
+        rule: Rule with ``tests`` fixtures.
+        corpus: Benign events.
+        policy: Gate thresholds; defaults to ``GatePolicy()``.
+
+    Returns:
+        The RuleResult with its verdict and reasons.
+    """
     policy = policy or GatePolicy()
     cr = compile_rule(rule)
     tps, tns = rule.tests.true_positives, rule.tests.true_negatives
@@ -74,4 +87,5 @@ def evaluate(rule: Rule, corpus: list[dict[str, Any]], policy: GatePolicy | None
 
 def evaluate_all(rules: list[Rule], corpus: list[dict[str, Any]],
                  policy: GatePolicy | None = None) -> list[RuleResult]:
+    """Evaluate every non-deprecated rule; see evaluate."""
     return [evaluate(r, corpus, policy) for r in rules if r.status != "deprecated"]

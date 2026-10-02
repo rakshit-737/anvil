@@ -27,6 +27,7 @@ Event = dict[str, Any]
 
 @dataclass
 class LoadReport:
+    """Counts of loaded, unparsable and skipped rule files."""
     loaded: int = 0
     parse_errors: dict[str, str] = field(default_factory=dict)
     skipped_non_detection: int = 0  # correlation / filter documents
@@ -67,6 +68,15 @@ class Library:
 
     @classmethod
     def build(cls, rules: Iterable[Rule], include_deprecated: bool = False) -> Library:
+        """Compile rules and build the (channel, EventID) index.
+
+        Args:
+            rules: Parsed rules.
+            include_deprecated: Keep deprecated rules.
+
+        Returns:
+            The Library; unsupported and unroutable rules are recorded, not raised.
+        """
         lib = cls()
         chan_any: dict[str, list[str]] = defaultdict(list)
         index: dict[tuple[str, int], list[str]] = defaultdict(list)
@@ -107,9 +117,11 @@ class Library:
 
     @property
     def active_ids(self) -> list[str]:
+        """IDs of compiled, routable rules."""
         return [r for r in self.compiled if r not in self.unroutable]
 
     def candidates(self, ev: Event) -> list[str]:
+        """Rule IDs whose logsource covers this event."""
         chan, eid = event_key(ev)
         out = self._index.get((chan, eid), [])
         extra = self._chan_any.get(chan)
@@ -119,6 +131,7 @@ class Library:
         return out
 
     def match_event(self, ev: Event) -> list[str]:
+        """Rule IDs that match this event."""
         hits = []
         for rid in self.candidates(ev):
             try:
@@ -131,6 +144,7 @@ class Library:
 
 @dataclass
 class ScanResult:
+    """Hit counts and throughput of one scan."""
     events: int = 0
     evaluations: int = 0
     seconds: float = 0.0
@@ -140,11 +154,23 @@ class ScanResult:
 
     @property
     def events_per_second(self) -> float:
+        """Scan throughput."""
         return self.events / self.seconds if self.seconds else 0.0
 
 
 def scan(lib: Library, events: Iterable[Event], keep_keys: bool = True,
          on_hit: Callable[[str, Event], None] | None = None) -> ScanResult:
+    """Run a library over an event stream.
+
+    Args:
+        lib: Compiled rule library.
+        events: Events to scan.
+        keep_keys: Record routing keys of hits.
+        on_hit: Callback per ``(rule_id, event)`` hit.
+
+    Returns:
+        The ScanResult.
+    """
     res = ScanResult()
     t0 = time.perf_counter()
     for i, ev in enumerate(events):
