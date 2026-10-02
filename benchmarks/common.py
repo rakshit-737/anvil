@@ -31,8 +31,31 @@ def benign_shards() -> list[Path]:
     return sorted((data_dir() / "corpus").glob("benign-*/*.jsonl.gz"))
 
 
+def provenance() -> dict[str, Any]:
+    """Git SHA, Python and key package versions, written into every results file."""
+    import importlib.metadata as md
+    import platform
+    import subprocess
+    try:
+        sha = subprocess.run(["git", "rev-parse", "HEAD"], cwd=ROOT, capture_output=True, text=True,
+                             timeout=10).stdout.strip()
+    except (OSError, subprocess.SubprocessError):
+        sha = ""
+    pk = {}
+    for name in ("pySigma", "pySigma-backend-sqlite", "pySigma-backend-kusto", "pysigma-backend-opensearch",
+                 "scikit-learn", "numpy", "pyahocorasick", "evtx"):
+        try:
+            pk[name] = md.version(name)
+        except md.PackageNotFoundError:
+            pass
+    return {"git_sha": sha, "python": platform.python_version(), "packages": pk,
+            "ci_run": os.environ.get("GITHUB_RUN_ID", "")}
+
+
 def save(name: str, obj: Any) -> Path:
     RESULTS.mkdir(parents=True, exist_ok=True)
+    if isinstance(obj, dict):
+        obj = {**obj, "provenance": provenance()}
     p = RESULTS / name
     text = json.dumps(obj, indent=1, default=str)
     if len(text) > 400_000:  # keep committed result files well under 1 MB

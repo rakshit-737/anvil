@@ -626,6 +626,18 @@ def _days() -> float:
         return 1.0
 
 
+def stage_nixcloud() -> dict[str, Any]:
+    """Linux / AWS captures (opt-in data; normally run by the CI bench job)."""
+    from benchmarks.nixcloud_bench import stage_linux_benign
+    from benchmarks.nixcloud_bench import stage_nixcloud as run
+    res = run(data_dir(), _rule_dirs())
+    res["linux_benign"] = stage_linux_benign(data_dir(), _rule_dirs())
+    save("nixcloud.json", res)
+    return res
+
+
+EXTRA_STAGES = {"nixcloud": stage_nixcloud}  # not part of "all": needs the opt-in nixcloud download
+
 STAGES = {"lint": stage_lint, "engine": stage_engine, "fp": stage_fp, "otrf": stage_otrf,
           "coverage": stage_coverage, "decay": stage_decay, "convert": stage_convert,
           "fpmodel": stage_fpmodel, "draft": stage_draft}
@@ -633,7 +645,7 @@ STAGES = {"lint": stage_lint, "engine": stage_engine, "fp": stage_fp, "otrf": st
 
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("stages", nargs="+", choices=[*STAGES, "report", "all"])
+    ap.add_argument("stages", nargs="+", choices=[*STAGES, *EXTRA_STAGES, "report", "all"])
     ap.add_argument("--workers", type=int, default=4, help="processes for corpus scans")
     a = ap.parse_args(argv)
     names = [*STAGES, "report"] if "all" in a.stages else a.stages
@@ -644,7 +656,7 @@ def main(argv: list[str] | None = None) -> int:
             from benchmarks.report import build
             build()
         else:
-            fn = STAGES[n]
+            fn = STAGES.get(n) or EXTRA_STAGES[n]
             r = fn(workers=a.workers) if "workers" in fn.__code__.co_varnames else fn()
             print(json.dumps({k: v for k, v in r.items() if not isinstance(v, (list, dict)) or k in
                               ("anvil", "anvil_v01", "backends")}, default=str)[:1500])

@@ -1,0 +1,106 @@
+name: bench
+
+# Full real-data benchmark on a clean ubuntu runner: fresh, checksum-verified
+# downloads (including the files local endpoint antivirus blocks on the dev laptop),
+# the Linux/AWS stage, live benign Linux telemetry recorded on this runner, and a
+# real-backend cross-check against OpenSearch. Results are uploaded as artefacts;
+# only the small results/*.json files are committed by hand afterwards.
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "41 3 * * 0"   # weekly
+
+permissions:
+  contents: read
+
+env:
+  ANVIL_DATA: ${{ github.workspace }}/../data
+  PYTHONUNBUFFERED: "1"
+
+jobs:
+  bench:
+    runs-on: ubuntu-latest
+    timeout-minutes: 330
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install
+        run: pip install -e ".[dev]" -r requirements-bench.txt
+      - name: Download (fresh, checksum-verified)
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: python scripts/download_data.py all nixcloud
+      - name: Ingest benign evtx-baseline
+        run: python -m anvil ingest --benign
+      - name: Record live Linux telemetry on this runner (benign commands only)
+        continue-on-error: true
+        run: bash scripts/record_linux_live.sh
+      - name: Real-data tests
+        run: python -m pytest -q -m realdata
+      - name: Benchmark (all stages + Linux/AWS)
+        run: python benchmarks/bench.py all nixcloud --workers 4 2>&1 | tee bench.log
+      - name: Assert every dataset was readable on the runner
+        run: |
+          python - <<'PY'
+          import json
+          o = json.load(open("results/otrf.json")); e = json.load(open("results/engine.json"))
+          print("otrf blocked:", o["files_blocked_by_av"], "engine unreadable:", e["anvil"].get("unreadable", 0))
+          assert o["files_blocked_by_av"] == 0 and e["anvil"].get("unreadable", 0) == 0
+          PY
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: always()
+        with:
+          name: bench-results
+          path: |
+            results/
+            docs/img/
+            docs/dashboard.html
+            bench.log
+
+  backend:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    services:
+      opensearch:
+        image: opensearchproject/opensearch:2.19.1
+        env:
+          discovery.type: single-node
+          DISABLE_SECURITY_PLUGIN: "true"
+          DISABLE_INSTALL_DEMO_CONFIG: "true"
+          OPENSEARCH_JAVA_OPTS: -Xms2g -Xmx2g
+        ports:
+          - 127.0.0.1:9200:9200
+        options: >-
+          --health-cmd "curl -fs http://localhost:9200/_cluster/health || exit 1"
+          --health-interval 10s --health-timeout 5s --health-retries 30
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install
+        run: pip install -e ".[sigma,evtx,fast]" pysigma-backend-opensearch pysigma-pipeline-sysmon pysigma-pipeline-windows
+      - name: Download SigmaHQ + evtx-baseline
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: python scripts/download_data.py sigma baseline
+      - name: Ingest benign
+        run: python -m anvil ingest --benign
+      - name: OpenSearch vs ANVIL
+        run: python benchmarks/backend_opensearch.py 2>&1 | tee backend.log
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: always()
+        with:
+          name: backend-results
+          path: |
+            results/backend_opensearch.json
+            backend.log
