@@ -174,10 +174,11 @@ def stage_linux_benign(data: Path, rule_dirs: list[str]) -> dict[str, Any] | Non
             for rid in lib.match_event(ev):
                 if lib.rules[rid].logsource.product.lower() == "linux":
                     hits[rid] += 1
-    per_day = {rid: c / hours * 24 for rid, c in hits.items()} if hours else {}
+    # A sample shorter than an hour cannot support a per-day projection: omit it.
+    per_day = {rid: c / hours * 24 for rid, c in hits.items()} if hours and hours >= 1 else None
     return {"events": n, "channels": dict(ch), "window_hours": round(hours, 3) if hours else None,
             "workload": meta.get("workload", ""),
             "rules_fired": len(hits), "alerts": sum(hits.values()),
-            "over_budget_20_per_day": sum(v > 20 for v in per_day.values()),
+            "over_budget_20_per_day": sum(v > 20 for v in per_day.values()) if per_day is not None else None,
             "fired": [{"title": lib.rules[r].title, "level": lib.rules[r].level, "hits": c,
-                       "alerts_per_day_projected": round(per_day.get(r, 0), 1)} for r, c in hits.most_common(40)]}
+                       "alerts_per_day_projected": round(per_day.get(r, 0), 1) if per_day is not None else None} for r, c in hits.most_common(40)]}

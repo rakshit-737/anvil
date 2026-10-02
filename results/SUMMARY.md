@@ -243,6 +243,6 @@ Rules converted by pySigma's OpenSearch Lucene backend with pySigma's own Sysmon
 |---|---|---|---|
 | regression captures: verdict | 459 | 433 | 94.3% [92, 96]% |
 | regression captures: exact count | 459 | 433 | 94.3% |
-| benign sample: same matching events per rule | 2838 | 2837 | 100.0% [0.998, 0.9999] |
+| benign sample: same matching events per rule | 2838 | 2837 | 99.96% [99.8, 100.0] |
 
 Benign fire/no-fire table: {'both': 2, 'anvil_only': 0, 'opensearch_only': 1, 'neither': 2835}, Cohen's kappa 0.7998. Disagreements by modifier: {'(plain)': 1}.

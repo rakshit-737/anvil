@@ -304,7 +304,7 @@ def summary() -> str:
                   ["regression captures: exact count", rg.get("compared", 0), rg.get("count_agree", 0),
                    f"{100 * rg['count_agreement']:.1f}%"],
                   ["benign sample: same matching events per rule", bn.get("compared", 0),
-                   bn.get("same_event_set", 0), f"{100 * bn['same_event_set_rate']:.1f}% {bn['same_event_set_ci95']}"]],
+                   bn.get("same_event_set", 0), f"{100 * bn['same_event_set_rate']:.2f}% [{100 * bn['same_event_set_ci95'][0]:.1f}, {100 * bn['same_event_set_ci95'][1]:.1f}]"]],
                  ["comparison", "rules/cases", "agree", "agreement [95% CI]"]), "",
               f"Benign fire/no-fire table: {bn['fire_table']}, Cohen's kappa {bn['fire_kappa']}. "
               f"Disagreements by modifier: {bn.get('disagreements_by_modifier', {})}.", ""]

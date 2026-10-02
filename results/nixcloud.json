@@ -2948,27 +2948,28 @@
   "workload": "venv + pip install + pytest + git on the runner",
   "rules_fired": 3,
   "alerts": 6,
-  "over_budget_20_per_day": 3,
+  "over_budget_20_per_day": null,
   "fired": [
    {
     "title": "System Information Discovery",
     "level": "informational",
     "hits": 3,
-    "alerts_per_day_projected": 15247.1
+    "alerts_per_day_projected": null
    },
    {
     "title": "Python Path Configuration File Creation - Linux",
     "level": "medium",
     "hits": 2,
-    "alerts_per_day_projected": 10164.7
+    "alerts_per_day_projected": null
    },
    {
     "title": "Potentially Suspicious Long Filename Pattern - Linux",
     "level": "low",
     "hits": 1,
-    "alerts_per_day_projected": 5082.4
+    "alerts_per_day_projected": null
    }
-  ]
+  ],
+  "note_projection": "window under 1 hour: smoke test only, no per-day projection"
  },
  "provenance": {
   "git_sha": "1c153a2012c76c1d743ffa244b849ae51190ee21",
