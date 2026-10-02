@@ -65,7 +65,8 @@ CATEGORY_MAP: dict[str, list[tuple[str, tuple[int, ...]]]] = {
     "pipe_created": [(SYSMON, (17, 18))],
     "wmi_event": [(SYSMON, (19, 20, 21))],
     "dns_query": [(SYSMON, (22,))],
-    "file_delete": [(SYSMON, (23, 26))],
+    "file_delete": [(SYSMON, (23,))],          # SigmaHQ thor.yml: file_delete = 23 only
+    "file_delete_detected": [(SYSMON, (26,))],
     "clipboard_change": [(SYSMON, (24,))],
     "process_tampering": [(SYSMON, (25,))],
     "file_block_executable": [(SYSMON, (27,))],
