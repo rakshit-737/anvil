@@ -185,11 +185,19 @@ def _ecs(ev: dict[str, Any]) -> dict[str, Any] | None:
     return {ECS.get(k, k): v for k, v in ev.items() if not k.startswith("__")}
 
 
-def _sysmon_to_4688(ev: dict[str, Any], keep_cmdline: bool = True) -> dict[str, Any] | None:
-    """Sysmon decommissioned: process creation now only from Security 4688; other Sysmon events vanish."""
+def _sysmon_to_4688(ev: dict[str, Any], keep_cmdline: bool = True,
+                    fleet_wide: bool = True) -> dict[str, Any] | None:
+    """Sysmon decommissioned: process creation now only from Security 4688; other Sysmon events vanish.
+
+    With ``keep_cmdline=False`` command-line auditing is off: CommandLine disappears from the
+    converted events and, when ``fleet_wide``, from the hosts' native Security 4688 events too.
+    """
     chan, eid = event_key(ev)
     if chan != SYSMON:
-        return {k: v for k, v in ev.items() if not k.startswith("__")}
+        out = {k: v for k, v in ev.items() if not k.startswith("__")}
+        if not keep_cmdline and fleet_wide and chan == "security" and eid == 4688:
+            out.pop("CommandLine", None)
+        return out
     if eid != 1:
         return None
     out = {"Channel": "Security", "EventID": 4688, "Provider_Name": "Microsoft-Windows-Security-Auditing",
@@ -211,8 +219,11 @@ SCHEMA_CHANGES: dict[str, tuple[str, Callable[[dict[str, Any]], dict[str, Any] |
     "ecs_rename": ("SIEM pipeline migrated to ECS field names (Image -> process.executable ...)", _ecs),
     "sysmon_to_4688": ("Sysmon removed; process creation only from Security 4688 (cmdline auditing on)",
                        _sysmon_to_4688),
-    "4688_no_cmdline": ("Sysmon removed and 4688 command-line auditing off",
+    "4688_no_cmdline": ("Sysmon removed and 4688 command-line auditing off on every host",
                         lambda e: _sysmon_to_4688(e, keep_cmdline=False)),
+    "4688_no_cmdline_mixed": ("As above, but hosts that already logged 4688 keep CommandLine "
+                              "(mixed pre/post-change inventory window)",
+                              lambda e: _sysmon_to_4688(e, keep_cmdline=False, fleet_wide=False)),
     "no_commandline": ("Collector drops CommandLine (size limits / privacy filter)", _drop_field("CommandLine")),
     "no_hashes": ("Sysmon config without file hashing", _drop_field("Hashes")),
 }
