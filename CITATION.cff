@@ -1,0 +1,10 @@
+cff-version: 1.2.0
+message: "If you use ANVIL, please cite it as below."
+title: "ANVIL: detection-as-code for Sigma, measured on real telemetry"
+authors:
+  - given-names: Rakshit
+type: software
+license: MIT
+repository-code: "https://github.com/rakshit-737/anvil"
+url: "https://rakshit-737.github.io/anvil/"
+keywords: [sigma, detection-engineering, siem, mitre-attack]

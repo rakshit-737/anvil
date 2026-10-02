@@ -1,0 +1,11 @@
+name: Bug report
+description: Something in ANVIL behaves wrongly
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes: {label: What happened, description: "Command, output and expected output"}
+    validations: {required: true}
+  - type: input
+    id: version
+    attributes: {label: ANVIL version and Python version}
