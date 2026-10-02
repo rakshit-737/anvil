@@ -90,8 +90,8 @@ jobs:
           test "$(docker run --rm --entrypoint id anvil:ci -u)" != "0"
       - name: Dependency audit (pip-audit)
         run: |
-          python -m venv /tmp/a && /tmp/a/bin/pip install -q ".[sigma,evtx,ml,fast]" pip-audit
+          python -m venv /tmp/a && /tmp/a/bin/pip install -q -U pip && /tmp/a/bin/pip install -q ".[sigma,evtx,ml,fast]" pip-audit
           # PYSEC-2026-2447 / CVE-2025-69872: diskcache (via pySigma), no fixed release yet. Only reachable
           # through pySigma's ~/.cache/pysigma MITRE cache, which ANVIL's conversions do not create.
           # Re-check by 2027-01-01. See SECURITY.md.
-          /tmp/a/bin/pip-audit --ignore-vuln PYSEC-2026-2447 --ignore-vuln GHSA-w8v5-vhqr-4h9v
+          /tmp/a/bin/pip-audit --ignore-vuln PYSEC-2026-2447 --ignore-vuln GHSA-w8v5-vhqr-4h9v --skip-editable
