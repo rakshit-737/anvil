@@ -715,7 +715,8 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("stages", nargs="+", choices=[*STAGES, *EXTRA_STAGES, "report", "all"])
     ap.add_argument("--workers", type=int, default=4, help="processes for corpus scans")
     a = ap.parse_args(argv)
-    names = [*STAGES, "report"] if "all" in a.stages else a.stages
+    extra = [n for n in a.stages if n in EXTRA_STAGES]
+    names = [*STAGES, *extra, "report"] if "all" in a.stages else a.stages
     for n in names:
         t0 = time.perf_counter()
         print(f"== {n}", flush=True)

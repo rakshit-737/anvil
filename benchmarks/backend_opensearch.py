@@ -19,6 +19,7 @@ Writes results/backend_opensearch.json.
 """
 from __future__ import annotations
 
+import http.client
 import json
 import math
 import os
@@ -58,6 +59,24 @@ def _req(method: str, path: str, body: Any = None, ndjson: bool = False) -> Any:
             return json.load(r)
     except urllib.error.HTTPError as exc:
         return {"_error": exc.code, "_body": exc.read().decode(errors="replace")[:300]}
+    except (OSError, http.client.HTTPException) as exc:
+        # A pathological query (huge wildcard/regex) can drop the connection or stall the
+        # node; count it as a query error and wait for the cluster to come back.
+        _wait_healthy()
+        return {"_error": type(exc).__name__}
+
+
+def _wait_healthy(seconds: int = 300) -> None:
+    deadline = time.time() + seconds
+    while time.time() < deadline:
+        try:
+            with urllib.request.urlopen(URL + "/_cluster/health", timeout=10) as r:  # noqa: S310 - localhost
+                if json.load(r).get("status") in ("green", "yellow"):
+                    return
+        except (OSError, http.client.HTTPException):
+            pass
+        time.sleep(5)
+    raise SystemExit("OpenSearch did not recover")
 
 
 def _doc(ev: dict[str, Any]) -> dict[str, Any]:
@@ -125,7 +144,7 @@ def _convert(backend, path: str, cache: dict[str, Any]) -> list[str] | str:
 
 
 def _search_ids(q: str, flt: dict[str, Any]) -> set[str] | None:
-    body = {"size": 50000, "_source": False, "track_total_hits": True,
+    body = {"size": 50000, "_source": False, "timeout": "30s", "track_total_hits": True,
             "query": {"bool": {"must": [{"query_string": {"query": q, "allow_leading_wildcard": True}}],
                                "filter": [flt]}}}
     r = _req("POST", f"/{INDEX}/_search", body)

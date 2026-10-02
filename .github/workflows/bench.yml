@@ -44,6 +44,7 @@ jobs:
       - name: Real-data tests
         run: python -m pytest -q -m realdata
       - name: Benchmark (all stages + Linux/AWS)
+        shell: bash
         run: python benchmarks/bench.py all nixcloud --workers 4 2>&1 | tee bench.log
       - name: Assert every dataset was readable on the runner
         run: |
@@ -96,6 +97,7 @@ jobs:
       - name: Ingest benign
         run: python -m anvil ingest --benign
       - name: OpenSearch vs ANVIL
+        shell: bash
         run: python benchmarks/backend_opensearch.py 2>&1 | tee backend.log
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         if: always()
