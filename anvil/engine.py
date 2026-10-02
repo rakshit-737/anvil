@@ -504,7 +504,7 @@ class _Parser:
         return ("sel", tok)
 
 
-def parse_condition(cond: str, names: list[str]):
+def parse_condition(cond: str, names: list[str]) -> tuple:
     """Parse a Sigma condition into an AST.
 
     Args:

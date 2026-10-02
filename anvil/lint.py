@@ -4,6 +4,7 @@ from __future__ import annotations
 import re
 import uuid
 from dataclasses import dataclass
+from typing import Any
 
 from .engine import MODIFIERS, UNSUPPORTED_MODS, ConditionError, UnsupportedRule, parse_condition, referenced_selections
 from .models import ATTACK_TAG, LEVELS, STATUSES, Rule
@@ -129,7 +130,7 @@ def lint_rule(rule: Rule, profile: str = "anvil", catalog=None) -> list[Finding]
     return out
 
 
-def lint_rules(rules: list[Rule], profile: str = "anvil", catalog=None) -> list[Finding]:
+def lint_rules(rules: list[Rule], profile: str = "anvil", catalog: Any = None) -> list[Finding]:
     """Lint a rule set, including cross-rule checks such as duplicate IDs.
 
     Args:
