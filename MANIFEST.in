@@ -1,0 +1,4 @@
+graft rules
+graft examples
+include requirements*.txt
+global-exclude *.py[cod]

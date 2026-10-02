@@ -8,3 +8,7 @@ telemetry/*.jsonl*
 .ruff_cache
 results
 docs
+.env*
+.venv
+venv
+drafts
