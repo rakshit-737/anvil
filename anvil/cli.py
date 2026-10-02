@@ -12,7 +12,7 @@ from .coverage import coverage, navigator_layer
 from .decay import FieldInventory, analyse, regressions, schema_drift
 from .harness import GatePolicy, evaluate_all
 from .lint import PROFILES, has_errors, lint_rules
-from .loader import load_events, load_rules
+from .loader import load_events, load_rule, load_rules
 from .quality import score_rule
 from .synth import generate, write_jsonl
 
@@ -29,12 +29,36 @@ def _catalog(path: str | None):
     return load_stix(path)
 
 
+class UsageError(Exception):
+    """A user-facing error: printed as one line, exit code 2."""
+
+
 def _load(a) -> list:
-    """Rules for commands that accept either ANVIL rules (with fixtures) or a Sigma repo."""
-    if getattr(a, "profile", "anvil") == "sigma" or len(a.rules) > 1:
+    """Load every ``--rules`` path (files or folders, any number of them).
+
+    The ``sigma`` profile reads multi-document SigmaHQ YAML; the default reads ANVIL
+    rules with fixtures. A missing path, or zero rules without ``--allow-empty``, is
+    a usage error so a CI gate cannot pass vacuously.
+    """
+    missing = [p for p in a.rules if not Path(p).exists()]
+    if missing:
+        raise UsageError(f"--rules path(s) not found: {', '.join(missing)}")
+    if getattr(a, "profile", "anvil") == "sigma":
         from .runner import load_rule_dir
-        return load_rule_dir(a.rules)[0]
-    return load_rules(a.rules[0])
+        rules = load_rule_dir(a.rules)[0]
+    else:
+        rules = []
+        for p in a.rules:
+            rules += [load_rule(p)] if Path(p).is_file() else load_rules(p)
+    if not rules and not getattr(a, "allow_empty", False):
+        raise UsageError(f"no rules found under {' '.join(a.rules)} (pass --allow-empty to accept)")
+    return rules
+
+
+def _events(path: str) -> list:
+    if not Path(path).exists():
+        raise UsageError(f"corpus {path} not found: run `anvil synth` or pass --corpus")
+    return load_events(path)
 
 
 def cmd_lint(a) -> int:
@@ -53,8 +77,8 @@ def cmd_lint(a) -> int:
 
 
 def cmd_test(a) -> int:
-    rules = load_rules(a.rules[0])
-    results = evaluate_all(rules, load_events(a.corpus), _policy(a))
+    rules = _load(a)
+    results = evaluate_all(rules, _events(a.corpus), _policy(a))
     if a.json:
         print(json.dumps([r.to_dict() for r in results], indent=2))
     else:
@@ -73,10 +97,13 @@ def cmd_test(a) -> int:
 
 def cmd_scan(a) -> int:
     """Library-scale scan: route every rule to its log source and count hits on real telemetry."""
-    from .runner import Library, load_rule_dir, scan
+    from .runner import Library, scan
     from .telemetry import iter_path
 
-    rules, rep = load_rule_dir(a.rules)
+    rules = _load(argparse.Namespace(rules=a.rules, profile="sigma", allow_empty=False))
+    for c in a.corpus:
+        if not Path(c).exists():
+            raise UsageError(f"corpus {c} not found")
     lib = Library.build(rules)
 
     def events():
@@ -176,7 +203,7 @@ def cmd_coverage(a) -> int:
     rules = _load(a)
     passing = None
     if a.corpus:
-        passing = {r.rule_id for r in evaluate_all(rules, load_events(a.corpus)) if r.passed}
+        passing = {r.rule_id for r in evaluate_all(rules, _events(a.corpus)) if r.passed}
     rep = coverage(rules, passing, _catalog(a.attack), a.platform)
     if a.navigator:
         Path(a.navigator).write_text(json.dumps(navigator_layer(rep), indent=2))
@@ -197,8 +224,8 @@ def cmd_coverage(a) -> int:
 
 
 def cmd_score(a) -> int:
-    rules = load_rules(a.rules[0])
-    results = {r.rule_id: r for r in evaluate_all(rules, load_events(a.corpus))}
+    rules = _load(a)
+    results = {r.rule_id: r for r in evaluate_all(rules, _events(a.corpus))}
     for r in rules:
         q = score_rule(r, results.get(r.id))
         print(f"{q.score:3d} {q.grade}  {q.title}  {q.breakdown}")
@@ -245,18 +272,20 @@ def cmd_report(a) -> int:
 
 def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(prog="anvil", description="Detection-as-code lifecycle toolkit")
+    fmt = argparse.ArgumentDefaultsHelpFormatter
     p.add_argument("--version", action="version", version=__version__)
     sub = p.add_subparsers(dest="cmd", required=True)
 
     def rules_arg(sp, default=("rules",)):
         sp.add_argument("--rules", nargs="+", default=list(default), help="rule file(s) or folder(s)")
+        sp.add_argument("--allow-empty", action="store_true", help="do not fail when no rules are found")
 
     def gate_args(sp):
         sp.add_argument("--capacity", type=float, default=200.0, help="SOC alerts/day capacity")
         sp.add_argument("--share", type=float, default=0.10, help="max capacity share per rule")
         sp.add_argument("--days", type=float, default=1.0, help="days the corpus represents")
 
-    s = sub.add_parser("lint", help="validate rule files")
+    s = sub.add_parser(formatter_class=fmt, name="lint", help="validate rule files")
     rules_arg(s)
     s.add_argument("--profile", choices=PROFILES, default="anvil",
                    help="anvil: rules carry TP/TN fixtures; sigma: SigmaHQ conventions")
@@ -265,51 +294,51 @@ def build_parser() -> argparse.ArgumentParser:
     s.add_argument("--strict", action="store_true", help="fail on warnings too")
     s.set_defaults(fn=cmd_lint)
 
-    s = sub.add_parser("test", help="run TP/TN fixtures + FP corpus and apply the CI gate")
+    s = sub.add_parser(formatter_class=fmt, name="test", help="run TP/TN fixtures + FP corpus and apply the CI gate")
     rules_arg(s)
-    s.add_argument("--corpus", default="telemetry/benign.jsonl")
-    s.add_argument("--max-fp-rate", type=float, default=0.001)
+    s.add_argument("--corpus", default="telemetry/benign.jsonl", help="benign JSONL corpus (see `anvil synth`)")
+    s.add_argument("--max-fp-rate", type=float, default=0.001, help="max share of benign events a rule may hit")
     gate_args(s)
-    s.add_argument("--json", action="store_true")
-    s.add_argument("--save-baseline")
+    s.add_argument("--json", action="store_true", help="machine-readable output")
+    s.add_argument("--save-baseline", metavar="FILE", help="write per-rule results for `decay --baseline`")
     s.set_defaults(fn=cmd_test)
 
-    s = sub.add_parser("scan", help="scan real telemetry with a whole (Sigma) rule library")
+    s = sub.add_parser(formatter_class=fmt, name="scan", help="scan real telemetry with a whole (Sigma) rule library")
     rules_arg(s)
     s.add_argument("--corpus", nargs="+", required=True, help="EVTX / JSON / JSONL(.gz) / OTRF zip / folders")
     gate_args(s)
-    s.add_argument("--top", type=int, default=25)
-    s.add_argument("--json", action="store_true")
+    s.add_argument("--top", type=int, default=25, help="rows to print")
+    s.add_argument("--json", action="store_true", help="machine-readable output")
     s.add_argument("--fail-on-gate", action="store_true", help="exit 1 if any rule exceeds its alert budget")
     s.set_defaults(fn=cmd_scan)
 
-    s = sub.add_parser("regress", help="replay SigmaHQ regression_data (real TP captures)")
+    s = sub.add_parser(formatter_class=fmt, name="regress", help="replay SigmaHQ regression_data (real TP captures)")
     s.add_argument("--sigma", required=True, help="path to a SigmaHQ checkout")
     s.add_argument("-v", "--verbose", action="store_true")
     s.set_defaults(fn=cmd_regress)
 
-    s = sub.add_parser("ingest", help="normalise EVTX/JSON/OTRF sources into sharded JSONL.gz")
-    s.add_argument("sources", nargs="*")
-    s.add_argument("--out")
-    s.add_argument("--prefix", default="part")
-    s.add_argument("--shard", type=int, default=100_000)
+    s = sub.add_parser(formatter_class=fmt, name="ingest", help="normalise EVTX/JSON/OTRF sources into sharded JSONL.gz")
+    s.add_argument("sources", nargs="*", help="EVTX / JSON / OTRF zip files or folders")
+    s.add_argument("--out", help="output folder for the shards")
+    s.add_argument("--prefix", default="part", help="shard file-name prefix")
+    s.add_argument("--shard", type=int, default=100_000, help="events per shard")
     s.add_argument("--benign", action="store_true", help="ingest $ANVIL_DATA/evtx-baseline/* into corpus/")
     s.set_defaults(fn=cmd_ingest)
 
-    s = sub.add_parser("draft", help="draft candidate Sigma rules from a CTI report (needs human review)")
+    s = sub.add_parser(formatter_class=fmt, name="draft", help="draft candidate Sigma rules from a CTI report (needs human review)")
     s.add_argument("report", help="text/markdown file")
-    s.add_argument("--out", default="drafts")
-    s.add_argument("--title")
+    s.add_argument("--out", default="drafts", help="output folder for draft rules")
+    s.add_argument("--title", help="report title (default: file name)")
     s.add_argument("--source", help="report URL for references")
     s.add_argument("--backend", choices=["heuristic", "llm", "keywords"], default="heuristic")
     s.set_defaults(fn=cmd_draft)
 
-    s = sub.add_parser("convert", help="convert rules to SIEM queries via pySigma")
+    s = sub.add_parser(formatter_class=fmt, name="convert", help="convert rules to SIEM queries via pySigma")
     s.add_argument("rule", help="rule file or folder")
     s.add_argument("--target", choices=["splunk", "elastic", "kusto", "sqlite"], default="splunk")
     s.set_defaults(fn=cmd_convert)
 
-    s = sub.add_parser("coverage", help="ATT&CK coverage report")
+    s = sub.add_parser(formatter_class=fmt, name="coverage", help="ATT&CK coverage report")
     rules_arg(s)
     s.add_argument("--profile", choices=PROFILES, default="anvil")
     s.add_argument("--corpus", help="if given, count only gate-passing rules as validated")
@@ -319,37 +348,50 @@ def build_parser() -> argparse.ArgumentParser:
     s.add_argument("--json", action="store_true")
     s.set_defaults(fn=cmd_coverage)
 
-    s = sub.add_parser("score", help="rule quality scores")
+    s = sub.add_parser(formatter_class=fmt, name="score", help="rule quality scores")
     rules_arg(s)
-    s.add_argument("--corpus", default="telemetry/benign.jsonl")
+    s.add_argument("--corpus", default="telemetry/benign.jsonl", help="benign JSONL corpus")
     s.set_defaults(fn=cmd_score)
 
-    s = sub.add_parser("decay", help="schema-drift + regression check")
+    s = sub.add_parser(formatter_class=fmt, name="decay", help="schema-drift + regression check")
     rules_arg(s)
     s.add_argument("--profile", choices=PROFILES, default="anvil")
-    s.add_argument("--corpus", default="telemetry/benign.jsonl")
-    s.add_argument("--baseline")
+    s.add_argument("--corpus", default="telemetry/benign.jsonl", help="current telemetry (JSONL or EVTX/JSON)")
+    s.add_argument("--baseline", help="results saved earlier with `test --save-baseline`")
     s.add_argument("--routed", action="store_true",
                    help="per-log-source symbolic analysis: ok / degraded / broken / source-missing")
     s.set_defaults(fn=cmd_decay)
 
-    s = sub.add_parser("synth", help="generate synthetic benign telemetry")
-    s.add_argument("--out", default="telemetry/benign.jsonl")
-    s.add_argument("-n", type=int, default=5000)
-    s.add_argument("--seed", type=int, default=1337)
-    s.add_argument("--schema", choices=["v1", "v2"], default="v1")
+    s = sub.add_parser(formatter_class=fmt, name="synth", help="generate synthetic benign telemetry")
+    s.add_argument("--out", default="telemetry/benign.jsonl", help="output JSONL file")
+    s.add_argument("-n", type=int, default=5000, help="number of events")
+    s.add_argument("--seed", type=int, default=1337, help="random seed")
+    s.add_argument("--schema", choices=["v1", "v2"], default="v1", help="v2 renames fields (decay demo)")
     s.set_defaults(fn=cmd_synth)
 
-    s = sub.add_parser("report", help="render the static detection-health dashboard from results/*.json")
-    s.add_argument("--results", default="results")
-    s.add_argument("--out", default="docs/dashboard.html")
+    s = sub.add_parser(formatter_class=fmt, name="report", help="render the static detection-health dashboard from results/*.json")
+    s.add_argument("--results", default="results", help="folder with results/*.json")
+    s.add_argument("--out", default="docs/dashboard.html", help="output HTML file")
     s.set_defaults(fn=cmd_report)
     return p
 
 
 def main(argv: list[str] | None = None) -> int:
     a = build_parser().parse_args(argv)
-    return a.fn(a)
+    try:
+        return a.fn(a)
+    except UsageError as exc:
+        print(f"anvil {a.cmd}: error: {exc}", file=sys.stderr)
+        return 2
+    except FileNotFoundError as exc:
+        print(f"anvil {a.cmd}: error: file not found: {exc.filename}", file=sys.stderr)
+        return 2
+    except ModuleNotFoundError as exc:
+        extra = {"sigma": "sigma", "anthropic": "llm", "sklearn": "ml", "evtx": "evtx",
+                 "matplotlib": "plots"}.get((exc.name or "").split(".")[0])
+        hint = f"pip install 'anvil-dac[{extra}]'" if extra else "install the missing package"
+        print(f"anvil {a.cmd}: error: optional dependency {exc.name!r} missing; {hint}", file=sys.stderr)
+        return 2
 
 
 if __name__ == "__main__":
