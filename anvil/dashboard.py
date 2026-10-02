@@ -39,7 +39,12 @@ td.n{text-align:right;font-variant-numeric:tabular-nums}
 .legend{color:var(--muted);font-size:12px;margin-top:8px}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}@media(max-width:800px){.grid2{grid-template-columns:1fr}}
 footer{color:var(--muted);font-size:12px;margin-top:40px}
+nav.top{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:14px;margin-bottom:18px}
+nav.top a,footer a{color:var(--accent)}
+.cap{color:var(--muted);font-size:13px;margin:0 0 8px}
 """
+
+DOCS = "https://rakshit-737.github.io/anvil/"
 
 
 def _load(results: Path, name: str) -> dict[str, Any] | None:
@@ -55,11 +60,23 @@ def _kpi(value: Any, label: str) -> str:
     return f'<div class="kpi"><b>{_e(value)}</b><span>{_e(label)}</span></div>'
 
 
+def _stamp(results: Path) -> str:
+    for name in ("fp.json", "engine.json", "decay.json"):
+        d = _load(results, name)
+        if d and d.get("provenance", {}).get("git_sha"):
+            return f' Results from commit <code>{_e(d["provenance"]["git_sha"][:10])}</code>.'
+    return ""
+
+
 def render(results: Path, out: Path) -> Path:
+    """Write the dashboard HTML for the result files in ``results`` to ``out``."""
     lint, eng, fp = _load(results, "lint.json"), _load(results, "engine.json"), _load(results, "fp.json")
     cov, dec, otrf = _load(results, "coverage.json"), _load(results, "decay.json"), _load(results, "otrf.json")
-    parts = ['<main><h1>Detection health</h1><p class="sub">SigmaHQ rule library measured by ANVIL '
-             'against real public telemetry. Generated from <code>results/*.json</code>.</p><div class="kpis">']
+    parts = [f'<main><nav class="top"><a href="{DOCS}">ANVIL docs</a><a href="{DOCS}evaluation/">Evaluation</a>'
+             f'<a href="{DOCS}reproduce/">Reproduce</a><a href="https://github.com/rakshit-737/anvil">GitHub</a></nav>'
+             '<h1>Detection health</h1><p class="sub">SigmaHQ rule library measured by ANVIL '
+             f'against real public telemetry. Generated from <code>results/*.json</code>.{_stamp(results)}</p>'
+             '<div class="kpis">']
     if lint:
         parts.append(_kpi(f"{lint['rules']:,}", "rules linted"))
     if eng:
@@ -68,7 +85,10 @@ def render(results: Path, out: Path) -> Path:
     if fp:
         parts.append(_kpi(f"{fp['corpus']['events']:,}", "benign events replayed"))
         parts.append(_kpi(f"{fp['fired_rules']}", "rules firing on clean hosts"))
-        parts.append(_kpi(f"{fp['gate_fail']}", f"rules over {fp['policy']['budget_per_rule_per_day']:.0f}/day budget"))
+        parts.append(_kpi(f"{fp['gate_fail']}",
+                          f"rules over {fp['policy']['budget_per_rule_per_day']:.0f}/day budget (per host)"))
+    if otrf:
+        parts.append(_kpi(f"{otrf['technique_detected']}/{otrf['datasets']}", "OTRF emulations: technique detected"))
     if cov:
         c, v = cov["claimed"], cov["tp_validated_and_gated"]
         parts.append(_kpi(f"{c['coverage_pct']}% / {v['validated_pct']}%", "ATT&CK (Windows) claimed / validated"))
@@ -89,10 +109,12 @@ def render(results: Path, out: Path) -> Path:
                      'alert budget) · light = claimed by tags only · numbers: validated / claimed / techniques</p></div>')
 
     if fp:
-        parts.append('<h2>Noisiest rules on clean Windows installs</h2><div class="card"><table><tr><th>rule</th>'
-                     '<th>level</th><th>status</th><th>folder</th><th class="n">alerts</th><th class="n">per day</th>'
-                     '<th>gate</th></tr>')
-        for r in [x for x in fp["rules"] if x["hits"]][:25]:
+        firing = [x for x in fp["rules"] if x["hits"]]
+        parts.append(f'<h2>Noisiest rules on clean Windows installs</h2><p class="cap">Top {min(25, len(firing))} '
+                     f'of {len(firing)} firing rules; rates are alerts per host-day.</p><div class="card"><table>'
+                     '<tr><th>rule</th><th>level</th><th>status</th><th>folder</th><th class="n">alerts</th>'
+                     '<th class="n">per day</th><th>gate</th></tr>')
+        for r in firing[:25]:
             parts.append(f'<tr><td>{_e(r["title"])}</td><td>{_e(r["level"])}</td><td>{_e(r["status"])}</td>'
                          f'<td>{_e(r["folder"])}</td><td class="n">{r["hits"]:,}</td><td class="n">'
                          f'{r["alerts_per_day"]:,}</td><td><span class="pill {r["gate"]}">{r["gate"]}</span></td></tr>')
@@ -110,17 +132,19 @@ def render(results: Path, out: Path) -> Path:
         parts.append("</table></div>")
 
     if otrf:
-        parts.append('<h2>Emulated attacks (OTRF Security-Datasets)</h2><div class="card"><table><tr><th>dataset</th>'
+        parts.append(f'<h2>Emulated attacks (OTRF Security-Datasets)</h2><p class="cap">All {otrf["datasets"]} '
+                     f'datasets: technique detected {otrf["technique_detected"]}, any alert {otrf["any_alert"]}.</p>'
+                     '<div class="card"><table><tr><th>dataset</th>'
                      '<th>techniques</th><th class="n">rules fired</th><th>technique detected</th></tr>')
-        for r in otrf["rows"][:60]:
+        for r in otrf["rows"]:
             ok = "pass" if r["technique_detected"] else ("warn" if r["any_alert"] else "fail")
             label = "yes" if r["technique_detected"] else ("other alerts" if r["any_alert"] else "no")
             parts.append(f'<tr><td>{_e(r["title"])}</td><td>{_e(", ".join(r["techniques"]))}</td>'
                          f'<td class="n">{r["rules_fired"]}</td><td><span class="pill {ok}">{label}</span></td></tr>')
         parts.append("</table></div>")
 
-    parts.append('<footer>ANVIL detection-as-code · data: SigmaHQ (DRL 1.1), MITRE ATT&amp;CK, OTRF Security-Datasets '
-                 '(MIT), NextronSystems evtx-baseline</footer></main>')
+    parts.append(f'<footer><a href="{DOCS}">ANVIL</a> detection-as-code · data: SigmaHQ (DRL 1.1), MITRE '
+                 'ATT&amp;CK, OTRF Security-Datasets (MIT), NextronSystems evtx-baseline</footer></main>')
     doc = ('<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" '
            'content="width=device-width,initial-scale=1"><title>ANVIL detection health</title>'
            f'<style>{CSS}</style></head><body>{"".join(parts)}</body></html>')

@@ -28,7 +28,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from anvil.attack import load_stix  # noqa: E402
 from anvil.coverage import coverage, navigator_layer  # noqa: E402
-from anvil.decay import SCHEMA_CHANGES, FieldInventory, analyse, apply_change  # noqa: E402
+from anvil.decay import META_FIELDS, SCHEMA_CHANGES, FieldInventory, analyse, apply_change  # noqa: E402
+from anvil.engine import rule_fields  # noqa: E402
 from anvil.lint import ERROR, lint_rules  # noqa: E402
 from anvil.logsource import applies  # noqa: E402
 from anvil.models import Rule  # noqa: E402
@@ -38,6 +39,7 @@ from anvil.regression import discover, run_case  # noqa: E402
 from anvil.runner import Library, load_rule_dir  # noqa: E402
 from anvil.telemetry import iter_json_file, iter_path  # noqa: E402
 from benchmarks.common import RESULTS, benign_shards, data_dir, load, save, sigma_root  # noqa: E402
+from benchmarks.nixcloud_bench import wilson  # noqa: E402
 
 CAPACITY, SHARE = 200.0, 0.10          # SOC triage capacity/day and max share for one rule
 BUDGET = CAPACITY * SHARE              # -> 20 alerts/day per rule
@@ -318,6 +320,10 @@ def stage_fp(workers: int = 8) -> dict[str, Any]:
         return out
 
     med_plus = [p for p in fired if p["level"] in ("medium", "high", "critical")]
+    non_low = [p for p in fired if p["level"] != "low"]
+    # The rates are per *host-day*: the three evtx-baseline hosts were recorded on different dates and
+    # their spans are summed. A fleet of H hosts multiplies every rule's daily volume by H.
+    fleet = {str(h): sum(1 for p in fired if p["alerts_per_day"] * h > BUDGET) for h in (1, 3, 10, 100, 1000)}
     res = {
         "corpus": {"shards": len(shards), "events": scan.events, "evaluations": scan.evaluations,
                    "cpu_seconds": round(scan.cpu_seconds, 1), "wall_seconds": round(scan.wall_seconds, 1),
@@ -325,6 +331,8 @@ def stage_fp(workers: int = 8) -> dict[str, Any]:
                    "spans": spans, "days": round(days, 2),
                    "top_sources": [[k, n] for k, n in scan.by_key.most_common(15)]},
         "policy": {"capacity_per_day": CAPACITY, "share": SHARE, "budget_per_rule_per_day": BUDGET},
+        "rate_unit": "alerts per host-day (hits / sum of per-host spans)",
+        "gate_fail_by_fleet_size": fleet,
         "windows_rules": len(per_rule), "observable_rules": len(observable),
         "fired_rules": len(fired), "total_alerts": sum(p["hits"] for p in fired),
         "gate_fail": sum(1 for p in per_rule if p["gate"] == "fail"),
@@ -334,7 +342,15 @@ def stage_fp(workers: int = 8) -> dict[str, Any]:
             "fired_medium_plus": len(med_plus),
             "on_known_fp_list": sum(p["known_fp"] for p in med_plus),
             "not_on_list": [{"id": p["id"], "title": p["title"], "hits": p["hits"]}
-                            for p in med_plus if not p["known_fp"]]},
+                            for p in med_plus if not p["known_fp"]],
+            "note": "per-rule match only (MatchString filters not applied); the list was also used during "
+                    "development to find a routing bug, so it is not a fully independent check",
+            "known_fp_rules_listed": len(known),
+            "known_fp_rules_fired": sum(1 for rid in known if scan.hits.get(rid)),
+            # SigmaHQ's goodlog CI (matchgrep.sh) fails on any non-low finding missing from the list; its
+            # win10/win11/win2022 jobs are green at the pinned commit, so each row is a disagreement.
+            "non_low_not_on_list": [{"id": p["id"], "title": p["title"], "level": p["level"], "hits": p["hits"]}
+                                    for p in non_low if not p["known_fp"]]},
         "rules": sorted(per_rule, key=lambda p: -p["hits"]),
         "examples": {k: v for k, v in scan.examples.items() if k in {p["id"] for p in fired}},
     }
@@ -355,10 +371,13 @@ def compact_fp(res: dict[str, Any]) -> dict[str, Any]:
 
 # ------------------------------------------------------------------------------- OTRF emulation
 def _tech_match(rule_techs: set[str], ds_techs: list[str]) -> bool:
-    for t in ds_techs:
-        if t in rule_techs or t.split(".")[0] in {x.split(".")[0] for x in rule_techs}:
-            return True
-    return False
+    """Strict (documented) rule: the exact technique, or the rule is tagged with its parent."""
+    return any(t in rule_techs or t.split(".")[0] in rule_techs for t in ds_techs)
+
+
+def _tech_match_lenient(rule_techs: set[str], ds_techs: list[str]) -> bool:
+    """Also credits sibling sub-techniques (the 1.0 definition, kept for comparison)."""
+    return any(t in rule_techs or t.split(".")[0] in {x.split(".")[0] for x in rule_techs} for t in ds_techs)
 
 
 def stage_otrf(workers: int = 8) -> dict[str, Any]:
@@ -388,9 +407,11 @@ def stage_otrf(workers: int = 8) -> dict[str, Any]:
         ev = sum(scan.per_file_events[p] for p in paths)
         fired = {rid for rid in hits}
         tech_rules = [rid for rid in fired if _tech_match(set(by_id[rid].techniques), d.techniques)]
+        lenient = any(_tech_match_lenient(set(by_id[rid].techniques), d.techniques) for rid in fired)
         rows.append({"id": d.id, "title": d.title, "techniques": d.techniques, "events": ev,
                      "rules_fired": len(fired), "alerts": sum(hits.values()),
                      "any_alert": bool(fired), "technique_detected": bool(tech_rules),
+                     "technique_detected_lenient": lenient,
                      "technique_rules": sorted(by_id[r].title for r in tech_rules)[:8],
                      "claimed": any(_tech_match(set(r.techniques), d.techniques) for r in rules
                                     if _is_windows(r) and r.status != "deprecated"),
@@ -401,7 +422,7 @@ def stage_otrf(workers: int = 8) -> dict[str, Any]:
             h = scan.per_file_hits[p]
             techs = sorted({t for rid in h for t in by_id[rid].techniques})
             comp[Path(p).name] = {"events": scan.per_file_events[p], "rules_fired": len(h),
-                                  "alerts": sum(h.values()), "techniques_alerted": len(techs),
+                                  "alerts": sum(h.values()), "technique_tags_on_fired_rules": len(techs),
                                   "top_rules": [by_id[r].title for r, _ in Counter(h).most_common(10)]}
     n = len(rows)
     claimed = [r for r in rows if r["claimed"]]
@@ -410,6 +431,9 @@ def stage_otrf(workers: int = 8) -> dict[str, Any]:
         "wall_seconds": round(scan.wall_seconds, 1),
         "any_alert": sum(r["any_alert"] for r in rows),
         "technique_detected": sum(r["technique_detected"] for r in rows),
+        "technique_detected_ci95": wilson(sum(r["technique_detected"] for r in rows), n),
+        "technique_detected_lenient": sum(r["technique_detected_lenient"] for r in rows),
+        "any_alert_ci95": wilson(sum(r["any_alert"] for r in rows), n),
         "claimed_coverage": len(claimed),
         "claimed_but_not_detected": [{"id": r["id"], "title": r["title"], "techniques": r["techniques"]}
                                      for r in claimed if not r["technique_detected"]],
@@ -457,8 +481,8 @@ def stage_decay(stride: int = 5) -> dict[str, Any]:
     cases = discover(sigma_root())
     base = {c["rule_id"]: run_case(lib, c) for c in cases}
     tp_ok = {rid for rid, rc in base.items() if rc.status == "pass"}
-    # "production" field inventory = benign corpus (every stride-th event) + the TP captures,
-    # before and after each simulated change
+    # "production" field inventory = benign corpus only (every stride-th event), before and after
+    # each simulated change. The TP captures are never part of the inventory (no attack data).
     changes = ["none", *SCHEMA_CHANGES]
     invs = {c: FieldInventory() for c in changes}
 
@@ -475,17 +499,31 @@ def stage_decay(stride: int = 5) -> dict[str, Any]:
             if i % stride == 0:
                 feed(ev)
                 n += 1
-    for case in cases:
-        try:
-            for ev in iter_json_file(case["sample"]):
-                feed(ev)
-        except OSError:
-            continue
     rank = {"ok": 0, "degraded": 1, "broken": 2, "source-missing": 3}
     before = {r.id: analyse(r, invs["none"]) for r in win}
-    res: dict[str, Any] = {"benign_events_inventoried": n, "rules_with_tp_evidence": len(tp_ok),
-                           "windows_rules": len(win),
+    flds = {r.id: rule_fields(r) - META_FIELDS for r in win}
+
+    def presence(inv: FieldInventory) -> dict[str, set[str] | None]:
+        """Field-presence baseline: which referenced fields are absent for the rule's own log source."""
+        out: dict[str, set[str] | None] = {}
+        for r in win:
+            got = inv.fields_for(r)
+            out[r.id] = None if got is None else {f for f in flds[r.id] if f not in got}
+        return out
+
+    def global_fields(inv: FieldInventory) -> set[str]:
+        return set().union(*inv.by_key.values()) if inv.by_key else set()
+
+    pres0, glob0 = presence(invs["none"]), global_fields(invs["none"])
+    floor = {rid for rid, v in before.items() if v["status"] in ("broken", "source-missing")}
+    res: dict[str, Any] = {"benign_events_inventoried": n, "inventory": "benign evtx-baseline only (no TP captures)",
+                           "rules_with_tp_evidence": len(tp_ok), "windows_rules": len(win),
                            "baseline_status": dict(Counter(v["status"] for v in before.values())),
+                           "none": {"description": "no change: rules flagged broken/source-missing on unchanged "
+                                                   "telemetry (the false-alarm floor; excluded from 'worsened')",
+                                    "library_flagged": len(floor),
+                                    "library_flagged_pct": round(100 * len(floor) / len(win), 1),
+                                    "tp_validated_flagged": len(floor & tp_ok)},
                            "changes": {}}
     for c in SCHEMA_CHANGES:
         # 1) ground truth: TP-validated rules that stop firing on their own captures after the change
@@ -505,12 +543,28 @@ def stage_decay(stride: int = 5) -> dict[str, Any]:
                    if v["status"] in ("broken", "source-missing") and rank[v["status"]] > rank[before[rid]["status"]]}
         degraded = {rid for rid, v in after.items() if rank[v["status"]] > rank[before[rid]["status"]]}
         tp_flagged = flagged & tp_ok
+        pres1, glob1 = presence(invs[c]), global_fields(invs[c])
+        pres_flag = {rid for rid in pres1 if (pres1[rid] is None and pres0[rid] is not None)
+                     or (pres1[rid] is not None and pres0[rid] is not None and pres1[rid] - pres0[rid])}
+        glob_flag = {r.id for r in win if (flds[r.id] - glob1) - (flds[r.id] - glob0)}
+
+        def score(flag: set[str]) -> dict[str, Any]:
+            tpf = flag & tp_ok
+            k_r, k_p = len(decayed & flag), len(decayed & tpf)
+            return {"flagged_tp_rules": len(tpf), "library_flagged": len(flag),
+                    "recall": round(k_r / len(decayed), 3) if decayed else None,
+                    "recall_ci95": wilson(k_r, len(decayed)),
+                    "precision": round(k_p / len(tpf), 3) if tpf else None,
+                    "precision_ci95": wilson(k_p, len(tpf))}
+
         res["changes"][c] = {
             "description": SCHEMA_CHANGES[c][0],
             "decayed_tp_rules": len(decayed),
             "static_flagged_tp_rules": len(tp_flagged),
             "static_recall": round(len(decayed & flagged) / len(decayed), 3) if decayed else None,
             "static_precision": round(len(decayed & tp_flagged) / len(tp_flagged), 3) if tp_flagged else None,
+            "methods": {"symbolic (ANVIL)": score(flagged), "field presence, per log source": score(pres_flag),
+                        "field presence, global (0.1 schema_drift)": score(glob_flag)},
             "regression_monitor_coverage": round(len(tp_ok) / len(win), 3),
             "library_flagged": len(flagged),
             "library_flagged_pct": round(100 * len(flagged) / len(win), 1),
@@ -540,7 +594,12 @@ def stage_convert() -> dict[str, Any]:
             if c.ok:
                 ok += 1
             else:
-                errs[c.error.split(":")[0]] += 1
+                cls = c.error.split(":")[0]
+                if "table name" in c.error:
+                    cls += " (log source has no table)"
+                elif "field name" in c.error.lower():
+                    cls += " (field cannot be mapped)"
+                errs[cls] += 1
         out[t] = {"converted": ok, "pct": round(100 * ok / len(win), 1), "seconds": round(time.perf_counter() - t0, 1),
                   "errors": dict(errs.most_common(6))}
     save("convert.json", out)
@@ -553,9 +612,11 @@ def stage_fpmodel() -> dict[str, Any]:
     rules, _ = _rules()
     by_id = {r.id: r for r in rules}
     fp = load("fp.json")
-    obs = [p for p in fp["rules"] if p["routed_events"] > 0 and p["id"] in by_id]
+    obs = sorted((p for p in fp["rules"] if p["routed_events"] > 0 and p["id"] in by_id), key=lambda p: p["id"])
+    import random
+    random.Random(7).shuffle(obs)  # fp.json is sorted by hits, i.e. by label: never feed that order through
     X, y = [by_id[p["id"]] for p in obs], [int(p["hits"] > 0) for p in obs]
-    res = cross_validate(X, y)
+    res = cross_validate(X, y, bootstrap=True)
     res["repeated"] = repeated_cv(X, y, seeds=range(10))
     res["label"] = "rule fires at least once on the benign evtx-baseline corpus (observable rules only)"
     save("fpmodel.json", res)
@@ -599,22 +660,28 @@ def stage_draft(workers: int = 4) -> dict[str, Any]:
             ids = set(meta[b][d.id])
             fired = any(att.per_file_hits.get(f, {}).get(rid) for f in ds_files[d.id] for rid in ids)
             rows.append({"id": d.id, "drafts": len(ids), "fires_on_own_capture": fired,
+                         "capture_readable": any(f in att.per_file_hits for f in ds_files[d.id]),
                          "benign_alerts": sum(ben.hits.get(rid, 0) for rid in ids),
                          "rules_over_budget": sum(1 for rid in ids if ben.hits.get(rid, 0) / max(1e-9, _days()) > BUDGET)})
-        with_drafts = [r for r in rows if r["drafts"]]
+        with_drafts = [r for r in rows if r["drafts"] and r["capture_readable"]]
         tp = sum(r["fires_on_own_capture"] for r in with_drafts)
         n_rules = sum(r["drafts"] for r in with_drafts)
         out["backends"][b] = {
             "drafts": n_rules, "datasets_with_drafts": len(with_drafts),
+            "unreadable_excluded": sum(1 for r in rows if r["drafts"] and not r["capture_readable"]),
             "fires_on_own_capture": tp, "tp_rate": round(tp / max(1, len(with_drafts)), 3),
+            "tp_rate_ci95": wilson(tp, len(with_drafts)),
             "datasets_with_benign_fp": sum(1 for r in with_drafts if r["benign_alerts"]),
             "benign_alerts_total": sum(r["benign_alerts"] for r in with_drafts),
             "rules_over_budget": sum(r["rules_over_budget"] for r in with_drafts),
             "gate_pass_and_fires": sum(1 for r in with_drafts if r["fires_on_own_capture"] and not r["rules_over_budget"]),
             "rows": rows}
-    both = [d.id for d in cat if meta["heuristic"][d.id]]
+    both = [r["id"] for r in out["backends"]["heuristic"]["rows"] if r["drafts"] and r["capture_readable"]]
+    sigmahq_any = {r["id"]: r["any_alert"] for r in otrf["rows"]}
     out["sigmahq_same_datasets"] = {
-        "datasets": len(both), "technique_detected": sum(bool(sigmahq_detected.get(i)) for i in both)}
+        "datasets": len(both), "technique_detected": sum(bool(sigmahq_detected.get(i)) for i in both),
+        "any_alert": sum(bool(sigmahq_any.get(i)) for i in both),
+        "note": "drafts are scored on 'any alert on their own capture'; compare with SigmaHQ any_alert"}
     save("draft.json", out)
     return out
 

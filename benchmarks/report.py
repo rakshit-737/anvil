@@ -5,6 +5,7 @@ import json
 from typing import Any
 
 from benchmarks.common import RESULTS, ROOT
+from benchmarks.nixcloud_bench import wilson
 
 IMG = ROOT / "docs" / "img"
 INK, MUTED, GRID = "#0b0b0b", "#52514e", "#e3e2dc"
@@ -49,7 +50,7 @@ def figures() -> list[str]:
         ax.set_xlabel("% of Windows techniques + sub-techniques", color=MUTED, fontsize=9)
         ax.set_title("SigmaHQ Windows rules: ATT&CK coverage claimed vs validated", loc="left", fontsize=11,
                      color=INK)
-        ax.legend(frameon=False, fontsize=8, loc="lower right")
+        ax.legend(frameon=False, fontsize=8, loc="upper center", bbox_to_anchor=(0.4, -0.13), ncol=2)
         fig.tight_layout()
         fig.savefig(IMG / "coverage_tactics.png")
         plt.close(fig)
@@ -79,13 +80,17 @@ def figures() -> list[str]:
     if fm:
         names = [n for n in fm["models"] if n != "random"] + ["random"]
         vals = [fm["models"][n]["pr_auc"] for n in names]
+        bs = (fm.get("bootstrap") or {}).get("models", {})
+        lo = [v - bs.get(n, {}).get("pr_auc_ci95", [v, v])[0] for n, v in zip(names, vals)]
+        hi = [bs.get(n, {}).get("pr_auc_ci95", [v, v])[1] - v for n, v in zip(names, vals)]
         fig, ax = plt.subplots(figsize=(7.2, 2.8), dpi=110)
         colors = [BLUE if n in ("gbdt", "logreg") else BLUE_LIGHT for n in names]
-        ax.barh(names[::-1], vals[::-1], height=0.6, color=colors[::-1])
-        for y, v in enumerate(vals[::-1]):
-            ax.text(v + 0.005, y, f"{v:.2f}", va="center", fontsize=8, color=MUTED)
+        ax.barh(names[::-1], vals[::-1], height=0.6, color=colors[::-1],
+                xerr=[lo[::-1], hi[::-1]], error_kw={"ecolor": MUTED, "elinewidth": 1, "capsize": 2})
+        for y, (v, h) in enumerate(zip(vals[::-1], hi[::-1])):
+            ax.text(v + h + 0.006, y, f"{v:.2f}", va="center", fontsize=8, color=MUTED)
         _style(ax)
-        ax.set_xlabel("PR-AUC, 5-fold CV (higher = better triage of noisy rules)", color=MUTED, fontsize=9)
+        ax.set_xlabel("PR-AUC, 5-fold CV, seed 7; bars: 95% bootstrap CI over rules", color=MUTED, fontsize=9)
         ax.set_title("Predicting benign-noisy rules before testing", loc="left", fontsize=11, color=INK)
         fig.tight_layout()
         fig.savefig(IMG / "fpmodel.png")
@@ -114,14 +119,18 @@ def summary() -> str:
     eng = _j("engine.json")
     if eng:
         a, v, o = eng["anvil"], eng["anvil_v01"], eng["pysigma_sqlite"]
-        rows = [["ANVIL 0.2", a.get("pass", 0), a.get("fail", 0), 0, f"{100 * a['pass_rate']:.1f}%"],
+        rows = [["ANVIL engine (1.x)", a.get("pass", 0), a.get("fail", 0), 0, f"{100 * a['pass_rate']:.1f}%"],
                 ["ANVIL 0.1 (baseline)", v.get("pass", 0), v.get("fail", 0), v.get("error", 0) + v.get("unsupported", 0),
                  f"{100 * v['pass_rate']:.1f}%"]]
         if o.get("available"):
             n = o.get("pass", 0) + o.get("fail", 0)
             rows.append(["pySigma -> SQLite", o.get("pass", 0), o.get("fail", 0),
                          o.get("convert-error", 0) + o.get("exec-error", 0), f"{100 * o.get('pass', 0) / max(1, n + o.get('convert-error', 0) + o.get('exec-error', 0)):.1f}%"])
-        s += ["## Engine fidelity on SigmaHQ regression captures", "",
+        k, n_ = a.get("pass", 0), a.get("pass", 0) + a.get("fail", 0)
+        lo, hi = wilson(k, n_)
+        s += ["## TP replay (recall) on SigmaHQ regression captures", "",
+              "TP-only check, and the development acceptance set: over-matching is detectable in only a few "
+              f"captures. ANVIL detection rate {k}/{n_}, Wilson 95% CI [{100 * lo:.1f}, {100 * hi:.1f}]%.", "",
               f"{eng['cases']} regression cases ({eng['sample_events']} real events); "
               f"{a.get('unreadable', 0)} samples unreadable (quarantined by local AV).", "",
               _t(rows, ["engine", "detected", "missed", "could not evaluate", "detection rate"]), ""]
@@ -134,7 +143,7 @@ def summary() -> str:
             s.append("")
         b = eng.get("benign_sample")
         if b:
-            s += [f"Benign sample ({b['events']} events): ANVIL 0.2 raised {b['anvil']['alerts']} alerts from "
+            s += [f"Benign sample ({b['events']} events): ANVIL 1.x raised {b['anvil']['alerts']} alerts from "
                   f"{b['anvil']['rules_fired']} rules with {b['anvil']['evaluations']:,} rule evaluations; the 0.1 "
                   f"engine (no log-source routing) raised {b['anvil_v01']['alerts']} alerts from "
                   f"{b['anvil_v01']['rules_fired']} rules with {b['anvil_v01']['evaluations']:,} evaluations.", ""]
@@ -144,30 +153,50 @@ def summary() -> str:
         s += ["## Benign replay (false positives)", "",
               f"{c['events']:,} events, {c['days']} days of clean Windows 10/11/Server 2022 AD telemetry; "
               f"{fp['observable_rules']} of {fp['windows_rules']} Windows rules have their log source present. "
-              f"Budget: {fp['policy']['budget_per_rule_per_day']:.0f} alerts/day per rule "
+              f"Budget: {fp['policy']['budget_per_rule_per_day']:.0f} alerts per host-day per rule "
               f"({100 * fp['policy']['share']:.0f}% of a {fp['policy']['capacity_per_day']:.0f}/day SOC).", "",
               _t([[fp["fired_rules"], fp["total_alerts"], fp["gate_fail"], c["events_per_cpu_second"]]],
-                 ["rules firing", "alerts", "rules over budget", "events / CPU-second"]), ""]
+                 ["rules firing", "alerts", "rules over budget (1 host)", "events / CPU-second"]), ""]
+        if fp.get("gate_fail_by_fleet_size"):
+            s += ["Rates are alerts per host-day. Rules over the 20/day budget when the per-host rate is "
+                  "projected to a fleet:", "",
+                  _t([[h, n] for h, n in fp["gate_fail_by_fleet_size"].items()], ["hosts", "rules over budget"]), ""]
         for name in ("by_status", "by_folder", "by_level"):
             s += [_t([[k, v["observable"], v["fired"], f"{v['fired_pct']}%", v["gate_fail"]]
                       for k, v in fp[name].items()], [name.replace("by_", ""), "observable", "fired", "fired %",
                                                       "over budget"]), ""]
         ag = fp["sigmahq_known_fp_agreement"]
-        s += [f"Cross-check with SigmaHQ's own goodlog CI (`known-FPs.csv`): of {ag['fired_medium_plus']} "
-              f"medium+ rules ANVIL saw firing, {ag['on_known_fp_list']} are on the list.", ""]
+        s += [f"Cross-check with SigmaHQ's `known-FPs.csv` (per rule, MatchString filters not applied; the list "
+              f"was also used during development): of {ag['fired_medium_plus']} medium+ rules ANVIL saw firing, "
+              f"{ag['on_known_fp_list']} are on the list.", ""]
+        if "non_low_not_on_list" in ag:
+            s += [f"SigmaHQ's goodlog CI is green on the same images, so these {len(ag['non_low_not_on_list'])} "
+                  f"non-low rules that fire in ANVIL but are not excused by the list are disagreements with the "
+                  f"reference checker:", ""]
+            s += [f"- {r['title']} ({r['level']}, {r['hits']} hits)" for r in ag["non_low_not_on_list"]] + [""]
+            s += [f"Reverse direction: {ag['known_fp_rules_fired']} of {ag['known_fp_rules_listed']} listed rules "
+                  f"fire here (the list covers 7 images, ANVIL replays 3).", ""]
         s += ["Top noisy rules:", "", _t([[r["title"], r["level"], r["status"], r["folder"], r["hits"],
                                           r["alerts_per_day"], r["gate"]] for r in fp["rules"][:15] if r["hits"]],
                                         ["rule", "level", "status", "folder", "alerts", "per day", "gate"]), ""]
     ot = _j("otrf.json")
     if ot:
+        n = ot["datasets"]
+
+        def _p(k: int) -> str:
+            lo, hi = wilson(k, n)
+            return f"{k} [{100 * lo:.0f}, {100 * hi:.0f}]%"
         s += ["## Emulated attacks (OTRF Security-Datasets)", "",
-              _t([[ot["datasets"], f"{ot['events']:,}", ot["any_alert"], ot["claimed_coverage"],
-                   ot["technique_detected"]]],
-                 ["datasets", "events", "any alert", "technique claimed by a rule", "technique detected"]), ""]
+              "Technique detected = a rule tagged with the dataset technique or its parent fired (sibling "
+              "sub-techniques do not count). Wilson 95% CIs.", "",
+              _t([[n, f"{ot['events']:,}", _p(ot["any_alert"]), ot["claimed_coverage"],
+                   _p(ot["technique_detected"]), ot.get("technique_detected_lenient", "-")]],
+                 ["datasets", "events", "any alert", "technique claimed by a rule", "technique detected",
+                  "lenient (siblings credited)"]), ""]
         if ot["compound"]:
-            s += [_t([[k, f"{v['events']:,}", v["rules_fired"], v["alerts"], v["techniques_alerted"]]
+            s += [_t([[k, f"{v['events']:,}", v["rules_fired"], v["alerts"], v.get("technique_tags_on_fired_rules", v.get("techniques_alerted"))]
                       for k, v in ot["compound"].items()],
-                     ["APT29 evaluation capture", "events", "rules fired", "alerts", "techniques alerted"]), ""]
+                     ["APT29 evaluation capture", "events", "rules fired", "alerts", "distinct technique tags on fired rules"]), ""]
     cov = _j("coverage.json")
     if cov:
         rows = [[k, v["catalog_size"], v["covered"], f"{v['coverage_pct']}%", v["validated"], f"{v['validated_pct']}%",
@@ -178,41 +207,103 @@ def summary() -> str:
                         "parent techniques validated"]), ""]
     dec = _j("decay.json")
     if dec:
+        nn = dec.get("none")
         s += ["## Decay monitor under realistic telemetry changes", "",
+              f"Field inventory: {dec.get('inventory', 'benign corpus')}."
+              + (f" False-alarm floor on unchanged telemetry: {nn['library_flagged']} rules "
+                 f"({nn['library_flagged_pct']}%) are already broken/source-missing and are excluded."
+                 if nn else ""), "",
               _t([[k, v["decayed_tp_rules"], v["static_flagged_tp_rules"],
                    "-" if v["static_recall"] is None else f"{100 * v['static_recall']:.0f}%",
                    "-" if v["static_precision"] is None else f"{100 * v['static_precision']:.0f}%",
                    f"{v['library_flagged_pct']}%"] for k, v in dec["changes"].items()],
                  ["change", "TP rules that stop firing", "flagged statically", "static recall", "static precision",
                   "library flagged"]), ""]
+        meth = [(c, m, v) for c, d in dec["changes"].items() for m, v in d.get("methods", {}).items()]
+        if meth:
+            def _pc(x, ci):
+                return "-" if x is None else f"{100 * x:.1f} [{100 * ci[0]:.1f}, {100 * ci[1]:.1f}]"
+            s += ["Ablation: the symbolic condition check vs field-presence checks (recall / precision on "
+                  "TP-validated rules, %, Wilson 95% CI):", "",
+                  _t([[c, m, _pc(v["recall"], v["recall_ci95"]), _pc(v["precision"], v["precision_ci95"]),
+                       v["library_flagged"]] for c, m, v in meth],
+                     ["change", "method", "recall", "precision", "library flagged"]), ""]
     cv = _j("convert.json")
     if cv:
         s += ["## SIEM conversion (pySigma)", "",
-              _t([[t, v.get("converted"), f"{v.get('pct')}%", v.get("seconds")] for t, v in cv.items()
-                  if isinstance(v, dict)], ["target", "converted", "of Windows rules", "seconds"]), ""]
+              _t([[t, v.get("converted"), f"{v.get('pct')}%", v.get("seconds"),
+                   "; ".join(f"{k}: {n}" for k, n in v.get("errors", {}).items())]
+                  for t, v in cv.items() if isinstance(v, dict) and "converted" in v],
+                 ["target", "converted", "of Windows rules", "seconds", "errors"]), ""]
     fm = _j("fpmodel.json")
     if fm:
         k = [x for x in next(iter(fm["models"].values())) if x.startswith("precision_at")][0]
         s += ["## FP-prediction model", "", f"{fm['n_rules']} observable rules, {fm['positives']} noisy "
-              f"({fm['label']}).", "",
+              f"({fm['label']}). Single CV run (seed 7); precision@k and recall use expected values under "
+              f"random tie-breaking.", "",
               _t([[n, m["roc_auc"], m["pr_auc"], m[k], m["recall_at_top10pct"]] for n, m in fm["models"].items()],
                  ["scorer", "ROC-AUC", "PR-AUC", k.replace("_", " "), "recall @ top 10%"]), ""]
         rp = fm.get("repeated")
         if rp:
             def _ci(v: dict) -> str:
-                return f"{v['mean']:.3f} [{v['ci95'][0]:.3f}, {v['ci95'][1]:.3f}]"
-            s += [f"Repeated {rp['folds']}-fold CV over {len(rp['seeds'])} seeds (mean [95% CI]):", "",
+                ci = v.get("cv_repeat_interval95") or v.get("ci95")
+                return f"{v['mean']:.3f} [{ci[0]:.3f}, {ci[1]:.3f}]"
+            s += [f"Repeated {rp['folds']}-fold CV over {len(rp['seeds'])} seeds (mean [interval over CV "
+                  f"repetitions only, not over rules]):", "",
                   _t([[n, _ci(m["roc_auc"]), _ci(m["pr_auc"]), _ci(m[k])] for n, m in rp["models"].items()],
                      ["scorer", "ROC-AUC", "PR-AUC", k.replace("_", " ")]), ""]
+        bs = fm.get("bootstrap")
+        if bs:
+            s += [f"Bootstrap over rules ({bs['n_boot']} resamples, seed-7 out-of-fold scores), paired against "
+                  f"`{bs['reference']}`:", "",
+                  _t([[n, m["roc_auc_ci95"], m["pr_auc_ci95"], m.get("pr_auc_delta_vs_ref_ci95", "-"),
+                       m.get("pr_auc_p_delta_le_0", "-")] for n, m in bs["models"].items()],
+                     ["scorer", "ROC-AUC 95% CI", "PR-AUC 95% CI", "dPR-AUC vs ref 95% CI", "P(d <= 0)"]), ""]
     dr = _j("draft.json")
     if dr:
         s += ["## Drafter: CTI text -> rule -> tested", "",
-              _t([[b, v["drafts"], v["datasets_with_drafts"], f"{v['fires_on_own_capture']} ({100 * v['tp_rate']:.0f}%)",
-                   v["datasets_with_benign_fp"], v["benign_alerts_total"]] for b, v in dr["backends"].items()],
-                 ["backend", "drafts", "datasets with a draft", "fires on its emulation", "datasets with benign FPs",
-                  "benign alerts"]), "",
-              f"SigmaHQ on the same {dr['sigmahq_same_datasets']['datasets']} datasets: technique detected in "
+              _t([[b, v["drafts"], v["datasets_with_drafts"],
+                   f"{v['fires_on_own_capture']} ({100 * v['tp_rate']:.0f}%, CI {v.get('tp_rate_ci95', '-')})",
+                   v.get("gate_pass_and_fires", "-"), v["datasets_with_benign_fp"], v["benign_alerts_total"]]
+                  for b, v in dr["backends"].items()],
+                 ["backend", "drafts", "datasets with a draft (readable)", "fires on its emulation",
+                  "fires and within budget", "datasets with benign FPs", "benign alerts"]), "",
+              f"SigmaHQ on the same {dr['sigmahq_same_datasets']['datasets']} datasets: any alert in "
+              f"{dr['sigmahq_same_datasets'].get('any_alert', '?')}, technique detected in "
               f"{dr['sigmahq_same_datasets']['technique_detected']}.", ""]
+    nx = _j("nixcloud.json")
+    if nx:
+        s += ["## Linux and AWS CloudTrail (SigmaHQ linux + cloud/aws rules)", "",
+              f"{nx['rules']['routed']} of {nx['rules']['linux_aws']} Linux/AWS rules routed; "
+              f"{nx['labelled']} labelled captures. Wilson 95% CIs.", "",
+              _t([[k, v["datasets"], f"{v['events']:,}", f"{v['technique_detected']} {v['technique_detected_ci95']}",
+                   f"{v['any_alert']} {v['any_alert_ci95']}"] for k, v in nx["by_kind"].items()]
+                 + [["all", nx["labelled"], "", f"{nx['technique_detected']} {nx['technique_detected_ci95']}",
+                     f"{nx['any_alert']} {nx['any_alert_ci95']}"]],
+                 ["source", "captures", "events", "technique detected", "any alert"]), ""]
+        if nx.get("zero_event_datasets"):
+            s += ["Captures that parsed to 0 events: " + ", ".join(nx["zero_event_datasets"]), ""]
+        lb = nx.get("linux_benign")
+        if lb:
+            s += [f"Benign Linux telemetry recorded on the CI runner ({lb['events']} events, "
+                  f"{lb['window_hours']} h, {lb['workload']}): {lb['rules_fired']} Linux rules fired "
+                  f"{lb['alerts']} alerts; {lb['over_budget_20_per_day']} would exceed 20/day.", ""]
+    bo = _j("backend_opensearch.json")
+    if bo:
+        rg, bn = bo["regression"], bo["benign"]
+        s += [f"## Real backend: OpenSearch {bo['backend']['version']} vs ANVIL", "",
+              "Rules converted by pySigma's OpenSearch Lucene backend with pySigma's own Sysmon + Windows "
+              "log-source pipelines (independent of ANVIL's router), executed with `_search` in an OpenSearch "
+              "container in CI.", "",
+              _t([["regression captures: verdict", rg.get("compared", 0), rg.get("verdict_agree", 0),
+                   f"{100 * rg['verdict_agreement']:.1f}% {rg['verdict_agreement_ci95']}"],
+                  ["regression captures: exact count", rg.get("compared", 0), rg.get("count_agree", 0),
+                   f"{100 * rg['count_agreement']:.1f}%"],
+                  ["benign sample: same matching events per rule", bn.get("compared", 0),
+                   bn.get("same_event_set", 0), f"{100 * bn['same_event_set_rate']:.1f}% {bn['same_event_set_ci95']}"]],
+                 ["comparison", "rules/cases", "agree", "agreement [95% CI]"]), "",
+              f"Benign fire/no-fire table: {bn['fire_table']}, Cohen's kappa {bn['fire_kappa']}. "
+              f"Disagreements by modifier: {bn.get('disagreements_by_modifier', {})}.", ""]
     return "\n".join(s)
 
 
