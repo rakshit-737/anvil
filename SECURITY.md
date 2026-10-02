@@ -1,7 +1,7 @@
 # Security Policy
 
 ## Scope
-ANVIL is a defensive detection-engineering tool. It contains no exploit code, and it never executes the techniques its rules describe. All bundled telemetry is synthetic.
+ANVIL is a defensive detection-engineering tool. It contains no exploit code, and it never executes the techniques its rules describe. Bundled test fixtures are synthetic; `results/fp.json` also carries a few example events from the public evtx-baseline lab corpus (clean lab hosts, no real users).
 
 ## Reporting a vulnerability
 Please report issues privately to the maintainer through GitHub Security Advisories on this repository, not through public issues. Include reproduction steps. Expect an acknowledgement within 7 days.

@@ -196,7 +196,7 @@ Only like-for-like setups are compared. Where no comparable number exists, the t
 | reference | their result | ANVIL on the same input |
 | --- | --- | --- |
 | SigmaHQ regression CI (evtx-sigma-checker + json_matcher) at `07ec293` | all cases pass (check run green) | 463/463 |
-| SigmaHQ goodlog CI on evtx-baseline win10, win11 and 2022 DC (non-low rules, known-FPs applied) | 0 unexcused rules (green) | 8 unexcused non-low rules (2 medium, 6 informational) |
+| SigmaHQ goodlog CI on evtx-baseline win10, win11 and 2022 DC (non-low rules; SigmaHQ applies known-FPs with MatchString filters, ANVIL per rule id only, so not like-for-like) | 0 unexcused rules (green) | 8 unexcused non-low rules (2 medium, 6 informational) |
 | GAUNTLET (sister project), OTRF recordings detected | 69.8% [60.0, 78.1] | 69/98 lenient, 62/98 strict |
 | LLM Sigma generation from CTI (AutoSigma, arXiv 2608.19011; CTI-REALM, arXiv 2603.13517) | rule validity and coverage on cloud blogs / agent tasks | not comparable: different corpora and metrics; ANVIL scores drafts by execution on their own emulation |
 | AMIDES (Uetz et al., USENIX Security 2024) | evasion of process-creation rules | not comparable: it measures adversarial evasion, not benign volume or recall |
