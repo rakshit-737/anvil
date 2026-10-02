@@ -108,6 +108,11 @@ def _create_index() -> None:
                            "_set": {"type": "keyword"}}}})
     if "_error" in r:
         raise SystemExit(f"index create failed: {r}")
+    # Cancel runaway searches (huge leading-wildcard automata) instead of letting them
+    # exhaust the heap and kill the node.
+    _req("PUT", "/_cluster/settings", {"persistent": {
+        "search_backpressure.mode": "enforced",
+        "search.cancel_after_time_interval": "30s"}})
 
 
 def _bulk(docs: list[tuple[str, dict[str, Any]]]) -> int:
@@ -147,7 +152,11 @@ def _search_ids(q: str, flt: dict[str, Any]) -> set[str] | None:
     body = {"size": 50000, "_source": False, "timeout": "30s", "track_total_hits": True,
             "query": {"bool": {"must": [{"query_string": {"query": q, "allow_leading_wildcard": True}}],
                                "filter": [flt]}}}
+    t = time.perf_counter()
     r = _req("POST", f"/{INDEX}/_search", body)
+    dt = time.perf_counter() - t
+    if "_error" in r or dt > 10:
+        print(f"slow-or-failed query ({dt:.1f}s, {r.get('_error', 'ok')}): {q[:200]}", flush=True)
     if "_error" in r:
         return None
     return {h["_id"] for h in r["hits"]["hits"]}

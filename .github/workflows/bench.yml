@@ -67,19 +67,6 @@ jobs:
   backend:
     runs-on: ubuntu-latest
     timeout-minutes: 120
-    services:
-      opensearch:
-        image: opensearchproject/opensearch:2.19.1
-        env:
-          discovery.type: single-node
-          DISABLE_SECURITY_PLUGIN: "true"
-          DISABLE_INSTALL_DEMO_CONFIG: "true"
-          OPENSEARCH_JAVA_OPTS: -Xms2g -Xmx2g
-        ports:
-          - 127.0.0.1:9200:9200
-        options: >-
-          --health-cmd "curl -fs http://localhost:9200/_cluster/health || exit 1"
-          --health-interval 10s --health-timeout 5s --health-retries 30
     steps:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
         with:
@@ -96,6 +83,10 @@ jobs:
         run: python scripts/download_data.py sigma baseline
       - name: Ingest benign
         run: python -m anvil ingest --benign
+      - name: Start OpenSearch (localhost only, restarts if a query exhausts the heap)
+        run: |
+          docker run -d --name os --restart unless-stopped -p 127.0.0.1:9200:9200             -e discovery.type=single-node -e DISABLE_SECURITY_PLUGIN=true             -e DISABLE_INSTALL_DEMO_CONFIG=true -e "OPENSEARCH_JAVA_OPTS=-Xms4g -Xmx4g"             opensearchproject/opensearch:2.19.1
+          for i in $(seq 60); do curl -fs localhost:9200/_cluster/health && break; sleep 5; done
       - name: OpenSearch vs ANVIL
         shell: bash
         run: python benchmarks/backend_opensearch.py 2>&1 | tee backend.log
