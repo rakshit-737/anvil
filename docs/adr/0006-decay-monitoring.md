@@ -17,5 +17,5 @@ Detections rot silently. A pipeline migration renames fields, Sysmon gets decomm
 - A real-data check that uses no simulator (added after 1.1.0): OTRF captures that log both Sysmon EID 1 and native Security 4688 are replayed with and without their Sysmon channel, and the prediction comes from the benign inventory with its real Sysmon events dropped.
 
 ## Consequences
-- Static analysis can over-flag when the inventory is thin, for example a field that exists but never appeared in the sample. The benchmark reports that false-alarm floor as `baseline_status` in `results/decay.json` (183 rules, 6.4%, on unchanged telemetry), and compares the symbolic check with per-source and global field-presence checks.
+- Static analysis can over-flag when the inventory is thin, for example a field that exists but never appeared in the sample. The benchmark reports that false-alarm floor as `baseline_status` in `results/decay.json` (183 rules, 6.4%, on unchanged telemetry, bench run 37093721154), and compares the symbolic check with per-source and global field-presence checks.
 - Both checks are meant to run in CI on a schedule. Regression failures block the build; static findings open an issue (`.github/workflows/decay.yml`, weekly, added after 1.1.0; it uses the bundled synthetic telemetry until a real inventory export is configured).
