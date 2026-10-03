@@ -138,9 +138,18 @@ def cmd_regress(a) -> int:
     from .regression import run_all
     from .runner import Library, load_rule_dir
     root = Path(a.sigma)
+    if not root.is_dir():
+        raise UsageError(f"--sigma path not found: {root}")
     dirs = [root / d for d in ("rules", "rules-emerging-threats", "rules-threat-hunting") if (root / d).exists()]
+    if not dirs:
+        raise UsageError(f"no rules/, rules-emerging-threats/ or rules-threat-hunting/ under {root}: "
+                         "is this a SigmaHQ checkout?")
     lib = Library.build(load_rule_dir(dirs)[0])
+    if not lib.rules:
+        raise UsageError(f"no rules found under {root}")
     res = run_all(lib, root)
+    if not res:
+        raise UsageError(f"no regression_data cases found under {root}")
     st = Counter(r.status for r in res)
     for r in res:
         if r.status == "fail" or a.verbose:
@@ -154,6 +163,9 @@ def cmd_ingest(a) -> int:
     from .telemetry import ingest
     if a.benign:
         base = Path(os.environ.get("ANVIL_DATA", "data"))
+        if not (base / "evtx-baseline").is_dir():
+            raise UsageError(f"{base / 'evtx-baseline'} not found: run `python scripts/download_data.py baseline` "
+                             "or set $ANVIL_DATA")
         total = 0
         for d in sorted((base / "evtx-baseline").iterdir()):
             if d.is_dir():
@@ -163,7 +175,10 @@ def cmd_ingest(a) -> int:
         print(f"ingested {total} shard(s) into {base / 'corpus'}")
         return 0
     if not a.sources or not a.out:
-        raise SystemExit("ingest: give SOURCES and --out, or --benign")
+        raise UsageError("give SOURCES and --out, or --benign")
+    missing = [s for s in a.sources if not Path(s).exists()]
+    if missing:
+        raise UsageError(f"source path(s) not found: {', '.join(missing)}")
     shards = ingest(a.sources, a.out, a.shard, a.prefix)
     print(f"wrote {len(shards)} shard(s) to {a.out}")
     return 0
@@ -276,7 +291,12 @@ def cmd_synth(a) -> int:
 def cmd_report(a) -> int:
     """Handle ``anvil report``: render the health dashboard."""
     from .dashboard import render
-    out = render(Path(a.results), Path(a.out))
+    res = Path(a.results)
+    if not res.is_dir():
+        raise UsageError(f"--results folder not found: {res}")
+    if not any(res.glob("*.json")):
+        raise UsageError(f"no *.json result files in {res}: run `python benchmarks/bench.py all` first")
+    out = render(res, Path(a.out))
     print(f"wrote {out}")
     return 0
 
@@ -407,7 +427,7 @@ def main(argv: list[str] | None = None) -> int:
         print(f"anvil {a.cmd}: error: file not found: {exc.filename}", file=sys.stderr)
         return 2
     except ModuleNotFoundError as exc:
-        extra = {"sigma": "sigma", "anthropic": "llm", "sklearn": "ml", "evtx": "evtx",
+        extra = {"sigma": "sigma", "anthropic": "llm", "sklearn": "ml", "evtx": "evtx", "Evtx": "evtx",
                  "matplotlib": "plots"}.get((exc.name or "").split(".")[0])
         hint = f"pip install 'anvil-dac[{extra}]'" if extra else "install the missing package"
         print(f"anvil {a.cmd}: error: optional dependency {exc.name!r} missing; {hint}", file=sys.stderr)
