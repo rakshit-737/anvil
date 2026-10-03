@@ -1,10 +1,12 @@
 name: bench
 
-# Full real-data benchmark on a clean ubuntu runner: fresh, checksum-verified
-# downloads (including the files local endpoint antivirus blocks on the dev laptop),
-# the Linux/AWS stage, live benign Linux telemetry recorded on this runner, and a
-# real-backend cross-check against OpenSearch. Results are uploaded as artefacts;
-# only the small results/*.json files are committed by hand afterwards.
+# Full real-data benchmark on clean ubuntu runners: fresh, checksum-verified downloads
+# (including the files local endpoint antivirus blocks on the dev laptop), the Linux/AWS
+# stage, Linux telemetry recorded on this runner (auditd + Sysmon for Linux: a benign
+# workload and a benign discovery-command emulation), and a real-backend cross-check
+# against OpenSearch. The `report` job joins both jobs' results from this one run and
+# renders SUMMARY.md, the figures, the dashboard and its screenshot; its `results`
+# artefact is what gets committed, unmodified.
 
 on:
   workflow_dispatch:
@@ -39,8 +41,13 @@ jobs:
       - name: Ingest benign evtx-baseline
         run: python -m anvil ingest --benign
       - name: Record live Linux telemetry on this runner (benign commands only)
-        continue-on-error: true
         run: bash scripts/record_linux_live.sh
+      - name: Assert the live Linux capture is not empty
+        run: |
+          for f in benign/auditd.log benign/sysmon_linux.log emulation/auditd.log emulation/sysmon_linux.log; do
+            test -s "$ANVIL_DATA/linux-live/$f" || { echo "::error::empty live capture: $f"; exit 1; }
+          done
+          cat "$ANVIL_DATA"/linux-live/*/window.txt
       - name: Real-data tests
         run: python -m pytest -q -m realdata
       - name: Benchmark (all stages + Linux/AWS)
@@ -51,8 +58,11 @@ jobs:
           python - <<'PY'
           import json
           o = json.load(open("results/otrf.json")); e = json.load(open("results/engine.json"))
+          n = json.load(open("results/nixcloud.json"))
           print("otrf blocked:", o["files_blocked_by_av"], "engine unreadable:", e["anvil"].get("unreadable", 0))
           assert o["files_blocked_by_av"] == 0 and e["anvil"].get("unreadable", 0) == 0
+          print("live emulation:", n.get("live_emulation"))
+          assert n.get("live_emulation") and n["live_emulation"]["events"] > 0
           PY
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         if: always()
@@ -60,8 +70,6 @@ jobs:
           name: bench-results
           path: |
             results/
-            docs/img/
-            docs/dashboard.html
             bench.log
 
   backend:
@@ -83,13 +91,25 @@ jobs:
         run: python scripts/download_data.py sigma baseline
       - name: Ingest benign
         run: python -m anvil ingest --benign
-      - name: Start OpenSearch (localhost only, restarts if a query exhausts the heap)
+      - name: Start OpenSearch (localhost only; no restart policy, so a crash fails the job)
         run: |
-          docker run -d --name os --restart unless-stopped -p 127.0.0.1:9200:9200             -e discovery.type=single-node -e DISABLE_SECURITY_PLUGIN=true             -e DISABLE_INSTALL_DEMO_CONFIG=true -e "OPENSEARCH_JAVA_OPTS=-Xms4g -Xmx4g"             opensearchproject/opensearch:2.19.1
+          docker run -d --name os -p 127.0.0.1:9200:9200 \
+            -e discovery.type=single-node -e DISABLE_SECURITY_PLUGIN=true \
+            -e DISABLE_INSTALL_DEMO_CONFIG=true -e "OPENSEARCH_JAVA_OPTS=-Xms4g -Xmx4g" \
+            opensearchproject/opensearch:2.19.1
           for i in $(seq 60); do curl -fs localhost:9200/_cluster/health && break; sleep 5; done
       - name: OpenSearch vs ANVIL
         shell: bash
         run: python benchmarks/backend_opensearch.py 2>&1 | tee backend.log
+      - name: OpenSearch log; fail on a restart, a dead node or an OutOfMemoryError
+        if: always()
+        run: |
+          docker logs os > opensearch.log 2>&1 || true
+          docker inspect -f 'status={{.State.Status}} restarts={{.RestartCount}} oom_killed={{.State.OOMKilled}} exit={{.State.ExitCode}}' os
+          echo "OutOfMemoryError lines: $(grep -c OutOfMemoryError opensearch.log || true)"
+          test "$(docker inspect -f '{{.RestartCount}}' os)" = 0
+          test "$(docker inspect -f '{{.State.Status}}' os)" = running
+          ! grep -q OutOfMemoryError opensearch.log
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         if: always()
         with:
@@ -97,3 +117,53 @@ jobs:
           path: |
             results/backend_opensearch.json
             backend.log
+            opensearch.log
+
+  report:
+    needs: [bench, backend]
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install
+        run: pip install -e . "matplotlib>=3.7" "playwright==1.63.0"
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: bench-results
+          path: .
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: backend-results
+          path: .
+      - name: Every results file comes from this run
+        run: |
+          python - <<'PY'
+          import glob, json, os
+          run = os.environ["GITHUB_RUN_ID"]
+          for f in sorted(glob.glob("results/*.json")):
+              d = json.load(open(f))
+              meta = d.get("provenance") if isinstance(d, dict) else None
+              if meta is None:  # the Navigator layer keeps provenance as layer metadata
+                  meta = {m["name"]: m["value"] for m in d.get("metadata", [])}
+              print(f, meta.get("ci_run"), meta.get("git_sha", "")[:10])
+              assert meta.get("ci_run") == run and meta.get("git_sha") == os.environ["GITHUB_SHA"], f
+          PY
+      - name: SUMMARY.md, figures and dashboard from this run's results
+        run: python benchmarks/bench.py report
+      - name: Dashboard screenshot
+        run: |
+          python -m playwright install --with-deps chromium
+          python scripts/screenshot_dashboard.py docs/dashboard.html docs/img/dashboard.png
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: results
+          path: |
+            results/
+            docs/img/
+            docs/dashboard.html
