@@ -1,8 +1,8 @@
 site_name: ANVIL
 site_description: Detection-as-code lifecycle for Sigma rules, measured on real telemetry
-site_url: https://rakshit-737.github.io/anvil/
-repo_url: https://github.com/rakshit-737/anvil
-repo_name: rakshit-737/anvil
+site_url: https://rakshit-737.github.io/anvil-detection-engineering/
+repo_url: https://github.com/rakshit-737/anvil-detection-engineering
+repo_name: rakshit-737/anvil-detection-engineering
 edit_uri: ""
 theme:
   name: material

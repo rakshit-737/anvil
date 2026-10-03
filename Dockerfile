@@ -1,5 +1,5 @@
 # ANVIL CLI image: lint / test / scan / convert Sigma rules.
-#   docker run --rm -v "$PWD:/work" -w /work ghcr.io/rakshit-737/anvil:<tag> lint --rules rules
+#   docker run --rm -v "$PWD:/work" -w /work ghcr.io/rakshit-737/anvil-detection-engineering:<tag> lint --rules rules
 # Without a mount it runs against the bundled rules/ and examples/ in /opt/anvil.
 FROM python:3.12-slim AS build
 WORKDIR /src

@@ -1,8 +1,8 @@
 # ANVIL: detection-as-code, measured on real telemetry
 
-[![ci](https://github.com/rakshit-737/anvil/actions/workflows/ci.yml/badge.svg)](https://github.com/rakshit-737/anvil/actions/workflows/ci.yml)
-[![bench](https://github.com/rakshit-737/anvil/actions/workflows/bench.yml/badge.svg)](https://github.com/rakshit-737/anvil/actions/workflows/bench.yml)
-[![docs](https://github.com/rakshit-737/anvil/actions/workflows/docs.yml/badge.svg)](https://rakshit-737.github.io/anvil/)
+[![ci](https://github.com/rakshit-737/anvil-detection-engineering/actions/workflows/ci.yml/badge.svg)](https://github.com/rakshit-737/anvil-detection-engineering/actions/workflows/ci.yml)
+[![bench](https://github.com/rakshit-737/anvil-detection-engineering/actions/workflows/bench.yml/badge.svg)](https://github.com/rakshit-737/anvil-detection-engineering/actions/workflows/bench.yml)
+[![docs](https://github.com/rakshit-737/anvil-detection-engineering/actions/workflows/docs.yml/badge.svg)](https://rakshit-737.github.io/anvil-detection-engineering/)
 ![python](https://img.shields.io/badge/python-3.10%20%7C%203.12%20%7C%203.13%20%7C%203.14-3776ab)
 [![license](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 ![rules](https://img.shields.io/badge/SigmaHQ%20rules-3%2C757%20linted%20%2F%202%2C844%20measured-2a78d6)
@@ -13,12 +13,12 @@
 Around that core it is an open, SIEM-free CI for Sigma: every rule is linted, replayed on real attack captures and on real clean-host telemetry, gated on a SOC alert budget, and cross-checked against a real OpenSearch backend.
 <!-- --8<-- [end:pitch] -->
 
-Documentation: **https://rakshit-737.github.io/anvil/** · [How it works](https://rakshit-737.github.io/anvil/how-it-works/) · [Evaluation](https://rakshit-737.github.io/anvil/evaluation/) · [Reproduce](https://rakshit-737.github.io/anvil/reproduce/)
+Documentation: **https://rakshit-737.github.io/anvil-detection-engineering/** · [How it works](https://rakshit-737.github.io/anvil-detection-engineering/how-it-works/) · [Evaluation](https://rakshit-737.github.io/anvil-detection-engineering/evaluation/) · [Reproduce](https://rakshit-737.github.io/anvil-detection-engineering/reproduce/)
 
-[![Detection health dashboard](https://raw.githubusercontent.com/rakshit-737/anvil/main/docs/img/dashboard.png)](https://rakshit-737.github.io/anvil/dashboard.html)
+[![Detection health dashboard](https://raw.githubusercontent.com/rakshit-737/anvil-detection-engineering/main/docs/img/dashboard.png)](https://rakshit-737.github.io/anvil-detection-engineering/dashboard.html)
 
 <!-- --8<-- [start:headline] -->
-| Headline (real data, `bench` run [37093721154](https://github.com/rakshit-737/anvil/actions/runs/37093721154) at `9906b42`; `k/n, p% [Wilson 95% CI]`) | Result |
+| Headline (real data, `bench` run [37093721154](https://github.com/rakshit-737/anvil-detection-engineering/actions/runs/37093721154) at `9906b42`; `k/n, p% [Wilson 95% CI]`) | Result |
 | --- | --- |
 | Decay monitor, **real**: Sysmon dropped from 88 OTRF captures that also log native 4688 | **114/122 rules that stop firing flagged statically, 93.4% [87.6, 96.6]; precision 114/114, 100% [96.7, 100]**. Field presence: precision 119/182, 65.4% [58.2, 71.9], 63 false alarms (exact McNemar p = 2.2e-19) |
 | Decay monitor, simulated Sysmon-to-4688 migration on SigmaHQ regression captures | 109/115, 94.8% [89.1, 97.6]; precision 109/109, 100% [96.6, 100] (partly by construction: the same transform builds ground truth and inventory). Field presence: 114/272, 41.9% [36.2, 47.8] |
@@ -38,7 +38,7 @@ Documentation: **https://rakshit-737.github.io/anvil/** · [How it works](https:
 ## Try it in 60 seconds
 
 ```bash
-git clone --depth 1 https://github.com/rakshit-737/anvil && cd anvil
+git clone --depth 1 https://github.com/rakshit-737/anvil-detection-engineering && cd anvil
 python -m venv .venv && . .venv/bin/activate      # Windows: .venv\Scripts\activate
 pip install -e .                                   # core needs only PyYAML
 anvil synth                                        # synthetic benign telemetry
@@ -51,8 +51,8 @@ anvil lint --rules drafts --profile sigma          # -> lint: 4 rule(s), 4 findi
 Or with the container image (non-root; rules and examples bundled):
 
 ```bash
-docker run --rm ghcr.io/rakshit-737/anvil:v1.1.1 lint --rules rules          # or :latest
-docker run --rm -v "$PWD:/work" -w /work ghcr.io/rakshit-737/anvil:v1.1.1 lint --rules my-rules
+docker run --rm ghcr.io/rakshit-737/anvil-detection-engineering:v1.1.1 lint --rules rules          # or :latest
+docker run --rm -v "$PWD:/work" -w /work ghcr.io/rakshit-737/anvil-detection-engineering:v1.1.1 lint --rules my-rules
 ```
 
 Development: `pip install -e ".[dev,sigma,ml]" && python -m pytest -q` (the real-data tests skip without `$ANVIL_DATA`).
@@ -101,13 +101,13 @@ Design decisions are recorded in [docs/adr](docs/adr).
 ## Results on real data
 
 <!-- --8<-- [start:results] -->
-**Provenance.** Every number below comes from one `bench` workflow run, [37093721154](https://github.com/rakshit-737/anvil/actions/runs/37093721154) at commit `9906b42`, with all three jobs green (bench, OpenSearch backend, report) on clean ubuntu runners and fresh, checksum-verified downloads. The `results` artefact of that run is committed unmodified; each results file records the run id, git SHA, package versions and dataset pins, and `python benchmarks/bench.py verify` diffs a reproduction against it. Proportions are `k/n, p% [Wilson 95% CI]`; the full tables are in [results/SUMMARY.md](https://github.com/rakshit-737/anvil/blob/main/results/SUMMARY.md) and the method is on the [Evaluation](https://rakshit-737.github.io/anvil/evaluation/) page.
+**Provenance.** Every number below comes from one `bench` workflow run, [37093721154](https://github.com/rakshit-737/anvil-detection-engineering/actions/runs/37093721154) at commit `9906b42`, with all three jobs green (bench, OpenSearch backend, report) on clean ubuntu runners and fresh, checksum-verified downloads. The `results` artefact of that run is committed unmodified; each results file records the run id, git SHA, package versions and dataset pins, and `python benchmarks/bench.py verify` diffs a reproduction against it. Proportions are `k/n, p% [Wilson 95% CI]`; the full tables are in [results/SUMMARY.md](https://github.com/rakshit-737/anvil-detection-engineering/blob/main/results/SUMMARY.md) and the method is on the [Evaluation](https://rakshit-737.github.io/anvil-detection-engineering/evaluation/) page.
 
 ### 1. Decay monitor (the novel part)
 
 `anvil decay` checks every rule's condition for satisfiability against the field inventory observed per log source. It uses benign telemetry only, with no attack data. It is compared with two field-presence checks (the per-field logic of schema validation): per log source, and global (ANVIL 0.1).
 
-![decay ablation](https://raw.githubusercontent.com/rakshit-737/anvil/main/docs/img/decay_ablation.png)
+![decay ablation](https://raw.githubusercontent.com/rakshit-737/anvil-detection-engineering/main/docs/img/decay_ablation.png)
 
 **Real change, no simulator.** 88 OTRF captures log both Sysmon EID 1 and native Security 4688. 286 Windows rules fire on them; 122 fire on none once the Sysmon channel is dropped from the real captures. The prediction comes from the benign inventory with its real Sysmon events dropped:
 
@@ -150,9 +150,9 @@ The corpus has 2,994,137 events from three hosts (Win10, Win11, Server 2022 AD),
 | --- | ---: | ---: | ---: | ---: |
 | rules over budget (of 75 firing) | 12 | 26 | 41 | 75 |
 
-The noisiest rules are install-driven (scheduled-task registry writes, AppX installs, AppCompat), so these per-day rates are likely higher than a steady-state host's (see Limitations). By level: 0/128 critical, 5/1,353 high (0.4% [0.2, 0.9]), 24/1,096 medium, 40/199 low and 6/13 informational rules fire. Against SigmaHQ's `known-FPs.csv`, 27 of the 29 medium+ rules that fire are listed (matched per rule id; the list was also used during development). Eight non-low rules fire in ANVIL without an entry: 2 medium (PowerShell-classic `HostApplication` parsing) and 6 informational. SigmaHQ's goodlog CI is green on the same images, and excusing per rule id is more lenient than its MatchString filters, so these 8 are a lower bound on rules where ANVIL fires and SigmaHQ's checker does not. They are listed in [SUMMARY](https://github.com/rakshit-737/anvil/blob/main/results/SUMMARY.md).
+The noisiest rules are install-driven (scheduled-task registry writes, AppX installs, AppCompat), so these per-day rates are likely higher than a steady-state host's (see Limitations). By level: 0/128 critical, 5/1,353 high (0.4% [0.2, 0.9]), 24/1,096 medium, 40/199 low and 6/13 informational rules fire. Against SigmaHQ's `known-FPs.csv`, 27 of the 29 medium+ rules that fire are listed (matched per rule id; the list was also used during development). Eight non-low rules fire in ANVIL without an entry: 2 medium (PowerShell-classic `HostApplication` parsing) and 6 informational. SigmaHQ's goodlog CI is green on the same images, and excusing per rule id is more lenient than its MatchString filters, so these 8 are a lower bound on rules where ANVIL fires and SigmaHQ's checker does not. They are listed in [SUMMARY](https://github.com/rakshit-737/anvil-detection-engineering/blob/main/results/SUMMARY.md).
 
-![fp by group](https://raw.githubusercontent.com/rakshit-737/anvil/main/docs/img/fp_by_group.png)
+![fp by group](https://raw.githubusercontent.com/rakshit-737/anvil-detection-engineering/main/docs/img/fp_by_group.png)
 
 ### 4. Emulated attacks and ATT&CK coverage
 
@@ -169,7 +169,7 @@ On ATT&CK Enterprise 19.2 for Windows, rule tags claim 299/474 techniques, 63.1%
 
 SigmaHQ ships no correlation rules at the pinned commit `07ec293` (0 `correlation:` documents in any folder; also 0 on master `330d1cf`, 2026-10-02). Its legacy aggregations live outside the rule folders: `unsupported/` holds 87 rules, 45 with `count()` and 54 with any aggregation in the condition, plus one `count()` rule in `deprecated/` (`results/lint.json`, `aggregation_census`). Correlation is therefore out of scope.
 
-![coverage](https://raw.githubusercontent.com/rakshit-737/anvil/main/docs/img/coverage_tactics.png)
+![coverage](https://raw.githubusercontent.com/rakshit-737/anvil-detection-engineering/main/docs/img/coverage_tactics.png)
 
 ### 5. Real backend: OpenSearch vs ANVIL
 
@@ -199,7 +199,7 @@ pySigma conversion of the 2,861 Windows rules succeeds for 2,857 (99.9% [99.6, 9
 
 FP prediction from static rule features (75 noisy rules of 2,789), seed-7 cross-validation with bootstrap 95% CIs over rules: logistic regression ROC-AUC 0.831 [0.776, 0.881], PR-AUC 0.178 [0.122, 0.265]; GBDT ROC-AUC 0.824 [0.768, 0.871], PR-AUC 0.209 [0.135, 0.304]. A one-line `level` heuristic scores ROC-AUC 0.853 [0.808, 0.894] and PR-AUC 0.172 [0.118, 0.243]. (Means over 10 CV seeds: logreg 0.829 / 0.183, GBDT 0.830 / 0.231.) The paired bootstrap puts the PR-AUC difference against the heuristic at [-0.051, 0.083] for logreg and [-0.037, 0.120] for GBDT. **With 75 positives, no scorer can be told apart from the heuristic.** Treat the models as a review-order aid only.
 
-![fp model](https://raw.githubusercontent.com/rakshit-737/anvil/main/docs/img/fpmodel.png)
+![fp model](https://raw.githubusercontent.com/rakshit-737/anvil-detection-engineering/main/docs/img/fpmodel.png)
 <!-- --8<-- [end:results] -->
 
 <!-- --8<-- [start:comparison] -->
@@ -211,7 +211,7 @@ Each row states whether the comparison is like-for-like.
 | --- | --- | --- | --- |
 | SigmaHQ regression CI at `07ec293` (evtx-sigma-checker + SigmaHQ's json_matcher v0.0.2, run as `json_checker`), run [36187990502](https://github.com/SigmaHQ/sigma/actions/runs/36187990502) | all cases pass (green) | 463/463 | yes: same captures and expected counts |
 | SigmaHQ goodlog CI on evtx-baseline win10, win11 and 2022 DC, non-low rules, run [36187990423](https://github.com/SigmaHQ/sigma/actions/runs/36187990423) | 0 unexcused rules (green) | 8 non-low rules fire without a `known-FPs.csv` entry (2 medium, 6 informational) | partly: same images and rules, but ANVIL excuses per rule id, which is more lenient than SigmaHQ's MatchString filters, so the 8 are a lower bound on rules where ANVIL fires and evtx-sigma-checker does not |
-| [GAUNTLET](https://github.com/rakshit-737/gauntlet) v1.1.0 (sister project, tag `cd41fa8`), OTRF recordings detected at technique-family level | sigma-all (SigmaHQ release package r2026-07-01, 2,519 rules): 67/98, 68.4% [58.6, 76.7]; sigma-full (adds low-level and threat-hunting rules, 2,805): 73/98, 74.5% [65.0, 82.1] | **lenient column: 69/98, 70.4% [60.7, 78.5]** (strict 62/98) | partly: the same 98 recordings and the same family-level match (ANVIL's lenient column), but different rule sets (release package r2026-07-01 vs repo commit `07ec293`, 2,844 routable Windows rules, all levels). GAUNTLET v1.0.0 reported 67/96 (69.8%) before two AV-blocked recordings were added |
+| [GAUNTLET](https://github.com/rakshit-737/gauntlet-detection-coverage) v1.1.0 (sister project, tag `cd41fa8`), OTRF recordings detected at technique-family level | sigma-all (SigmaHQ release package r2026-07-01, 2,519 rules): 67/98, 68.4% [58.6, 76.7]; sigma-full (adds low-level and threat-hunting rules, 2,805): 73/98, 74.5% [65.0, 82.1] | **lenient column: 69/98, 70.4% [60.7, 78.5]** (strict 62/98) | partly: the same 98 recordings and the same family-level match (ANVIL's lenient column), but different rule sets (release package r2026-07-01 vs repo commit `07ec293`, 2,844 routable Windows rules, all levels). GAUNTLET v1.0.0 reported 67/96 (69.8%) before two AV-blocked recordings were added |
 | Decay / breakage prediction for detection rules | no published benchmark found | Section 1 | n/a |
 | LLM Sigma generation from CTI: AutoSigma ([arXiv 2608.19011](https://arxiv.org/abs/2608.19011)), CTI-REALM ([arXiv 2603.13517](https://arxiv.org/abs/2603.13517)) | rule validity and coverage on cloud blogs / agent tasks | drafts scored by execution on their own emulation | no: different corpora and metrics |
 | AMIDES (Uetz et al., USENIX Security 2024, [arXiv 2311.10197](https://arxiv.org/abs/2311.10197)) | evasion of process-creation rules | - | no: it measures adversarial evasion, not benign volume or recall |
@@ -245,7 +245,7 @@ python benchmarks/bench.py all --workers 4    # stages can also run one by one
 python benchmarks/bench.py verify             # diff against the committed results, ignoring timings
 ```
 
-Per-stage outputs and runtimes are on the [Reproduce](https://rakshit-737.github.io/anvil/reproduce/) page.
+Per-stage outputs and runtimes are on the [Reproduce](https://rakshit-737.github.io/anvil-detection-engineering/reproduce/) page.
 
 ## CLI
 

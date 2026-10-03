@@ -5,8 +5,8 @@ authors:
   - given-names: Rakshit
 type: software
 license: MIT
-repository-code: "https://github.com/rakshit-737/anvil"
-url: "https://rakshit-737.github.io/anvil/"
+repository-code: "https://github.com/rakshit-737/anvil-detection-engineering"
+url: "https://rakshit-737.github.io/anvil-detection-engineering/"
 keywords: [sigma, detection-engineering, siem, mitre-attack]
 version: "1.1.1"
 date-released: "2026-10-03"

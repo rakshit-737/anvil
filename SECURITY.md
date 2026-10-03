@@ -4,7 +4,7 @@
 ANVIL is a defensive detection-engineering tool. It contains no exploit code, and it never executes the techniques its rules describe. Bundled test fixtures are synthetic; `results/fp.json` also carries a few example events from the public evtx-baseline lab corpus (clean lab hosts, no real users).
 
 ## Reporting a vulnerability
-Please report issues privately through GitHub's private vulnerability reporting: **[Report a vulnerability](https://github.com/rakshit-737/anvil/security/advisories/new)** (Security tab, "Report a vulnerability"). Do not use public issues. Include reproduction steps. Expect an acknowledgement within 7 days.
+Please report issues privately through GitHub's private vulnerability reporting: **[Report a vulnerability](https://github.com/rakshit-737/anvil-detection-engineering/security/advisories/new)** (Security tab, "Report a vulnerability"). Do not use public issues. Include reproduction steps. Expect an acknowledgement within 7 days.
 
 Examples of in-scope issues:
 - code execution or file access through a crafted rule YAML, condition string or JSONL input
@@ -12,7 +12,7 @@ Examples of in-scope issues:
 - a gate bypass (a rule that should fail `anvil test` passes)
 
 ## Supported versions
-The latest release (1.1.x, also published as `ghcr.io/rakshit-737/anvil`) and `main`. Older releases do not get fixes.
+The latest release (1.1.x, also published as `ghcr.io/rakshit-737/anvil-detection-engineering`) and `main`. Older releases do not get fixes.
 
 ## Known dependency advisories
 CI runs `pip-audit` over the `sigma`, `evtx`, `ml` and `fast` extras. One advisory is ignored there, on purpose:

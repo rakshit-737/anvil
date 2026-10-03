@@ -36,7 +36,7 @@ python benchmarks/bench.py verify            # diff against the committed files,
 `verify` prints `identical` per file for a faithful reproduction; a plain `git diff --stat results/`
 always shows changes because provenance and timing fields differ on every run.
 
-Runtimes and console summaries from `bench` run [37093721154](https://github.com/rakshit-737/anvil/actions/runs/37093721154) at `9906b42` (ubuntu-latest, 4 workers; the whole run took 13 minutes: bench 12.3, backend 3.6 in parallel, report 0.7):
+Runtimes and console summaries from `bench` run [37093721154](https://github.com/rakshit-737/anvil-detection-engineering/actions/runs/37093721154) at `9906b42` (ubuntu-latest, 4 workers; the whole run took 13 minutes: bench 12.3, backend 3.6 in parallel, report 0.7):
 
 | Stage | Writes | Runtime | Expected summary |
 | --- | --- | ---: | --- |

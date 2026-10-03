@@ -3,7 +3,7 @@
 ### Quickstart
 
 ```bash
-git clone https://github.com/rakshit-737/anvil && cd anvil
+git clone https://github.com/rakshit-737/anvil-detection-engineering && cd anvil
 pip install -e ".[dev]"          # core needs only PyYAML
 python -m pytest -q              # offline suite; real-data tests skip without $ANVIL_DATA
 

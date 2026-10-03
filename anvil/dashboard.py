@@ -47,7 +47,7 @@ nav.top a,footer a{color:var(--accent)}
 .cap{color:var(--muted);font-size:13px;margin:0 0 8px}
 """
 
-DOCS = "https://rakshit-737.github.io/anvil/"
+DOCS = "https://rakshit-737.github.io/anvil-detection-engineering/"
 
 
 def _load(results: Path, name: str) -> dict[str, Any] | None:
@@ -97,7 +97,7 @@ def _stamp(results: Path) -> str:
     parts = []
     for run, sha in seen:
         if run:
-            parts.append(f'bench run <a href="https://github.com/rakshit-737/anvil/actions/runs/{_e(run)}">'
+            parts.append(f'bench run <a href="https://github.com/rakshit-737/anvil-detection-engineering/actions/runs/{_e(run)}">'
                          f'{_e(run)}</a> at commit <code>{_e(sha)}</code>')
         else:
             parts.append(f"a local run at commit <code>{_e(sha)}</code>")
@@ -109,7 +109,7 @@ def render(results: Path, out: Path) -> Path:
     lint, eng, fp = _load(results, "lint.json"), _load(results, "engine.json"), _load(results, "fp.json")
     cov, dec, otrf = _load(results, "coverage.json"), _load(results, "decay.json"), _load(results, "otrf.json")
     parts = [f'<main><nav class="top"><a href="{DOCS}">ANVIL docs</a><a href="{DOCS}evaluation/">Evaluation</a>'
-             f'<a href="{DOCS}reproduce/">Reproduce</a><a href="https://github.com/rakshit-737/anvil">GitHub</a></nav>'
+             f'<a href="{DOCS}reproduce/">Reproduce</a><a href="https://github.com/rakshit-737/anvil-detection-engineering">GitHub</a></nav>'
              '<h1>Detection health</h1><p class="sub">SigmaHQ rule library measured by ANVIL '
              f'against real public telemetry. Generated from <code>results/*.json</code>.{_stamp(results)}</p>'
              '<div class="kpis">']

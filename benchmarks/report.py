@@ -190,7 +190,7 @@ def _provenance_line() -> str:
             runs.setdefault((str(meta.get("ci_run") or "local"), str(meta.get("git_sha", ""))[:7]), []).append(p.name)
     if len(runs) == 1:
         (run, sha), _ = next(iter(runs.items()))
-        link = f"[{run}](https://github.com/rakshit-737/anvil/actions/runs/{run})" if run != "local" else run
+        link = f"[{run}](https://github.com/rakshit-737/anvil-detection-engineering/actions/runs/{run})" if run != "local" else run
         return f"All result files come from `bench` run {link} at commit `{sha}`."
     return "Result files come from several runs: " + "; ".join(
         f"{run} at `{sha}` ({', '.join(files)})" for (run, sha), files in runs.items()) + "."
