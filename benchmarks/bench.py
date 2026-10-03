@@ -8,6 +8,8 @@
 Each stage writes ``results/<stage>.json``; ``report`` renders the tables in
 ``results/SUMMARY.md``, figures in ``docs/img`` and the static dashboard.
 Stages: lint engine fp otrf coverage decay convert fpmodel draft report.
+``python benchmarks/bench.py verify`` compares results/*.json with the committed files,
+ignoring provenance and timings.
 """
 from __future__ import annotations
 
@@ -31,7 +33,7 @@ from anvil.coverage import coverage, navigator_layer  # noqa: E402
 from anvil.decay import META_FIELDS, SCHEMA_CHANGES, FieldInventory, analyse, apply_change  # noqa: E402
 from anvil.engine import rule_fields  # noqa: E402
 from anvil.lint import ERROR, lint_rules  # noqa: E402
-from anvil.logsource import applies  # noqa: E402
+from anvil.logsource import SYSMON, applies, event_key  # noqa: E402
 from anvil.models import Rule  # noqa: E402
 from anvil.otrf import load_catalog  # noqa: E402
 from anvil.parallel import scan_files  # noqa: E402
@@ -39,7 +41,7 @@ from anvil.regression import discover, run_case  # noqa: E402
 from anvil.runner import Library, load_rule_dir  # noqa: E402
 from anvil.telemetry import iter_json_file, iter_path  # noqa: E402
 from benchmarks.common import RESULTS, benign_shards, data_dir, load, provenance, save, sigma_root  # noqa: E402
-from benchmarks.stats import wilson  # noqa: E402
+from benchmarks.stats import paired_mcnemar, wilson  # noqa: E402
 
 CAPACITY, SHARE = 200.0, 0.10          # SOC triage capacity/day and max share for one rule
 BUDGET = CAPACITY * SHARE              # -> 20 alerts/day per rule
@@ -100,9 +102,24 @@ def stage_lint() -> dict[str, Any]:
         "with_regression_test": sum(bool(r.regression_tests_path) for r in rules),
         "test_or_stable_without_regression": codes.get("W209", 0),
         "attack_version": cat.version if cat else None,
+        "aggregation_census": _aggregation_census(),
     }
     save("lint.json", res)
     return res
+
+
+def _aggregation_census() -> dict[str, Any]:
+    """Legacy aggregation conditions and correlation documents in the pinned SigmaHQ checkout."""
+    import re
+    base = sigma_root()
+    agg = re.compile(r"^\s*condition:.*\|\s*(count|min|max|avg|sum|near)\b", re.M)
+    out: dict[str, Any] = {}
+    for folder in ("unsupported", "deprecated", "rules", "rules-emerging-threats", "rules-threat-hunting"):
+        texts = [f.read_text(encoding="utf-8", errors="replace") for f in sorted((base / folder).rglob("*.yml"))]
+        out[folder] = {"files": len(texts), "with_count_call": sum("count(" in t for t in texts),
+                       "with_aggregation_condition": sum(bool(agg.search(t)) for t in texts),
+                       "correlation_documents": sum(len(re.findall(r"^correlation:", t, re.M)) for t in texts)}
+    return out
 
 
 # ------------------------------------------------------------------------------- engine
@@ -220,9 +237,25 @@ def stage_engine() -> dict[str, Any]:
                         hits01[cr.rule.id] += 1
                 except Exception:  # noqa: BLE001
                     continue
+        # ablation: the same 1.x engine with log-source routing switched off (every Windows rule
+        # sees every event), which isolates routing from the 0.1 -> 1.x value-semantics changes
+        win_ids = [rid for rid in lib.active_ids if _is_windows(lib.rules[rid])]
+        t0 = time.perf_counter()
+        hits_nr: Counter = Counter()
+        for e in sample:
+            for rid in win_ids:
+                try:
+                    if lib.compiled[rid].matches(e):
+                        hits_nr[rid] += 1
+                except (TypeError, ValueError, AttributeError):
+                    continue
+        t_nr = time.perf_counter() - t0
         benign = {"events": len(sample),
                   "anvil": {"alerts": sum(r02.hits.values()), "rules_fired": len(r02.hits),
                             "evaluations": r02.evaluations, "seconds": round(r02.seconds, 2)},
+                  "anvil_unrouted": {"alerts": sum(hits_nr.values()), "rules_fired": len(hits_nr),
+                                     "evaluations": len(sample) * len(win_ids), "seconds": round(t_nr, 2),
+                                     "note": "1.x engine, routing disabled: every Windows rule on every event"},
                   "anvil_v01": {"alerts": sum(hits01.values()), "rules_fired": len(hits01),
                                 "evaluations": len(sample) * len(compiled01),
                                 "seconds": round(time.perf_counter() - t0, 2)}}
@@ -395,7 +428,7 @@ def stage_otrf(workers: int = 8) -> dict[str, Any]:
             readable.append(f)
         except OSError:
             pass
-    scan = scan_files(_rule_dirs(), readable, workers=workers)
+    scan = scan_files(_rule_dirs(), readable, workers=workers, split_channels=True)
     rows = []
     for d in cat:
         paths = [str(p) for p in d.host_files if str(p) in scan.per_file_hits]
@@ -442,8 +475,44 @@ def stage_otrf(workers: int = 8) -> dict[str, Any]:
         "rule_fire_counts": Counter(r for p in files for r in scan.per_file_hits.get(p, {})).most_common(40),
     }
     res["rule_fire_counts"] = [[by_id[r].title, c] for r, c in res["rule_fire_counts"]]
+    res["sysmon_removal"] = _sysmon_removal(cat, scan, by_id)
     save("otrf.json", res)
     return res
+
+
+def _sysmon_removal(cat: list[Any], scan: Any, by_id: dict[str, Rule]) -> dict[str, Any]:
+    """Real (not simulated) Sysmon decommissioning on OTRF captures that also log native 4688.
+
+    A capture qualifies when it holds both Sysmon EventID 1 and Security 4688 events. Rule hits
+    are split by channel, so the hits that survive dropping the Sysmon channel are exactly the
+    hits on the remaining events. ``fired_before`` / ``fired_after`` are the Windows rules that
+    fire on at least one qualifying capture with / without its Sysmon events.
+    """
+    dual, ev_sysmon1, ev_4688 = [], 0, 0
+    before: set[str] = set()
+    after: set[str] = set()
+    for d in cat:
+        paths = [str(p) for p in d.host_files if str(p) in scan.per_file_hits]
+        keys: Counter = Counter()
+        for p in paths:
+            keys.update(scan.per_file_by_key.get(p, {}))
+        s1, s4688 = keys.get(f"{SYSMON}|1", 0), keys.get("security|4688", 0)
+        if not (s1 and s4688):
+            continue
+        dual.append(d.id)
+        ev_sysmon1 += s1
+        ev_4688 += s4688
+        for p in paths:
+            for rid, chans in scan.per_file_hits_by_channel.get(p, {}).items():
+                if rid not in by_id or not _is_windows(by_id[rid]):
+                    continue
+                before.add(rid)
+                if any(c != SYSMON for c in chans):
+                    after.add(rid)
+    return {"description": "OTRF Windows captures holding both Sysmon EID 1 and Security 4688; the Sysmon "
+                           "channel is dropped from the real capture (no simulator)",
+            "datasets": len(dual), "dataset_ids": dual, "sysmon_eid1_events": ev_sysmon1,
+            "security_4688_events": ev_4688, "fired_before": sorted(before), "fired_after": sorted(after)}
 
 
 # ------------------------------------------------------------------------------- coverage
@@ -478,10 +547,26 @@ def stage_coverage() -> dict[str, Any]:
 
 # ------------------------------------------------------------------------------- decay
 def stage_decay(stride: int = 5) -> dict[str, Any]:
-    """Ground truth from TP captures vs. a diff-based static monitor on production-like telemetry."""
+    """Ground truth from TP captures vs. a diff-based static monitor on production-like telemetry.
+
+    Two kinds of ground truth:
+
+    * **simulated**: each change in ``SCHEMA_CHANGES`` is applied to the SigmaHQ regression
+      captures of TP-validated rules; a rule is broken when it no longer fires on them. The
+      same transform builds the post-change benign inventory, so precision is partly a
+      soundness property relative to the transform.
+    * **real** (``real_sysmon_removal``): OTRF captures that log both Sysmon EID 1 and native
+      Security 4688; the Sysmon channel is dropped from the real capture, and the prediction
+      uses the benign inventory with its real Sysmon events dropped (native 4688 only). No
+      simulator is involved on either side.
+
+    Per-rule flag sets are stored as index lists into ``tp_rule_ids`` / ``real.rule_ids`` so
+    the McNemar tests can be recomputed from the committed file.
+    """
     rules, _ = _rules()
     lib = Library.build(rules)
     win = [lib.rules[r] for r in lib.active_ids if _is_windows(lib.rules[r])]
+    win_ids = {r.id for r in win}
     cases = discover(sigma_root())
     base = {c["rule_id"]: run_case(lib, c) for c in cases}
     tp_ok = {rid for rid, rc in base.items() if rc.status == "pass"}
@@ -489,9 +574,12 @@ def stage_decay(stride: int = 5) -> dict[str, Any]:
     # each simulated change. The TP captures are never part of the inventory (no attack data).
     changes = ["none", *SCHEMA_CHANGES]
     invs = {c: FieldInventory() for c in changes}
+    inv_real = FieldInventory()   # real Sysmon removal: drop the Sysmon events, keep native 4688 as logged
 
     def feed(ev: dict[str, Any]) -> None:
         invs["none"].add(ev)
+        if event_key(ev)[0] != SYSMON:
+            inv_real.add(ev)
         for c in SCHEMA_CHANGES:
             t = SCHEMA_CHANGES[c][1](ev)
             if t is not None:
@@ -519,16 +607,61 @@ def stage_decay(stride: int = 5) -> dict[str, Any]:
         return set().union(*inv.by_key.values()) if inv.by_key else set()
 
     pres0, glob0 = presence(invs["none"]), global_fields(invs["none"])
+
+    def flags(inv: FieldInventory) -> dict[str, set[str]]:
+        """Rules each method flags when the inventory changes from the unchanged one to ``inv``."""
+        after = {r.id: analyse(r, inv) for r in win}
+        sym = {rid for rid, v in after.items()
+               if v["status"] in ("broken", "source-missing") and rank[v["status"]] > rank[before[rid]["status"]]}
+        pres1, glob1 = presence(inv), global_fields(inv)
+        pres = {rid for rid in pres1 if (pres1[rid] is None and pres0[rid] is not None)
+                or (pres1[rid] is not None and pres0[rid] is not None and pres1[rid] - pres0[rid])}
+        glob = {r.id for r in win if (flds[r.id] - glob1) - (flds[r.id] - glob0)}
+        worse = {rid for rid, v in after.items() if rank[v["status"]] > rank[before[rid]["status"]]}
+        return {SYM: sym, PRES: pres, GLOB: glob, "_worsened": worse}
+
+    def score(flag: set[str], universe: set[str], decayed: set[str]) -> dict[str, Any]:
+        tpf = flag & universe
+        k_r, k_p = len(decayed & flag), len(decayed & tpf)
+        return {"flagged_tp_rules": len(tpf), "library_flagged": len(flag),
+                "recall": round(k_r / len(decayed), 4) if decayed else None,
+                "recall_k_n": [k_r, len(decayed)], "recall_ci95": wilson(k_r, len(decayed)),
+                "precision": round(k_p / len(tpf), 4) if tpf else None,
+                "precision_k_n": [k_p, len(tpf)], "precision_ci95": wilson(k_p, len(tpf)),
+                "false_alarms": len(tpf - decayed)}
+
+    def tests(fl: dict[str, set[str]], universe: set[str], decayed: set[str]) -> dict[str, Any]:
+        """Exact McNemar tests, symbolic vs each presence baseline, on the same rules."""
+        ok = universe - decayed
+        return {base_name: {"false_alarms_on_unbroken_rules": {**paired_mcnemar(fl[SYM], fl[base_name], ok),
+                                                               "rules": len(ok)},
+                            "recall_on_broken_rules": {**paired_mcnemar(fl[SYM], fl[base_name], decayed),
+                                                       "rules": len(decayed)}}
+                for base_name in (PRES, GLOB)}
+
+    tp_list = sorted(tp_ok & win_ids)
+    tp_index = {rid: i for i, rid in enumerate(tp_list)}
+
+    def idx(ids: set[str], index: dict[str, int]) -> list[int]:
+        return sorted(index[r] for r in ids if r in index)
+
     floor = {rid for rid, v in before.items() if v["status"] in ("broken", "source-missing")}
-    res: dict[str, Any] = {"benign_events_inventoried": n, "inventory": "benign evtx-baseline only (no TP captures)",
-                           "rules_with_tp_evidence": len(tp_ok), "windows_rules": len(win),
-                           "baseline_status": dict(Counter(v["status"] for v in before.values())),
-                           "none": {"description": "no change: rules flagged broken/source-missing on unchanged "
-                                                   "telemetry (the false-alarm floor; excluded from 'worsened')",
-                                    "library_flagged": len(floor),
-                                    "library_flagged_pct": round(100 * len(floor) / len(win), 1),
-                                    "tp_validated_flagged": len(floor & tp_ok)},
-                           "changes": {}}
+    res: dict[str, Any] = {
+        "benign_events_inventoried": n, "inventory": "benign evtx-baseline only (no TP captures)",
+        "rules_with_tp_evidence": len(tp_ok), "windows_rules": len(win),
+        "baseline_status": dict(Counter(v["status"] for v in before.values())),
+        "none": {"description": "no change: rules flagged broken/source-missing on unchanged "
+                                "telemetry (the false-alarm floor; excluded from 'worsened')",
+                 "library_flagged": len(floor),
+                 "library_flagged_pct": round(100 * len(floor) / len(win), 1),
+                 "tp_validated_flagged": len(floor & tp_ok),
+                 "tp_validated_flagged_rules": [{"id": rid, "title": lib.rules[rid].title,
+                                                 "status": before[rid]["status"],
+                                                 "missing": before[rid]["missing"][:6]}
+                                                for rid in sorted(floor & tp_ok)]},
+        "tp_rule_ids": tp_list,
+        "flag_sets_note": "index lists into tp_rule_ids (simulated changes) or real_sysmon_removal.rule_ids",
+        "changes": {}}
     for c in SCHEMA_CHANGES:
         # 1) ground truth: TP-validated rules that stop firing on their own captures after the change
         decayed = set()
@@ -542,42 +675,63 @@ def stage_decay(stride: int = 5) -> dict[str, Any]:
                 decayed.add(rid)
         # 2) static monitor: re-analyse against the changed schema, flag rules whose verdict worsened
         #    to broken/source-missing (no attack data needed, works for every rule)
-        after = {r.id: analyse(r, invs[c]) for r in win}
-        flagged = {rid for rid, v in after.items()
-                   if v["status"] in ("broken", "source-missing") and rank[v["status"]] > rank[before[rid]["status"]]}
-        degraded = {rid for rid, v in after.items() if rank[v["status"]] > rank[before[rid]["status"]]}
-        tp_flagged = flagged & tp_ok
-        pres1, glob1 = presence(invs[c]), global_fields(invs[c])
-        pres_flag = {rid for rid in pres1 if (pres1[rid] is None and pres0[rid] is not None)
-                     or (pres1[rid] is not None and pres0[rid] is not None and pres1[rid] - pres0[rid])}
-        glob_flag = {r.id for r in win if (flds[r.id] - glob1) - (flds[r.id] - glob0)}
-
-        def score(flag: set[str]) -> dict[str, Any]:
-            tpf = flag & tp_ok
-            k_r, k_p = len(decayed & flag), len(decayed & tpf)
-            return {"flagged_tp_rules": len(tpf), "library_flagged": len(flag),
-                    "recall": round(k_r / len(decayed), 3) if decayed else None,
-                    "recall_ci95": wilson(k_r, len(decayed)),
-                    "precision": round(k_p / len(tpf), 3) if tpf else None,
-                    "precision_ci95": wilson(k_p, len(tpf))}
-
+        fl = flags(invs[c])
+        flagged, tp_flagged = fl[SYM], fl[SYM] & tp_ok
         res["changes"][c] = {
             "description": SCHEMA_CHANGES[c][0],
+            "ground_truth": "simulated: the change is applied to the regression captures",
             "decayed_tp_rules": len(decayed),
             "static_flagged_tp_rules": len(tp_flagged),
-            "static_recall": round(len(decayed & flagged) / len(decayed), 3) if decayed else None,
-            "static_precision": round(len(decayed & tp_flagged) / len(tp_flagged), 3) if tp_flagged else None,
-            "methods": {"symbolic (ANVIL)": score(flagged), "field presence, per log source": score(pres_flag),
-                        "field presence, global (0.1 schema_drift)": score(glob_flag)},
+            "static_recall": round(len(decayed & flagged) / len(decayed), 4) if decayed else None,
+            "static_precision": round(len(decayed & tp_flagged) / len(tp_flagged), 4) if tp_flagged else None,
+            "methods": {m: score(fl[m], tp_ok, decayed) for m in (SYM, PRES, GLOB)},
+            "mcnemar_symbolic_vs": tests(fl, tp_ok, decayed),
             "regression_monitor_coverage": round(len(tp_ok) / len(win), 3),
             "library_flagged": len(flagged),
             "library_flagged_pct": round(100 * len(flagged) / len(win), 1),
-            "library_worsened": len(degraded),
+            "library_worsened": len(fl["_worsened"]),
             "missed_examples": [lib.rules[r].title for r in sorted(decayed - flagged)][:8],
             "false_alarm_examples": [lib.rules[r].title for r in sorted(tp_flagged - decayed)][:8],
+            "decayed_idx": idx(decayed, tp_index),
+            "flagged_tp_idx": {m: idx(fl[m] & tp_ok, tp_index) for m in (SYM, PRES, GLOB)},
         }
+    res["real_sysmon_removal"] = _decay_real(flags, score, tests, invs, inv_real, win_ids, lib)
     save("decay.json", res)
     return res
+
+
+SYM, PRES, GLOB = "symbolic (ANVIL)", "field presence, per log source", "field presence, global (0.1 schema_drift)"
+
+
+def _decay_real(flags: Any, score: Any, tests: Any, invs: dict[str, FieldInventory], inv_real: FieldInventory,
+                win_ids: set[str], lib: Library) -> dict[str, Any] | None:
+    """Score the static monitor against real Sysmon removal on OTRF captures (see ``_sysmon_removal``)."""
+    if not (RESULTS / "otrf.json").exists():
+        return None
+    sr = load("otrf.json").get("sysmon_removal")
+    if not sr or not sr.get("datasets"):
+        return None
+    universe = set(sr["fired_before"]) & win_ids
+    decayed = universe - set(sr["fired_after"])
+    ids = sorted(universe)
+    index = {rid: i for i, rid in enumerate(ids)}
+    out: dict[str, Any] = {
+        "description": sr["description"], "datasets": sr["datasets"],
+        "sysmon_eid1_events": sr["sysmon_eid1_events"], "security_4688_events": sr["security_4688_events"],
+        "ground_truth": "real: rules that fire on the captures (for any reason) and fire on none of them once "
+                        "the Sysmon channel is dropped",
+        "rules_firing_before": len(universe), "rules_that_stop_firing": len(decayed),
+        "rule_ids": ids, "decayed_idx": sorted(index[r] for r in decayed), "inventories": {}}
+    for name, inv in (("native 4688: benign inventory with its Sysmon events dropped", inv_real),
+                      ("simulated: sysmon_to_4688 transform of the benign inventory", invs["sysmon_to_4688"])):
+        fl = flags(inv)
+        out["inventories"][name] = {
+            "methods": {m: score(fl[m], universe, decayed) for m in (SYM, PRES, GLOB)},
+            "mcnemar_symbolic_vs": tests(fl, universe, decayed),
+            "flagged_idx": {m: sorted(index[r] for r in fl[m] & universe) for m in (SYM, PRES, GLOB)},
+            "missed_examples": [lib.rules[r].title for r in sorted(decayed - fl[SYM])][:8],
+            "false_alarm_examples": [lib.rules[r].title for r in sorted((fl[SYM] & universe) - decayed)][:8]}
+    return out
 
 
 # ------------------------------------------------------------------------------- conversion
@@ -686,8 +840,36 @@ def stage_draft(workers: int = 4) -> dict[str, Any]:
         "datasets": len(both), "technique_detected": sum(bool(sigmahq_detected.get(i)) for i in both),
         "any_alert": sum(bool(sigmahq_any.get(i)) for i in both),
         "note": "drafts are scored on 'any alert on their own capture'; compare with SigmaHQ any_alert"}
+    out["paired"] = draft_paired(out)
     save("draft.json", out)
     return out
+
+
+def draft_paired(out: dict[str, Any]) -> dict[str, Any]:
+    """Heuristic vs keyword drafter on the same datasets, with exact McNemar tests.
+
+    A dataset scores for a backend when that backend drafted at least one rule that fires on the
+    dataset's own capture (``fires``), and additionally when none of its drafts is over the
+    benign alert budget (``fires_within_budget``). Datasets without a draft count as misses.
+    """
+    rows = {b: {r["id"]: r for r in v["rows"] if r["capture_readable"]} for b, v in out["backends"].items()}
+    h, k = rows["heuristic"], rows["keywords"]
+
+    def ok(r: dict[str, Any] | None, budget: bool) -> bool:
+        return bool(r and r["drafts"] and r["fires_on_own_capture"] and (not budget or not r["rules_over_budget"]))
+
+    res: dict[str, Any] = {}
+    for scope, ids in (("all datasets", sorted(set(h) | set(k))),
+                       ("datasets where both backends drafted", sorted(i for i in set(h) & set(k)
+                                                                      if h[i]["drafts"] and k[i]["drafts"]))):
+        block: dict[str, Any] = {"datasets": len(ids)}
+        for metric, budget in (("fires", False), ("fires_within_budget", True)):
+            hs = {i for i in ids if ok(h.get(i), budget)}
+            ks = {i for i in ids if ok(k.get(i), budget)}
+            block[metric] = {"heuristic": len(hs), "keywords": len(ks),
+                             **paired_mcnemar(hs, ks, set(ids))}
+        res[scope] = block
+    return res
 
 
 def _days() -> float:
@@ -714,11 +896,68 @@ STAGES = {"lint": stage_lint, "engine": stage_engine, "fp": stage_fp, "otrf": st
           "fpmodel": stage_fpmodel, "draft": stage_draft}
 
 
+VOLATILE = ("provenance", "seconds", "wall_seconds", "cpu_seconds", "lint_seconds", "events_per_cpu_second")
+
+
+def _strip_volatile(x: Any) -> Any:
+    """Drop provenance and timing keys, which differ on every run."""
+    if isinstance(x, dict):
+        return {k: _strip_volatile(v) for k, v in x.items()
+                if k not in VOLATILE and not k.endswith("_seconds") and k != "metadata"}
+    if isinstance(x, list):
+        return [_strip_volatile(v) for v in x]
+    return x
+
+
+def _diff(a: Any, b: Any, path: str = "$") -> list[str]:
+    if isinstance(a, dict) and isinstance(b, dict):
+        out = []
+        for k in sorted(set(a) | set(b), key=str):
+            if k not in a or k not in b:
+                out.append(f"{path}.{k}: only in {'reference' if k in a else 'this run'}")
+            else:
+                out += _diff(a[k], b[k], f"{path}.{k}")
+        return out
+    if isinstance(a, list) and isinstance(b, list) and len(a) == len(b):
+        return [d for i, (x, y) in enumerate(zip(a, b)) for d in _diff(x, y, f"{path}[{i}]")]
+    return [] if a == b else [f"{path}: {str(a)[:60]} -> {str(b)[:60]}"]
+
+
+def verify(against: str | None = None, show: int = 20) -> int:
+    """Compare results/*.json with a reference (a folder, or the committed files at git HEAD).
+
+    Provenance and timing keys are ignored, so a faithful reproduction prints no differences.
+    """
+    import subprocess
+    bad = 0
+    for f in sorted(RESULTS.glob("*.json")):
+        if against:
+            ref_p = Path(against) / f.name
+            ref_text = ref_p.read_text(encoding="utf-8") if ref_p.exists() else None
+        else:
+            r = subprocess.run(["git", "show", f"HEAD:results/{f.name}"], cwd=RESULTS.parent, capture_output=True,
+                               text=True, encoding="utf-8")
+            ref_text = r.stdout if r.returncode == 0 else None
+        if ref_text is None:
+            print(f"{f.name}: no reference")
+            continue
+        diffs = _diff(_strip_volatile(json.loads(ref_text)), _strip_volatile(json.loads(f.read_text(encoding="utf-8"))))
+        print(f"{f.name}: {'identical' if not diffs else f'{len(diffs)} difference(s)'}")
+        for d in diffs[:show]:
+            print(f"    {d}")
+        bad += bool(diffs)
+    return 1 if bad else 0
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("stages", nargs="+", choices=[*STAGES, *EXTRA_STAGES, "report", "all"])
+    ap.add_argument("stages", nargs="+", choices=[*STAGES, *EXTRA_STAGES, "report", "all", "verify"],
+                    help="stages to run; 'verify' compares results/*.json with --against or git HEAD")
     ap.add_argument("--workers", type=int, default=4, help="processes for corpus scans")
+    ap.add_argument("--against", help="verify: reference results folder (default: committed files at HEAD)")
     a = ap.parse_args(argv)
+    if a.stages == ["verify"]:
+        return verify(a.against)
     extra = [n for n in a.stages if n in EXTRA_STAGES]
     names = [*STAGES, *extra, "report"] if "all" in a.stages else a.stages
     for n in names:
