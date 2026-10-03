@@ -77,12 +77,16 @@ PY
 
 # ---- benign window: an ordinary developer workload
 T0=$(date +%s)
-python -m venv /tmp/wl && /tmp/wl/bin/pip install -q -e ".[dev]" && /tmp/wl/bin/python -m pytest -q -x tests >/dev/null || true
+RC_PIP=0; RC_TEST=0
+python -m venv /tmp/wl
+/tmp/wl/bin/pip install -q -e ".[dev]" || RC_PIP=$?
+/tmp/wl/bin/python -m pytest -q tests >/dev/null 2>&1 || RC_TEST=$?
 git log --oneline -n 50 >/dev/null; git status >/dev/null; ls -la /etc >/dev/null; df -h >/dev/null
 sleep 5
 T1=$(date +%s)
 dump "$OUT/benign" "$T0"
-printf 'seconds=%s\nworkload=venv + pip install + pytest + git on the runner\n' "$((T1 - T0))" > "$OUT/benign/window.txt"
+printf 'seconds=%s\nworkload=venv + pip install (exit %s) + unit tests (exit %s) + git on the runner\n' \
+  "$((T1 - T0))" "$RC_PIP" "$RC_TEST" > "$OUT/benign/window.txt"
 
 # ---- emulation window: benign commands only
 T2=$(date +%s)

@@ -106,10 +106,11 @@ jobs:
         run: |
           docker logs os > opensearch.log 2>&1 || true
           docker inspect -f 'status={{.State.Status}} restarts={{.RestartCount}} oom_killed={{.State.OOMKilled}} exit={{.State.ExitCode}}' os
-          echo "OutOfMemoryError lines: $(grep -c OutOfMemoryError opensearch.log || true)"
+          # the JVM's own -XX:+HeapDumpOnOutOfMemoryError flag is logged at start-up; match the exception only
+          echo "java.lang.OutOfMemoryError lines: $(grep -c 'java.lang.OutOfMemoryError' opensearch.log || true)"
           test "$(docker inspect -f '{{.RestartCount}}' os)" = 0
           test "$(docker inspect -f '{{.State.Status}}' os)" = running
-          ! grep -q OutOfMemoryError opensearch.log
+          ! grep -q 'java.lang.OutOfMemoryError' opensearch.log
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         if: always()
         with:

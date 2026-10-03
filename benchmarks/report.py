@@ -513,7 +513,8 @@ def _backend_summary(bo: dict[str, Any]) -> list[str]:
           + (f" ({qe})" if qe else "") + f"; conversion errors {bo.get('convert_errors', {})}; values above Lucene's "
           f"term limit (not indexed): {bo.get('values_over_term_limit', {})}.", ""]
     if bo.get("query_errors"):
-        s += [_t([[q["rule"], q["set"], q.get("status"), q.get("type"), str(q.get("reason", ""))[:120]]
+        s += [_t([[q["rule"], q["set"], q.get("status"), q.get("type"),
+                   str(q.get("caused_by") or q.get("reason", ""))[:160].replace("|", "\\|")]
                   for q in bo["query_errors"]], ["rule", "set", "HTTP", "error type", "reason"]), ""]
     return s
 

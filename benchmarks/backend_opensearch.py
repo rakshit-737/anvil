@@ -64,7 +64,8 @@ def _req(method: str, path: str, body: Any = None, ndjson: bool = False) -> Any:
         with urllib.request.urlopen(req, timeout=120) as r:  # noqa: S310 - localhost only, checked above
             return json.load(r)
     except urllib.error.HTTPError as exc:
-        return {"_error": exc.code, "_body": exc.read().decode(errors="replace")[:4000]}
+        # keep the whole body: query-parse errors echo the (long) query, and a truncated body is not JSON
+        return {"_error": exc.code, "_body": exc.read().decode(errors="replace")[:500_000]}
     except (OSError, http.client.HTTPException) as exc:
         # A dropped connection means the node stalled or died. The container runs without a
         # restart policy, so a crash is not hidden: _wait_healthy fails the job if it is gone.
