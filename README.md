@@ -51,8 +51,8 @@ anvil lint --rules drafts --profile sigma          # -> lint: 4 rule(s), 4 findi
 Or with the container image (non-root; rules and examples bundled):
 
 ```bash
-docker run --rm ghcr.io/rakshit-737/anvil:v1.1.0 lint --rules rules          # or :latest
-docker run --rm -v "$PWD:/work" -w /work ghcr.io/rakshit-737/anvil:v1.1.0 lint --rules my-rules
+docker run --rm ghcr.io/rakshit-737/anvil:v1.1.1 lint --rules rules          # or :latest
+docker run --rm -v "$PWD:/work" -w /work ghcr.io/rakshit-737/anvil:v1.1.1 lint --rules my-rules
 ```
 
 Development: `pip install -e ".[dev,sigma,ml]" && python -m pytest -q` (the real-data tests skip without `$ANVIL_DATA`).

@@ -2,7 +2,7 @@
 
 All notable changes to this project are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses [semantic versioning](https://semver.org/).
 
-## Unreleased
+## [1.1.1] - 2026-10-03
 
 ### Added
 - Real-telemetry decay check without a simulator: OTRF captures that log both Sysmon EID 1 and native Security 4688 are replayed with and without their Sysmon channel, and the static monitor (benign inventory with real Sysmon events dropped) is scored against that ground truth with Wilson intervals and exact McNemar tests against both field-presence baselines. Per-rule flag sets are committed in `results/decay.json`, so the tests can be recomputed.
@@ -95,5 +95,6 @@ Real-data release: ANVIL now runs the full SigmaHQ library against public attack
 
 - MVP: Sigma-like engine subset, lint, TP/TN fixture harness, FP/SOC-capacity gate, bundled ATT&CK subset coverage, quality score, schema-drift decay check and synthetic telemetry.
 
+[1.1.1]: https://github.com/rakshit-737/anvil/releases/tag/v1.1.1
 [1.1.0]: https://github.com/rakshit-737/anvil/releases/tag/v1.1.0
 [1.0.0]: https://github.com/rakshit-737/anvil/releases/tag/v1.0.0
