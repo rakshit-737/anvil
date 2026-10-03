@@ -272,6 +272,8 @@ def cmd_decay(a) -> int:
             v = analyse(r, inv)
             if v["status"] != "ok":
                 print(f"{v['status'].upper():14} {r.title}  missing={v['missing']} blind={v['blind_filters']}")
+            if v["status"] in ("broken", "source-missing"):
+                issues += 1  # no detection path can fire on this telemetry; "degraded" only warns
     if a.baseline:
         base = json.loads(Path(a.baseline).read_text())
         for rid, msgs in regressions(base, evaluate_all(rules, events)).items():

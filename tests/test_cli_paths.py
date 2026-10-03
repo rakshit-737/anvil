@@ -75,3 +75,11 @@ def test_report_needs_result_files(tmp_path):
 def test_ingest_missing_source_is_usage_error(tmp_path, capsys):
     assert main(["ingest", str(tmp_path / "nope.evtx"), "--out", str(tmp_path / "o")]) == 2
     assert "not found" in capsys.readouterr().err
+
+
+def test_decay_routed_counts_broken_rules(tmp_path):
+    v1, v2 = tmp_path / "v1.jsonl", tmp_path / "v2.jsonl"
+    assert main(["synth", "--out", str(v1), "-n", "300"]) == 0
+    assert main(["synth", "--out", str(v2), "-n", "300", "--schema", "v2"]) == 0
+    assert main(["decay", "--rules", "rules", "--routed", "--corpus", str(v1)]) == 0
+    assert main(["decay", "--rules", "rules", "--routed", "--corpus", str(v2)]) == 1

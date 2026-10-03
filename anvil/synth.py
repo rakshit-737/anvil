@@ -50,7 +50,8 @@ def generate(n: int = 5000, seed: int = 1337, schema: str = "v1") -> list[dict[s
         ts = start + timedelta(seconds=int(86400 * i / n))
         image, cmd, parent = rng.choice(BENIGN_PROCS)
         e: dict[str, Any] = {
-            "timestamp": ts.isoformat(), "EventID": 1, "Computer": rng.choice(HOSTS),
+            "timestamp": ts.isoformat(), "Channel": "Microsoft-Windows-Sysmon/Operational", "EventID": 1,
+            "Computer": rng.choice(HOSTS),
             "User": rng.choice(USERS), "Image": image, "CommandLine": cmd, "ParentImage": parent,
         }
         if schema == "v2":

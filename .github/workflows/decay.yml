@@ -1,0 +1,68 @@
+name: decay
+
+# Scheduled decay monitor: re-checks the rule library against current telemetry and opens
+# (or updates) one issue when a rule can no longer fire. The repo has no maintained real
+# inventory source, so the scheduled run uses the bundled synthetic telemetry; point
+# `corpus` at your own export (JSONL/EVTX) to monitor a real fleet. The `v2` schema is a
+# simulated pipeline rename, useful to see the issue path work.
+
+on:
+  schedule:
+    - cron: "23 5 * * 1"   # weekly
+  workflow_dispatch:
+    inputs:
+      schema:
+        description: "synthetic telemetry schema (v2 = simulated field rename)"
+        type: choice
+        options: [v1, v2]
+        default: v1
+
+permissions:
+  contents: read
+
+jobs:
+  decay:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.12"
+      - run: pip install -e .
+      - name: Decay check (schema drift + per-log-source satisfiability)
+        id: check
+        env:
+          SCHEMA: ${{ inputs.schema || 'v1' }}
+        run: |
+          anvil synth --schema "$SCHEMA" --out telemetry/current.jsonl
+          set +e
+          anvil decay --rules rules --routed --corpus telemetry/current.jsonl > decay.txt
+          echo "rc=$?" >> "$GITHUB_OUTPUT"
+          cat decay.txt
+      - name: Open or update the decay issue
+        if: steps.check.outputs.rc != '0'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SCHEMA: ${{ inputs.schema || 'v1' }}
+        run: |
+          {
+            echo "The scheduled decay check found rules that can no longer fire (telemetry: synthetic $SCHEMA)."
+            echo
+            echo "Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+            echo
+            echo '```'
+            cat decay.txt
+            echo '```'
+          } > body.md
+          n=$(gh issue list -R "$GITHUB_REPOSITORY" --state open --search "in:title \"Decay monitor:\"" --json number --jq '.[0].number')
+          if [ -n "$n" ]; then
+            gh issue comment "$n" -R "$GITHUB_REPOSITORY" --body-file body.md
+          else
+            gh issue create -R "$GITHUB_REPOSITORY" --title "Decay monitor: rules that can no longer fire" --body-file body.md
+          fi
