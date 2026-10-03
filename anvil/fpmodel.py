@@ -164,13 +164,17 @@ def bootstrap_auc(y: Any, scores: dict[str, Any], reference: str, n_boot: int = 
                 row[metric + "_delta_vs_ref_ci95"] = [round(float(np.percentile(d, 2.5)), 3),
                                                       round(float(np.percentile(d, 97.5)), 3)]
                 row[metric + "_p_delta_le_0"] = round(float((d <= 0).mean()), 3)
+                row[metric + "_n_delta_le_0"] = [int((d <= 0).sum()), int(len(d))]
         out["models"][m] = row
     return out
 
 
 def cross_validate(rules: list[Rule], labels: list[int], seed: int = 7, folds: int = 5,
-                   importance: bool = True, bootstrap: bool = False) -> dict[str, Any]:
-    """Stratified k-fold CV for the ML models vs. reviewer heuristics. Returns metrics."""
+                   importance: bool = True, bootstrap: bool = False, gbdt_iter: int = 300) -> dict[str, Any]:
+    """Stratified k-fold CV for the ML models vs. reviewer heuristics. Returns metrics.
+
+    ``gbdt_iter`` is the boosting-round count (300 in the benchmark; unit tests use a few).
+    """
     import numpy as np
     from sklearn.ensemble import HistGradientBoostingClassifier
     from sklearn.linear_model import LogisticRegression
@@ -185,7 +189,7 @@ def cross_validate(rules: list[Rule], labels: list[int], seed: int = 7, folds: i
     models = {
         "logreg": lambda: make_pipeline(StandardScaler(), LogisticRegression(max_iter=2000, C=0.5,
                                                                              class_weight="balanced")),
-        "gbdt": lambda: HistGradientBoostingClassifier(max_depth=3, learning_rate=0.05, max_iter=300,
+        "gbdt": lambda: HistGradientBoostingClassifier(max_depth=3, learning_rate=0.05, max_iter=gbdt_iter,
                                                        class_weight="balanced", random_state=seed),
     }
     oof = {k: np.zeros(len(y)) for k in models}
@@ -231,7 +235,7 @@ def cross_validate(rules: list[Rule], labels: list[int], seed: int = 7, folds: i
 
 
 def repeated_cv(rules: list[Rule], labels: list[int], seeds: Iterable[int] = range(10),
-                folds: int = 5) -> dict[str, Any]:
+                folds: int = 5, gbdt_iter: int = 300) -> dict[str, Any]:
     """Repeat stratified CV over several seeds; report the mean and a 95% t-interval per metric.
 
     The interval only measures fold-assignment (CV-seed) variation on the same rules, not
@@ -241,7 +245,8 @@ def repeated_cv(rules: list[Rule], labels: list[int], seeds: Iterable[int] = ran
     import statistics
 
     seeds = list(seeds)
-    runs = [cross_validate(rules, labels, seed=s, folds=folds, importance=False) for s in seeds]
+    runs = [cross_validate(rules, labels, seed=s, folds=folds, importance=False, gbdt_iter=gbdt_iter)
+            for s in seeds]
     t975 = {2: 12.706, 3: 4.303, 4: 3.182, 5: 2.776, 6: 2.571, 7: 2.447, 8: 2.365, 9: 2.306, 10: 2.262}
     out: dict[str, Any] = {"seeds": seeds, "folds": folds, "models": {}}
     for model in runs[0]["models"]:

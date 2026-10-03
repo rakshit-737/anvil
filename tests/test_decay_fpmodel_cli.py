@@ -70,7 +70,7 @@ def test_fpmodel_cross_validation_runs():
         rules.append(rule({"s": {"Image|endswith": "\\a.exe" if noisy else "\\very_specific_tool.exe"},
                            "condition": "s"}, level="low" if noisy else "high"))
         labels.append(int(noisy))
-    res = cross_validate(rules, labels, folds=4, importance=False)
+    res = cross_validate(rules, labels, folds=4, importance=False, gbdt_iter=10)
     assert res["positives"] == 10 and res["models"]["logreg"]["roc_auc"] > 0.9
 
 
@@ -84,7 +84,7 @@ def test_fpmodel_repeated_cv_reports_intervals():
         rules.append(rule({"s": {"Image|endswith": "\a.exe" if noisy else "\tool.exe"}, "condition": "s"},
                           level="low" if noisy else "high"))
         labels.append(int(noisy))
-    res = repeated_cv(rules, labels, seeds=range(3), folds=4)
+    res = repeated_cv(rules, labels, seeds=range(3), folds=3, gbdt_iter=10)
     lo, hi = res["models"]["random"]["roc_auc"]["cv_repeat_interval95"]
     assert res["seeds"] == [0, 1, 2] and lo <= res["models"]["random"]["roc_auc"]["mean"] <= hi
     h = res["models"]["heuristic_level"]["roc_auc"]
