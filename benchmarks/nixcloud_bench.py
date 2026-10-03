@@ -63,11 +63,25 @@ def _datasets(data: Path) -> list[dict[str, Any]]:
                     "files": [f]})
     live = data / "linux-live"
     for kind in ("emulation",):
-        files = sorted((live / kind).glob("*")) if (live / kind).exists() else []
+        files = sorted((live / kind).glob("*.log")) if (live / kind).exists() else []
         if files:
-            out.append({"id": f"live:{kind}", "source": "CI runner (benign commands)", "techniques": [],
+            meta = _window(live / kind)
+            out.append({"id": f"live:{kind}", "source": "CI runner (benign commands)",
+                        "techniques": [t for t in meta.get("techniques", "").split(",") if t],
                         "files": files})
     return out
+
+
+def _window(folder: Path) -> dict[str, str]:
+    """key=value lines of window.txt written by scripts/record_linux_live.sh."""
+    meta: dict[str, str] = {}
+    mf = folder / "window.txt"
+    if mf.exists():
+        for line in mf.read_text().splitlines():
+            if "=" in line:
+                k, v = line.split("=", 1)
+                meta[k.strip()] = v.strip()
+    return meta
 
 
 def _meta_names_file(otrf: Path, key: str, f: Path) -> bool:
@@ -109,14 +123,22 @@ def stage_nixcloud(data: Path, rule_dirs: list[str]) -> dict[str, Any]:
         fired = [rid for rid in hits if rid in nix]
         tech = [rid for rid in fired if ds["techniques"] and strict_match(set(lib.rules[rid].techniques),
                                                                             ds["techniques"])]
+        per_tech = {t: sorted(lib.rules[r].title for r in fired if strict_match(set(lib.rules[r].techniques), [t]))
+                    for t in ds["techniques"]}
         rows.append({"id": ds["id"], "source": ds["source"], "kind": _channel_kind(ch), "events": n,
+                     "channels": dict(ch) if ds["id"].startswith("live:") else None,
+                     "techniques_detected": [t for t, v in per_tech.items() if v] if ds["id"].startswith("live:")
+                     else None,
                      "techniques": ds["techniques"], "rules_fired": len(fired),
                      "alerts": sum(hits[r] for r in fired), "any_alert": bool(fired),
                      "technique_detected": bool(tech),
                      "technique_rules": sorted(lib.rules[r].title for r in tech)[:6],
                      "top_rules": [lib.rules[r].title for r, _ in Counter({r: hits[r] for r in fired})
                                    .most_common(5)]})
-    labelled = [r for r in rows if r["events"] and r["techniques"]]
+    # The runner's own emulation window is scored on its own (live_emulation), not pooled with
+    # the public captures.
+    labelled = [r for r in rows if r["events"] and r["techniques"] and not r["id"].startswith("live:")]
+    live = next((r for r in rows if r["id"] == "live:emulation"), None)
     by_kind: dict[str, Any] = {}
     for k in sorted({r["kind"] for r in labelled}):
         sub = [r for r in labelled if r["kind"] == k]
@@ -134,8 +156,23 @@ def stage_nixcloud(data: Path, rule_dirs: list[str]) -> dict[str, Any]:
         "zero_event_datasets": [r["id"] for r in rows if not r["events"]],
         "technique_detected": td, "technique_detected_ci95": wilson(td, len(labelled)),
         "any_alert": aa, "any_alert_ci95": wilson(aa, len(labelled)),
-        "by_kind": by_kind, "rows": rows, "seconds": round(time.perf_counter() - t0, 1),
+        "by_kind": by_kind, "rows": [r for r in rows if not r["id"].startswith("live:")],
+        "live_emulation": _live_summary(live),
+        "seconds": round(time.perf_counter() - t0, 1),
     }
+
+
+def _live_summary(row: dict[str, Any] | None) -> dict[str, Any] | None:
+    """Per-technique result of the benign command emulation recorded on the CI runner."""
+    if row is None:
+        return None
+    techs, hit = row["techniques"], row["techniques_detected"] or []
+    return {"events": row["events"], "channels": row["channels"], "techniques_emulated": techs,
+            "techniques_detected": hit, "techniques_missed": [t for t in techs if t not in hit],
+            "detected_ci95": wilson(len(hit), len(techs)), "rules_fired": row["rules_fired"],
+            "alerts": row["alerts"], "technique_rules": row["technique_rules"], "top_rules": row["top_rules"],
+            "note": "technique detected = a Linux rule tagged with the technique or its parent fired in the "
+                    "window; the window also holds the runner's background activity"}
 
 
 def stage_linux_benign(data: Path, rule_dirs: list[str]) -> dict[str, Any] | None:
@@ -145,13 +182,7 @@ def stage_linux_benign(data: Path, rule_dirs: list[str]) -> dict[str, Any] | Non
         return None
     rules, _ = load_rule_dir(rule_dirs)
     lib = Library.build(rules)
-    meta = {}
-    mf = live / "window.txt"
-    if mf.exists():
-        for line in mf.read_text().splitlines():
-            if "=" in line:
-                k, v = line.split("=", 1)
-                meta[k.strip()] = v.strip()
+    meta = _window(live)
     hours = float(meta.get("seconds", "0") or 0) / 3600 or None
     hits: Counter = Counter()
     ch: Counter = Counter()
