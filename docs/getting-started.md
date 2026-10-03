@@ -23,7 +23,7 @@ python -m anvil lint --rules drafts --profile sigma         # A114: unreviewed d
 ```bash
 pip install -e ".[dev]" -r requirements-bench.txt
 export ANVIL_DATA=$PWD/data                   # PowerShell: $env:ANVIL_DATA="$PWD\data"
-python scripts/download_data.py all           # ~350 MB, pinned + checksummed
+python scripts/download_data.py all           # ~0.46 GB, pinned + checksummed
 python -m anvil ingest --benign               # EVTX -> 31 JSONL.gz shards (2,994,137 events)
 python benchmarks/bench.py all --workers 4    # ~1-2 h on a laptop; stages can run separately
 ```

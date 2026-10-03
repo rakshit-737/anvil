@@ -5,7 +5,7 @@ Every source is pinned (git commit or release tag) and every file is checked
 against ``scripts/checksums.sha256``. Nothing here is executable content: the
 sources are YAML rules, JSON/EVTX *log records* and the ATT&CK STIX bundle.
 
-    python scripts/download_data.py all            # ~0.45 GB download
+    python scripts/download_data.py all            # ~0.46 GB download
     python scripts/download_data.py sigma attack   # just some sources
     python scripts/download_data.py all --record   # (maintainers) refresh checksums
 
@@ -15,14 +15,14 @@ Sources and licences
 --------------------
 sigma     SigmaHQ/sigma rules + regression_data           Detection Rule License 1.1
 attack    MITRE ATT&CK Enterprise STIX 2.1 (v19.2)          ATT&CK Terms of Use (royalty-free)
-otrf      OTRF Security-Datasets (Mordor) Windows host logs MIT          (~66 MB)
+otrf      OTRF Security-Datasets (Mordor) Windows host logs MIT          (~123 MB)
 baseline  NextronSystems/evtx-baseline clean Windows EVTX   (repository README, public)
-nixcloud  Linux + AWS attack telemetry (1.1):                                        (~780 MB)
+nixcloud  Linux + AWS attack telemetry (1.1):                                        (~0.78 GB)
           splunk/attack_data Sysmon-for-Linux, auditd and CloudTrail captures        Apache-2.0
           (Git LFS objects, pinned by the LFS sha256 in scripts/splunk_attack_data.tsv)
           OTRF Linux/AWS atomic datasets and the Log4Shell Linux Syslog captures     MIT
 
-``all`` means sigma, attack, otrf and baseline (~0.45 GB download, ~4 GB on disk
+``all`` means sigma, attack, otrf and baseline (~0.46 GB download, ~4 GB on disk
 after extraction and ingest). ``nixcloud`` (~0.78 GB) is opt-in and is meant to be
 fetched by the CI benchmark job (.github/workflows/bench.yml), not on a laptop.
 
