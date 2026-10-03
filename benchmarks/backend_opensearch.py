@@ -7,7 +7,11 @@ service container on localhost:9200. It never contacts any other host.
 1. Bulk-load the SigmaHQ regression captures (one ``_case`` per capture) and a
    deterministic benign sample of evtx-baseline (``_set: benign``) into one index.
    Every string is a ``keyword`` with a lowercase normalizer (Sigma matching is
-   case-insensitive); ``EventID`` is a long.
+   case-insensitive) and is also copied into one catch-all keyword field,
+   ``anvil_all``, which is the index's default field: Sigma keyword searches have
+   no field, and expanding them over thousands of mapped fields is what exhausted
+   the heap. ``EventID`` is a long. Values are indexed up to Lucene's 32,766-byte
+   term limit (PowerShell script blocks reach 19k characters).
 2. Convert each Windows rule with pySigma's OpenSearch Lucene backend plus the
    *pySigma* Sysmon and Windows log-source pipelines, so log-source handling is
    independent of ANVIL's router. Only the JSON loader (flattening) is shared.
@@ -41,6 +45,8 @@ from benchmarks.stats import cohen_kappa, kappa_bootstrap_ci, wilson  # noqa: E4
 
 URL = os.environ.get("OPENSEARCH_URL", "http://localhost:9200")
 INDEX = "anvil-xcheck"
+MAX_TERM_BYTES = 32766  # Lucene's hard limit for one indexed term
+FAILED: list[dict[str, Any]] = []    # one row per failed query, saved in the results file
 MODIFIERS = ("windash", "base64offset", "base64", "cidr", "fieldref", "re", "expand", "utf16", "wide", "all",
              "exists", "gt", "lt")
 
@@ -58,12 +64,12 @@ def _req(method: str, path: str, body: Any = None, ndjson: bool = False) -> Any:
         with urllib.request.urlopen(req, timeout=120) as r:  # noqa: S310 - localhost only, checked above
             return json.load(r)
     except urllib.error.HTTPError as exc:
-        return {"_error": exc.code, "_body": exc.read().decode(errors="replace")[:300]}
+        return {"_error": exc.code, "_body": exc.read().decode(errors="replace")[:4000]}
     except (OSError, http.client.HTTPException) as exc:
-        # A pathological query (huge wildcard/regex) can drop the connection or stall the
-        # node; count it as a query error and wait for the cluster to come back.
+        # A dropped connection means the node stalled or died. The container runs without a
+        # restart policy, so a crash is not hidden: _wait_healthy fails the job if it is gone.
         _wait_healthy()
-        return {"_error": type(exc).__name__}
+        return {"_error": type(exc).__name__, "_body": str(exc)[:300]}
 
 
 def _wait_healthy(seconds: int = 300) -> None:
@@ -79,6 +85,9 @@ def _wait_healthy(seconds: int = 300) -> None:
     raise SystemExit("OpenSearch did not recover")
 
 
+TOO_LONG: Counter = Counter()  # field -> values above the term limit (not indexed, like ignore_above)
+
+
 def _doc(ev: dict[str, Any]) -> dict[str, Any]:
     out: dict[str, Any] = {}
     for k, v in ev.items():
@@ -92,27 +101,34 @@ def _doc(ev: dict[str, Any]) -> dict[str, Any]:
                 continue
         elif v is not None and not isinstance(v, str):
             v = str(v)
+        if isinstance(v, str) and len(v.encode("utf-8")) > MAX_TERM_BYTES:
+            TOO_LONG[k] += 1
+            continue
         out[k] = v
     return out
 
 
 def _create_index() -> None:
     _req("DELETE", f"/{INDEX}")
+    kw = {"type": "keyword", "normalizer": "lc", "ignore_above": MAX_TERM_BYTES}
     r = _req("PUT", f"/{INDEX}", {
         "settings": {"number_of_shards": 1, "number_of_replicas": 0, "index.mapping.total_fields.limit": 20000,
-                     "index.max_result_window": 50000,
+                     "index.max_result_window": 50000, "index.query.default_field": ["anvil_all"],
                      "analysis": {"normalizer": {"lc": {"type": "custom", "filter": ["lowercase"]}}}},
         "mappings": {"dynamic_templates": [{"s": {"match_mapping_type": "string", "mapping": {
-            "type": "keyword", "normalizer": "lc", "ignore_above": 10922}}}],
+            **kw, "copy_to": "anvil_all"}}}],
             "properties": {"EventID": {"type": "long"}, "_case": {"type": "integer"},
-                           "_set": {"type": "keyword"}}}})
+                           "_set": {"type": "keyword"}, "anvil_all": kw}}})
     if "_error" in r:
         raise SystemExit(f"index create failed: {r}")
-    # Cancel runaway searches (huge leading-wildcard automata) instead of letting them
-    # exhaust the heap and kill the node.
-    _req("PUT", "/_cluster/settings", {"persistent": {
+    # Cancel runaway searches instead of letting them exhaust the heap; the request breaker
+    # turns an oversized request into an HTTP error instead of an OutOfMemoryError.
+    r = _req("PUT", "/_cluster/settings", {"persistent": {
         "search_backpressure.mode": "enforced",
-        "search.cancel_after_time_interval": "30s"}})
+        "search.cancel_after_time_interval": "30s",
+        "indices.breaker.request.limit": "40%"}})
+    if "_error" in r:
+        raise SystemExit(f"cluster settings failed: {r}")
 
 
 def _bulk(docs: list[tuple[str, dict[str, Any]]]) -> int:
@@ -148,18 +164,46 @@ def _convert(backend, path: str, cache: dict[str, Any]) -> list[str] | str:
     return out
 
 
-def _search_ids(q: str, flt: dict[str, Any]) -> set[str] | None:
-    body = {"size": 50000, "_source": False, "timeout": "30s", "track_total_hits": True,
-            "query": {"bool": {"must": [{"query_string": {"query": q, "allow_leading_wildcard": True}}],
-                               "filter": [flt]}}}
+def _error_detail(r: dict[str, Any]) -> dict[str, Any]:
+    """HTTP status plus OpenSearch's root-cause type and reason for a failed request."""
+    out: dict[str, Any] = {"status": r.get("_error")}
+    try:
+        err = json.loads(r.get("_body", "")).get("error", {})
+        root = (err.get("root_cause") or [err])[0]
+        out["type"] = root.get("type") or err.get("type")
+        out["reason"] = str(root.get("reason") or err.get("reason") or "")[:300]
+        caused = err.get("caused_by") or {}
+        if caused:
+            out["caused_by"] = f"{caused.get('type')}: {str(caused.get('reason', ''))[:200]}"
+    except (ValueError, AttributeError, TypeError):
+        out["reason"] = str(r.get("_body", ""))[:300]
+    return out
+
+
+def _search_ids(q: str, flt: dict[str, Any], rule: str = "", where: str = "") -> set[str] | None:
+    """Matching document ids for one query, paged 2,000 at a time (the filtered sets are small)."""
+    ids: set[str] = set()
+    start, page = 0, 2000
     t = time.perf_counter()
-    r = _req("POST", f"/{INDEX}/_search", body)
+    while True:
+        body = {"from": start, "size": page, "_source": False, "timeout": "30s", "track_total_hits": True,
+                "query": {"bool": {"must": [{"query_string": {"query": q, "allow_leading_wildcard": True}}],
+                                   "filter": [flt]}}}
+        r = _req("POST", f"/{INDEX}/_search", body)
+        if "_error" in r:
+            det = _error_detail(r)
+            FAILED.append({"rule": rule, "set": where, **det, "query": q[:300]})
+            print(f"failed query ({time.perf_counter() - t:.1f}s, {det}): {q[:200]}", flush=True)
+            return None
+        hits = r["hits"]["hits"]
+        ids |= {h["_id"] for h in hits}
+        start += len(hits)
+        if not hits or start >= r["hits"]["total"]["value"]:
+            break
     dt = time.perf_counter() - t
-    if "_error" in r or dt > 10:
-        print(f"slow-or-failed query ({dt:.1f}s, {r.get('_error', 'ok')}): {q[:200]}", flush=True)
-    if "_error" in r:
-        return None
-    return {h["_id"] for h in r["hits"]["hits"]}
+    if dt > 10:
+        print(f"slow query ({dt:.1f}s): {q[:200]}", flush=True)
+    return ids
 
 
 def _modifiers(path: str) -> list[str]:
@@ -209,7 +253,7 @@ def main() -> int:
         ids: set[str] = set()
         err = False
         for q in qs:
-            got = _search_ids(q, {"term": {"_case": i}})
+            got = _search_ids(q, {"term": {"_case": i}}, c["rule_id"], "regression")
             if got is None:
                 err = True
                 break
@@ -248,7 +292,7 @@ def main() -> int:
         ids = set()
         bad = False
         for q in qs:
-            got = _search_ids(q, {"term": {"_set": "benign"}})
+            got = _search_ids(q, {"term": {"_set": "benign"}}, rid, "benign")
             if got is None:
                 bad = True
                 break
@@ -264,6 +308,9 @@ def main() -> int:
         cc += fo and not fa
         d += not fa and not fo
         ben["same_event_set"] += mine == ids
+        if fa or fo:
+            ben["fire_in_either"] += 1
+            ben["fire_in_either_same_event_set"] += mine == ids
         if mine != ids:
             ben_rows.append({"rule": rid, "title": r.title, "anvil": len(mine), "opensearch": len(ids),
                              "both": len(mine & ids), "modifiers": _modifiers(r.path)})
@@ -287,6 +334,9 @@ def main() -> int:
                    "disagreements_by_modifier": dict(Counter(m for row in ben_rows for m in row["modifiers"]
                                                              or ["(plain)"]))},
         "convert_errors": dict(conv_errors),
+        "query_errors": FAILED,
+        "query_errors_by_type": dict(Counter(f"{f.get('status')} {f.get('type')}" for f in FAILED)),
+        "values_over_term_limit": dict(TOO_LONG),
         "seconds": round(time.perf_counter() - t0, 1),
     }
     save("backend_opensearch.json", res)
