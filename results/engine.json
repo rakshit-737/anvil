@@ -6,18 +6,18 @@
   "evaluable": 463,
   "pass_rate": 1.0,
   "exact_count": 463,
-  "seconds": 0.05
+  "seconds": 0.02
  },
  "anvil_v01": {
   "pass": 420,
   "error": 29,
   "fail": 14,
   "pass_rate": 0.9071,
-  "seconds": 0.07
+  "seconds": 0.03
  },
  "pysigma_sqlite": {
   "available": true,
-  "seconds": 2.5,
+  "seconds": 1.2,
   "pass": 461,
   "agree": 461,
   "convert-error": 1,
@@ -39,13 +39,20 @@
    "alerts": 15,
    "rules_fired": 2,
    "evaluations": 44084,
-   "seconds": 0.14
+   "seconds": 0.08
+  },
+  "anvil_unrouted": {
+   "alerts": 163,
+   "rules_fired": 16,
+   "evaluations": 5119200,
+   "seconds": 5.45,
+   "note": "1.x engine, routing disabled: every Windows rule on every event"
   },
   "anvil_v01": {
    "alerts": 163,
    "rules_fired": 16,
    "evaluations": 5149800,
-   "seconds": 55.07
+   "seconds": 5.45
   }
  },
  "failures": [],
@@ -512,7 +519,7 @@
   "ffa6861c-4461-4f59-8a41-578c39f3f23e"
  ],
  "provenance": {
-  "git_sha": "1c153a2012c76c1d743ffa244b849ae51190ee21",
+  "git_sha": "9906b42abfd3ecee1ec9c853658025eb3fdf3b45",
   "python": "3.12.14",
   "packages": {
    "pySigma": "1.5.1",
@@ -523,6 +530,16 @@
    "pyahocorasick": "2.3.1",
    "evtx": "0.13.1"
   },
-  "ci_run": "37016390345"
+  "datasets": {
+   "sigmahq": "07ec293a51695cb1131a2e05260247872b31e1e1",
+   "attack": "19.2 @ 6cda5ad8462c79e14fbb872f4e09059b18e0cfc4",
+   "otrf_security_datasets": "d9d40ef123d2c87d5d3df28c96bcab4f0faccc87",
+   "evtx_baseline": "v0.8.5",
+   "splunk_attack_data": "b4573ed3b6bf05473b01048dd36380dbd52288c0",
+   "sha256(checksums.sha256)": "bbae446b8fd0990998feb3a9a3c925d5d3ba4adb0d9270f39149ea238ade7bc0",
+   "sha256(splunk_attack_data.tsv)": "0be8e2e4fee208d93187b691162f620e90ff975f37966b585ee801c87f127e6b"
+  },
+  "ci_run": "37093721154",
+  "ci_run_url": "https://github.com/rakshit-737/anvil/actions/runs/37093721154"
  }
 }

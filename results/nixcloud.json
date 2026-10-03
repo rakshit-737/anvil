@@ -7,20 +7,20 @@
    "linux service": 11
   }
  },
- "datasets": 169,
+ "datasets": 170,
  "labelled": 168,
  "zero_event_datasets": [
   "splunk:T1068/linux_dirtyfrag"
  ],
  "technique_detected": 27,
  "technique_detected_ci95": [
-  0.1129,
-  0.2237
+  0.112865,
+  0.223733
  ],
  "any_alert": 89,
  "any_alert_ci95": [
-  0.4545,
-  0.6037
+  0.454467,
+  0.603726
  ],
  "by_kind": {
   "auditd": {
@@ -28,13 +28,13 @@
    "events": 7158,
    "technique_detected": 8,
    "technique_detected_ci95": [
-    0.0637,
-    0.2245
+    0.063704,
+    0.224517
    ],
    "any_alert": 19,
    "any_alert_ci95": [
-    0.1958,
-    0.412
+    0.195833,
+    0.411963
    ],
    "median_alerts": 0
   },
@@ -43,13 +43,13 @@
    "events": 27793,
    "technique_detected": 6,
    "technique_detected_ci95": [
-    0.0706,
-    0.2907
+    0.070611,
+    0.290726
    ],
    "any_alert": 32,
    "any_alert_ci95": [
-    0.6524,
-    0.895
+    0.652424,
+    0.895001
    ],
    "median_alerts": 3
   },
@@ -58,13 +58,13 @@
    "events": 551655,
    "technique_detected": 13,
    "technique_detected_ci95": [
-    0.1248,
+    0.124752,
     0.3217
    ],
    "any_alert": 38,
    "any_alert_ci95": [
-    0.4798,
-    0.7147
+    0.479807,
+    0.714683
    ],
    "median_alerts": 4
   }
@@ -75,6 +75,8 @@
    "source": "splunk/attack_data",
    "kind": "sysmon-linux",
    "events": 11109,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1003.008"
    ],
@@ -94,6 +96,8 @@
    "source": "splunk/attack_data",
    "kind": "auditd",
    "events": 105,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1003.008"
    ],
@@ -109,6 +113,8 @@
    "source": "splunk/attack_data",
    "kind": "sysmon-linux",
    "events": 7,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1014"
    ],
@@ -124,6 +130,8 @@
    "source": "splunk/attack_data",
    "kind": "sysmon-linux",
    "events": 18085,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1016"
    ],
@@ -147,6 +155,8 @@
    "source": "splunk/attack_data",
    "kind": "auditd",
    "events": 25,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1016"
    ],
@@ -164,6 +174,8 @@
    "source": "splunk/attack_data",
    "kind": "auditd",
    "events": 642,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1016"
    ],
@@ -181,6 +193,8 @@
    "source": "splunk/attack_data",
    "kind": "sysmon-linux",
    "events": 1,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1021.004"
    ],
@@ -196,6 +210,8 @@
    "source": "splunk/attack_data",
    "kind": "sysmon-linux",
    "events": 15,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1027"
    ],
@@ -216,6 +232,8 @@
    "source": "splunk/attack_data",
    "kind": "sysmon-linux",
    "events": 1,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1027"
    ],
@@ -233,6 +251,8 @@
    "source": "splunk/attack_data",
    "kind": "auditd",
    "events": 4,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1030"
    ],
@@ -248,6 +268,8 @@
    "source": "splunk/attack_data",
    "kind": "auditd",
    "events": 1,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1030"
    ],
@@ -267,6 +289,8 @@
    "source": "splunk/attack_data",
    "kind": "auditd",
    "events": 2,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1030"
    ],
@@ -286,6 +310,8 @@
    "source": "splunk/attack_data",
    "kind": "auditd",
    "events": 3,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1033"
    ],
@@ -301,6 +327,8 @@
    "source": "splunk/attack_data",
    "kind": "auditd",
    "events": 3,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1033"
    ],
@@ -316,6 +344,8 @@
    "source": "splunk/attack_data",
    "kind": "sysmon-linux",
    "events": 53954,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1053.002"
    ],
@@ -338,6 +368,8 @@
    "source": "splunk/attack_data",
    "kind": "auditd",
    "events": 14,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1053.002"
    ],
@@ -353,6 +385,8 @@
    "source": "splunk/attack_data",
    "kind": "auditd",
    "events": 18,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1053.002"
    ],
@@ -368,6 +402,8 @@
    "source": "splunk/attack_data",
    "kind": "auditd",
    "events": 9,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1053.002"
    ],
@@ -383,6 +419,8 @@
    "source": "splunk/attack_data",
    "kind": "sysmon-linux",
    "events": 67214,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1053.003"
    ],
@@ -405,6 +443,8 @@
    "source": "splunk/attack_data",
    "kind": "sysmon-linux",
    "events": 57830,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1053.003"
    ],
@@ -428,6 +468,8 @@
    "source": "splunk/attack_data",
    "kind": "sysmon-linux",
    "events": 332,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1053.003"
    ],
@@ -447,6 +489,8 @@
    "source": "splunk/attack_data",
    "kind": "auditd",
    "events": 19,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1053.003"
    ],
@@ -462,6 +506,8 @@
    "source": "splunk/attack_data",
    "kind": "auditd",
    "events": 3,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1053.003"
    ],
@@ -477,6 +523,8 @@
    "source": "splunk/attack_data",
    "kind": "auditd",
    "events": 3,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1053.003"
    ],
@@ -492,6 +540,8 @@
    "source": "splunk/attack_data",
    "kind": "auditd",
    "events": 127,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1053.006"
    ],
@@ -507,6 +557,8 @@
    "source": "splunk/attack_data",
    "kind": "sysmon-linux",
    "events": 59630,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1053.006"
    ],
@@ -525,6 +577,8 @@
    "source": "splunk/attack_data",
    "kind": "sysmon-linux",
    "events": 2447,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1059.004"
    ],
@@ -546,6 +600,8 @@
    "source": "splunk/attack_data",
    "kind": "auditd",
    "events": 241,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1068"
    ],
@@ -561,6 +617,8 @@
    "source": "splunk/attack_data",
    "kind": "none",
    "events": 0,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1068"
    ],
@@ -576,6 +634,8 @@
    "source": "splunk/attack_data",
    "kind": "auditd",
    "events": 2,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1068"
    ],
@@ -591,6 +651,8 @@
    "source": "splunk/attack_data",
    "kind": "sysmon-linux",
    "events": 1,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1068"
    ],
@@ -606,6 +668,8 @@
    "source": "splunk/attack_data",
    "kind": "cloudtrail",
    "events": 3,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1078"
    ],
@@ -621,6 +685,8 @@
    "source": "splunk/attack_data",
    "kind": "cloudtrail",
    "events": 75,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1078"
    ],
@@ -639,6 +705,8 @@
    "source": "splunk/attack_data",
    "kind": "cloudtrail",
    "events": 37,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1078"
    ],
@@ -657,6 +725,8 @@
    "source": "splunk/attack_data",
    "kind": "cloudtrail",
    "events": 4,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1078"
    ],
@@ -672,6 +742,8 @@
    "source": "splunk/attack_data",
    "kind": "cloudtrail",
    "events": 2,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1078"
    ],
@@ -689,6 +761,8 @@
    "source": "splunk/attack_data",
    "kind": "cloudtrail",
    "events": 2,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1078.004"
    ],
@@ -710,6 +784,8 @@
    "source": "splunk/attack_data",
    "kind": "sysmon-linux",
    "events": 1,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1082"
    ],
@@ -725,6 +801,8 @@
    "source": "splunk/attack_data",
    "kind": "auditd",
    "events": 1,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1082"
    ],
@@ -740,6 +818,8 @@
    "source": "splunk/attack_data",
    "kind": "auditd",
    "events": 1,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1082"
    ],
@@ -755,6 +835,8 @@
    "source": "splunk/attack_data",
    "kind": "auditd",
    "events": 8,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1083"
    ],
@@ -772,6 +854,8 @@
    "source": "splunk/attack_data",
    "kind": "auditd",
    "events": 102,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1083"
    ],
@@ -789,6 +873,8 @@
    "source": "splunk/attack_data",
    "kind": "auditd",
    "events": 8,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1083"
    ],
@@ -806,6 +892,8 @@
    "source": "splunk/attack_data",
    "kind": "auditd",
    "events": 4,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1083"
    ],
@@ -823,6 +911,8 @@
    "source": "splunk/attack_data",
    "kind": "cloudtrail",
    "events": 1,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1087.004"
    ],
@@ -840,6 +930,8 @@
    "source": "splunk/attack_data",
    "kind": "auditd",
    "events": 4,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1098.004"
    ],
@@ -855,6 +947,8 @@
    "source": "splunk/attack_data",
    "kind": "sysmon-linux",
    "events": 14566,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1098.004"
    ],
@@ -872,6 +966,8 @@
    "source": "splunk/attack_data",
    "kind": "sysmon-linux",
    "events": 140,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1105"
    ],
@@ -893,6 +989,8 @@
    "source": "splunk/attack_data",
    "kind": "cloudtrail",
    "events": 7,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1110.001"
    ],
@@ -912,6 +1010,8 @@
    "source": "splunk/attack_data",
    "kind": "cloudtrail",
    "events": 2,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1110.002"
    ],
@@ -930,6 +1030,8 @@
    "source": "splunk/attack_data",
    "kind": "cloudtrail",
    "events": 31,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1110.003"
    ],
@@ -949,6 +1051,8 @@
    "source": "splunk/attack_data",
    "kind": "cloudtrail",
    "events": 28,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1110.003"
    ],
@@ -968,6 +1072,8 @@
    "source": "splunk/attack_data",
    "kind": "sysmon-linux",
    "events": 28,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1115"
    ],
@@ -987,6 +1093,8 @@
    "source": "splunk/attack_data",
    "kind": "auditd",
    "events": 6,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1115"
    ],
@@ -1002,6 +1110,8 @@
    "source": "splunk/attack_data",
    "kind": "cloudtrail",
    "events": 5,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1119"
    ],
@@ -1019,6 +1129,8 @@
    "source": "splunk/attack_data",
    "kind": "auditd",
    "events": 179,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1136.001"
    ],
@@ -1034,6 +1146,8 @@
    "source": "splunk/attack_data",
    "kind": "auditd",
    "events": 1,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1136.001"
    ],
@@ -1053,6 +1167,8 @@
    "source": "splunk/attack_data",
    "kind": "auditd",
    "events": 11,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1140"
    ],
@@ -1068,6 +1184,8 @@
    "source": "splunk/attack_data",
    "kind": "cloudtrail",
    "events": 2,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1185"
    ],
@@ -1085,6 +1203,8 @@
    "source": "splunk/attack_data",
    "kind": "sysmon-linux",
    "events": 12216,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1190"
    ],
@@ -1105,6 +1225,8 @@
    "source": "splunk/attack_data",
    "kind": "sysmon-linux",
    "events": 151,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1190"
    ],
@@ -1124,6 +1246,8 @@
    "source": "splunk/attack_data",
    "kind": "auditd",
    "events": 2,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1200"
    ],
@@ -1139,6 +1263,8 @@
    "source": "splunk/attack_data",
    "kind": "cloudtrail",
    "events": 7,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1201"
    ],
@@ -1156,6 +1282,8 @@
    "source": "splunk/attack_data",
    "kind": "cloudtrail",
    "events": 2,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1204"
    ],
@@ -1171,6 +1299,8 @@
    "source": "splunk/attack_data",
    "kind": "auditd",
    "events": 40,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1222.002"
    ],
@@ -1186,6 +1316,8 @@
    "source": "splunk/attack_data",
    "kind": "auditd",
    "events": 5,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1222.002"
    ],
@@ -1201,6 +1333,8 @@
    "source": "splunk/attack_data",
    "kind": "cloudtrail",
    "events": 1,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1485"
    ],
@@ -1218,6 +1352,8 @@
    "source": "splunk/attack_data",
    "kind": "cloudtrail",
    "events": 8,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1485"
    ],
@@ -1235,6 +1371,8 @@
    "source": "splunk/attack_data",
    "kind": "auditd",
    "events": 2,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1485"
    ],
@@ -1250,6 +1388,8 @@
    "source": "splunk/attack_data",
    "kind": "auditd",
    "events": 4,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1485"
    ],
@@ -1265,6 +1405,8 @@
    "source": "splunk/attack_data",
    "kind": "auditd",
    "events": 4,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1485"
    ],
@@ -1280,6 +1422,8 @@
    "source": "splunk/attack_data",
    "kind": "sysmon-linux",
    "events": 6911,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1485"
    ],
@@ -1297,6 +1441,8 @@
    "source": "splunk/attack_data",
    "kind": "sysmon-linux",
    "events": 675,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1485"
    ],
@@ -1315,6 +1461,8 @@
    "source": "splunk/attack_data",
    "kind": "sysmon-linux",
    "events": 617,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1485"
    ],
@@ -1336,6 +1484,8 @@
    "source": "splunk/attack_data",
    "kind": "cloudtrail",
    "events": 674,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1486"
    ],
@@ -1353,6 +1503,8 @@
    "source": "splunk/attack_data",
    "kind": "cloudtrail",
    "events": 2,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1486"
    ],
@@ -1368,6 +1520,8 @@
    "source": "splunk/attack_data",
    "kind": "auditd",
    "events": 8,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1489"
    ],
@@ -1383,6 +1537,8 @@
    "source": "splunk/attack_data",
    "kind": "auditd",
    "events": 8,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1489"
    ],
@@ -1398,6 +1554,8 @@
    "source": "splunk/attack_data",
    "kind": "auditd",
    "events": 1,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1489"
    ],
@@ -1413,6 +1571,8 @@
    "source": "splunk/attack_data",
    "kind": "auditd",
    "events": 8,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1489"
    ],
@@ -1428,6 +1588,8 @@
    "source": "splunk/attack_data",
    "kind": "sysmon-linux",
    "events": 3331,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1489"
    ],
@@ -1451,6 +1613,8 @@
    "source": "splunk/attack_data",
    "kind": "cloudtrail",
    "events": 2,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1490"
    ],
@@ -1471,6 +1635,8 @@
    "source": "splunk/attack_data",
    "kind": "cloudtrail",
    "events": 100,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1530"
    ],
@@ -1486,6 +1652,8 @@
    "source": "splunk/attack_data",
    "kind": "cloudtrail",
    "events": 9,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1530"
    ],
@@ -1503,6 +1671,8 @@
    "source": "splunk/attack_data",
    "kind": "cloudtrail",
    "events": 2,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1537"
    ],
@@ -1520,6 +1690,8 @@
    "source": "splunk/attack_data",
    "kind": "cloudtrail",
    "events": 9,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1537"
    ],
@@ -1540,6 +1712,8 @@
    "source": "splunk/attack_data",
    "kind": "auditd",
    "events": 7,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1546.004"
    ],
@@ -1555,6 +1729,8 @@
    "source": "splunk/attack_data",
    "kind": "sysmon-linux",
    "events": 42342,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1546.004"
    ],
@@ -1574,6 +1750,8 @@
    "source": "splunk/attack_data",
    "kind": "auditd",
    "events": 2,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1547.006"
    ],
@@ -1593,6 +1771,8 @@
    "source": "splunk/attack_data",
    "kind": "auditd",
    "events": 1,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1547.006"
    ],
@@ -1612,6 +1792,8 @@
    "source": "splunk/attack_data",
    "kind": "auditd",
    "events": 3,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1547.006"
    ],
@@ -1627,6 +1809,8 @@
    "source": "splunk/attack_data",
    "kind": "auditd",
    "events": 1,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1547.006"
    ],
@@ -1642,6 +1826,8 @@
    "source": "splunk/attack_data",
    "kind": "auditd",
    "events": 10,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1547.006"
    ],
@@ -1657,6 +1843,8 @@
    "source": "splunk/attack_data",
    "kind": "auditd",
    "events": 2,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1547.006"
    ],
@@ -1672,6 +1860,8 @@
    "source": "splunk/attack_data",
    "kind": "auditd",
    "events": 1,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1547.006"
    ],
@@ -1687,6 +1877,8 @@
    "source": "splunk/attack_data",
    "kind": "sysmon-linux",
    "events": 15640,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1547.006"
    ],
@@ -1706,6 +1898,8 @@
    "source": "splunk/attack_data",
    "kind": "sysmon-linux",
    "events": 44,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1548"
    ],
@@ -1723,6 +1917,8 @@
    "source": "splunk/attack_data",
    "kind": "sysmon-linux",
    "events": 2,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1548"
    ],
@@ -1740,6 +1936,8 @@
    "source": "splunk/attack_data",
    "kind": "sysmon-linux",
    "events": 18,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1548"
    ],
@@ -1757,6 +1955,8 @@
    "source": "splunk/attack_data",
    "kind": "sysmon-linux",
    "events": 2,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1548"
    ],
@@ -1772,6 +1972,8 @@
    "source": "splunk/attack_data",
    "kind": "sysmon-linux",
    "events": 10,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1548"
    ],
@@ -1787,6 +1989,8 @@
    "source": "splunk/attack_data",
    "kind": "sysmon-linux",
    "events": 3,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1548"
    ],
@@ -1802,6 +2006,8 @@
    "source": "splunk/attack_data",
    "kind": "sysmon-linux",
    "events": 6,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1548"
    ],
@@ -1817,6 +2023,8 @@
    "source": "splunk/attack_data",
    "kind": "sysmon-linux",
    "events": 9,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1548"
    ],
@@ -1832,6 +2040,8 @@
    "source": "splunk/attack_data",
    "kind": "sysmon-linux",
    "events": 4,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1548"
    ],
@@ -1847,6 +2057,8 @@
    "source": "splunk/attack_data",
    "kind": "sysmon-linux",
    "events": 598,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1548"
    ],
@@ -1865,6 +2077,8 @@
    "source": "splunk/attack_data",
    "kind": "sysmon-linux",
    "events": 22,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1548"
    ],
@@ -1880,6 +2094,8 @@
    "source": "splunk/attack_data",
    "kind": "sysmon-linux",
    "events": 6,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1548"
    ],
@@ -1898,6 +2114,8 @@
    "source": "splunk/attack_data",
    "kind": "sysmon-linux",
    "events": 4,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1548"
    ],
@@ -1915,6 +2133,8 @@
    "source": "splunk/attack_data",
    "kind": "sysmon-linux",
    "events": 13,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1548"
    ],
@@ -1930,6 +2150,8 @@
    "source": "splunk/attack_data",
    "kind": "sysmon-linux",
    "events": 4,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1548"
    ],
@@ -1945,6 +2167,8 @@
    "source": "splunk/attack_data",
    "kind": "sysmon-linux",
    "events": 5,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1548"
    ],
@@ -1960,6 +2184,8 @@
    "source": "splunk/attack_data",
    "kind": "sysmon-linux",
    "events": 8,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1548"
    ],
@@ -1975,6 +2201,8 @@
    "source": "splunk/attack_data",
    "kind": "sysmon-linux",
    "events": 17,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1548"
    ],
@@ -1990,6 +2218,8 @@
    "source": "splunk/attack_data",
    "kind": "sysmon-linux",
    "events": 6,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1548"
    ],
@@ -2005,6 +2235,8 @@
    "source": "splunk/attack_data",
    "kind": "sysmon-linux",
    "events": 8,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1548"
    ],
@@ -2020,6 +2252,8 @@
    "source": "splunk/attack_data",
    "kind": "sysmon-linux",
    "events": 10,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1548"
    ],
@@ -2035,6 +2269,8 @@
    "source": "splunk/attack_data",
    "kind": "sysmon-linux",
    "events": 4,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1548"
    ],
@@ -2050,6 +2286,8 @@
    "source": "splunk/attack_data",
    "kind": "sysmon-linux",
    "events": 2,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1548"
    ],
@@ -2065,6 +2303,8 @@
    "source": "splunk/attack_data",
    "kind": "sysmon-linux",
    "events": 6,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1548"
    ],
@@ -2080,6 +2320,8 @@
    "source": "splunk/attack_data",
    "kind": "sysmon-linux",
    "events": 8,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1548"
    ],
@@ -2095,6 +2337,8 @@
    "source": "splunk/attack_data",
    "kind": "sysmon-linux",
    "events": 1,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1548"
    ],
@@ -2110,6 +2354,8 @@
    "source": "splunk/attack_data",
    "kind": "sysmon-linux",
    "events": 23649,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1548.001"
    ],
@@ -2130,6 +2376,8 @@
    "source": "splunk/attack_data",
    "kind": "auditd",
    "events": 53,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1548.001"
    ],
@@ -2145,6 +2393,8 @@
    "source": "splunk/attack_data",
    "kind": "sysmon-linux",
    "events": 16016,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1548.001"
    ],
@@ -2165,6 +2415,8 @@
    "source": "splunk/attack_data",
    "kind": "sysmon-linux",
    "events": 7577,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1548.003"
    ],
@@ -2186,6 +2438,8 @@
    "source": "splunk/attack_data",
    "kind": "sysmon-linux",
    "events": 14878,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1548.003"
    ],
@@ -2206,6 +2460,8 @@
    "source": "splunk/attack_data",
    "kind": "sysmon-linux",
    "events": 11436,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1548.003"
    ],
@@ -2224,6 +2480,8 @@
    "source": "splunk/attack_data",
    "kind": "auditd",
    "events": 11,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1548.003"
    ],
@@ -2239,6 +2497,8 @@
    "source": "splunk/attack_data",
    "kind": "auditd",
    "events": 8,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1548.003"
    ],
@@ -2254,6 +2514,8 @@
    "source": "splunk/attack_data",
    "kind": "auditd",
    "events": 3,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1548.003"
    ],
@@ -2269,6 +2531,8 @@
    "source": "splunk/attack_data",
    "kind": "auditd",
    "events": 4548,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1548.003"
    ],
@@ -2284,6 +2548,8 @@
    "source": "splunk/attack_data",
    "kind": "auditd",
    "events": 1,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1548.003"
    ],
@@ -2299,6 +2565,8 @@
    "source": "splunk/attack_data",
    "kind": "sysmon-linux",
    "events": 33731,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1548.003"
    ],
@@ -2319,6 +2587,8 @@
    "source": "splunk/attack_data",
    "kind": "sysmon-linux",
    "events": 12227,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1548.003"
    ],
@@ -2340,6 +2610,8 @@
    "source": "splunk/attack_data",
    "kind": "sysmon-linux",
    "events": 6743,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1548.003"
    ],
@@ -2357,6 +2629,8 @@
    "source": "splunk/attack_data",
    "kind": "sysmon-linux",
    "events": 29812,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1548.003"
    ],
@@ -2377,6 +2651,8 @@
    "source": "splunk/attack_data",
    "kind": "cloudtrail",
    "events": 60,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1552"
    ],
@@ -2394,6 +2670,8 @@
    "source": "splunk/attack_data",
    "kind": "auditd",
    "events": 50,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1552.004"
    ],
@@ -2411,6 +2689,8 @@
    "source": "splunk/attack_data",
    "kind": "auditd",
    "events": 101,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1552.004"
    ],
@@ -2429,6 +2709,8 @@
    "source": "splunk/attack_data",
    "kind": "auditd",
    "events": 352,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1555.005"
    ],
@@ -2446,6 +2728,8 @@
    "source": "splunk/attack_data",
    "kind": "auditd",
    "events": 16,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1555.005"
    ],
@@ -2463,6 +2747,8 @@
    "source": "splunk/attack_data",
    "kind": "cloudtrail",
    "events": 2,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1556.006"
    ],
@@ -2480,6 +2766,8 @@
    "source": "splunk/attack_data",
    "kind": "auditd",
    "events": 1,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1562.004"
    ],
@@ -2495,6 +2783,8 @@
    "source": "splunk/attack_data",
    "kind": "cloudtrail",
    "events": 13274,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1562.007"
    ],
@@ -2515,6 +2805,8 @@
    "source": "splunk/attack_data",
    "kind": "cloudtrail",
    "events": 13274,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1562.007"
    ],
@@ -2535,6 +2827,8 @@
    "source": "splunk/attack_data",
    "kind": "cloudtrail",
    "events": 1,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1562.008"
    ],
@@ -2553,6 +2847,8 @@
    "source": "splunk/attack_data",
    "kind": "cloudtrail",
    "events": 1,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1562.008"
    ],
@@ -2568,6 +2864,8 @@
    "source": "splunk/attack_data",
    "kind": "cloudtrail",
    "events": 8,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1562.008"
    ],
@@ -2583,6 +2881,8 @@
    "source": "splunk/attack_data",
    "kind": "cloudtrail",
    "events": 4,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1562.008"
    ],
@@ -2600,6 +2900,8 @@
    "source": "splunk/attack_data",
    "kind": "cloudtrail",
    "events": 5,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1562.008"
    ],
@@ -2617,6 +2919,8 @@
    "source": "splunk/attack_data",
    "kind": "cloudtrail",
    "events": 3,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1562.008"
    ],
@@ -2634,6 +2938,8 @@
    "source": "splunk/attack_data",
    "kind": "cloudtrail",
    "events": 7,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1562.008"
    ],
@@ -2652,6 +2958,8 @@
    "source": "splunk/attack_data",
    "kind": "auditd",
    "events": 68,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1562.012"
    ],
@@ -2670,6 +2978,8 @@
    "source": "splunk/attack_data",
    "kind": "auditd",
    "events": 2,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1564.001"
    ],
@@ -2689,6 +2999,8 @@
    "source": "splunk/attack_data",
    "kind": "auditd",
    "events": 211,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1569.002"
    ],
@@ -2704,6 +3016,8 @@
    "source": "splunk/attack_data",
    "kind": "sysmon-linux",
    "events": 13,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1572"
    ],
@@ -2719,6 +3033,8 @@
    "source": "splunk/attack_data",
    "kind": "sysmon-linux",
    "events": 27416,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1574.006"
    ],
@@ -2736,6 +3052,8 @@
    "source": "splunk/attack_data",
    "kind": "auditd",
    "events": 4,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1574.006"
    ],
@@ -2751,6 +3069,8 @@
    "source": "splunk/attack_data",
    "kind": "auditd",
    "events": 6,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1574.006"
    ],
@@ -2770,6 +3090,8 @@
    "source": "splunk/attack_data",
    "kind": "cloudtrail",
    "events": 12,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1580"
    ],
@@ -2785,6 +3107,8 @@
    "source": "splunk/attack_data",
    "kind": "cloudtrail",
    "events": 8,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1586.003"
    ],
@@ -2804,6 +3128,8 @@
    "source": "splunk/attack_data",
    "kind": "cloudtrail",
    "events": 14,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1621"
    ],
@@ -2822,6 +3148,8 @@
    "source": "splunk/attack_data",
    "kind": "cloudtrail",
    "events": 2,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1621"
    ],
@@ -2839,6 +3167,8 @@
    "source": "OTRF",
    "kind": "cloudtrail",
    "events": 103,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1078",
     "T1530"
@@ -2857,6 +3187,8 @@
    "source": "OTRF",
    "kind": "auditd",
    "events": 6,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1027",
     "T1027.001"
@@ -2878,6 +3210,8 @@
    "source": "OTRF",
    "kind": "auditd",
    "events": 12,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1018"
    ],
@@ -2893,6 +3227,8 @@
    "source": "OTRF",
    "kind": "auditd",
    "events": 50,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1018",
     "T1027",
@@ -2914,6 +3250,8 @@
    "source": "OTRF",
    "kind": "sysmon-linux",
    "events": 93,
+   "channels": null,
+   "techniques_detected": null,
    "techniques": [
     "T1018",
     "T1027",
@@ -2938,18 +3276,88 @@
    ]
   }
  ],
- "seconds": 31.7,
- "linux_benign": {
-  "events": 2821,
+ "live_emulation": {
+  "events": 755,
   "channels": {
-   "linux-sysmon/operational": 2821
+   "linux-auditd": 697,
+   "linux-sysmon/operational": 58
   },
-  "window_hours": 0.005,
-  "workload": "venv + pip install + pytest + git on the runner",
-  "rules_fired": 3,
-  "alerts": 6,
+  "techniques_emulated": [
+   "T1033",
+   "T1082",
+   "T1007",
+   "T1087.001",
+   "T1027",
+   "T1057",
+   "T1016",
+   "T1083"
+  ],
+  "techniques_detected": [
+   "T1033",
+   "T1082",
+   "T1007",
+   "T1087.001",
+   "T1057",
+   "T1016",
+   "T1083"
+  ],
+  "techniques_missed": [
+   "T1027"
+  ],
+  "detected_ci95": [
+   0.529105,
+   0.977583
+  ],
+  "rules_fired": 10,
+  "alerts": 17,
+  "technique_rules": [
+   "Crontab Enumeration",
+   "File and Directory Discovery - Linux",
+   "Local System Accounts Discovery - Linux",
+   "Process Discovery",
+   "System Information Discovery",
+   "System Information Discovery - Auditd"
+  ],
+  "top_rules": [
+   "System Owner or User Discovery - Linux",
+   "System Information Discovery - Auditd",
+   "Local System Accounts Discovery - Linux",
+   "System Information Discovery",
+   "Crontab Enumeration"
+  ],
+  "note": "technique detected = a Linux rule tagged with the technique or its parent fired in the window; the window also holds the runner's background activity"
+ },
+ "seconds": 17.2,
+ "linux_benign": {
+  "events": 15480,
+  "channels": {
+   "linux-auditd": 12662,
+   "linux-sysmon/operational": 2818
+  },
+  "window_hours": 0.003,
+  "workload": "venv + pip install (exit 0) + unit tests (exit 0) + git on the runner",
+  "rules_fired": 6,
+  "alerts": 42,
   "over_budget_20_per_day": null,
   "fired": [
+   {
+    "title": "Use Of Hidden Paths Or Files",
+    "level": "low",
+    "hits": 30,
+    "alerts_per_day_projected": null
+   },
+   {
+    "title": "System Owner or User Discovery - Linux",
+    "level": "low",
+    "hits": 3,
+    "alerts_per_day_projected": null
+   },
+   {
+    "title": "System Information Discovery - Auditd",
+    "level": "low",
+    "hits": 3,
+    "alerts_per_day_projected": null
+   },
    {
     "title": "System Information Discovery",
     "level": "informational",
@@ -2968,11 +3376,10 @@
     "hits": 1,
     "alerts_per_day_projected": null
    }
-  ],
-  "note_projection": "window under 1 hour: smoke test only, no per-day projection"
+  ]
  },
  "provenance": {
-  "git_sha": "1c153a2012c76c1d743ffa244b849ae51190ee21",
+  "git_sha": "9906b42abfd3ecee1ec9c853658025eb3fdf3b45",
   "python": "3.12.14",
   "packages": {
    "pySigma": "1.5.1",
@@ -2983,6 +3390,16 @@
    "pyahocorasick": "2.3.1",
    "evtx": "0.13.1"
   },
-  "ci_run": "37016390345"
+  "datasets": {
+   "sigmahq": "07ec293a51695cb1131a2e05260247872b31e1e1",
+   "attack": "19.2 @ 6cda5ad8462c79e14fbb872f4e09059b18e0cfc4",
+   "otrf_security_datasets": "d9d40ef123d2c87d5d3df28c96bcab4f0faccc87",
+   "evtx_baseline": "v0.8.5",
+   "splunk_attack_data": "b4573ed3b6bf05473b01048dd36380dbd52288c0",
+   "sha256(checksums.sha256)": "bbae446b8fd0990998feb3a9a3c925d5d3ba4adb0d9270f39149ea238ade7bc0",
+   "sha256(splunk_attack_data.tsv)": "0be8e2e4fee208d93187b691162f620e90ff975f37966b585ee801c87f127e6b"
+  },
+  "ci_run": "37093721154",
+  "ci_run_url": "https://github.com/rakshit-737/anvil/actions/runs/37093721154"
  }
 }

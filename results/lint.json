@@ -1,7 +1,7 @@
 {
  "rules": 3757,
  "parse_errors": 0,
- "lint_seconds": 0.14,
+ "lint_seconds": 0.08,
  "rules_with_errors": 0,
  "rules_with_warnings": 3121,
  "findings_by_code": {
@@ -10,6 +10,7 @@
   "W203": 468,
   "W206": 46,
   "W204": 27,
+  "W213": 3,
   "W210": 2
  },
  "status": {
@@ -55,8 +56,40 @@
  "with_regression_test": 460,
  "test_or_stable_without_regression": 3029,
  "attack_version": "19.2",
+ "aggregation_census": {
+  "unsupported": {
+   "files": 87,
+   "with_count_call": 45,
+   "with_aggregation_condition": 54,
+   "correlation_documents": 0
+  },
+  "deprecated": {
+   "files": 172,
+   "with_count_call": 1,
+   "with_aggregation_condition": 1,
+   "correlation_documents": 0
+  },
+  "rules": {
+   "files": 3144,
+   "with_count_call": 0,
+   "with_aggregation_condition": 0,
+   "correlation_documents": 0
+  },
+  "rules-emerging-threats": {
+   "files": 473,
+   "with_count_call": 0,
+   "with_aggregation_condition": 0,
+   "correlation_documents": 0
+  },
+  "rules-threat-hunting": {
+   "files": 140,
+   "with_count_call": 0,
+   "with_aggregation_condition": 0,
+   "correlation_documents": 0
+  }
+ },
  "provenance": {
-  "git_sha": "1c153a2012c76c1d743ffa244b849ae51190ee21",
+  "git_sha": "9906b42abfd3ecee1ec9c853658025eb3fdf3b45",
   "python": "3.12.14",
   "packages": {
    "pySigma": "1.5.1",
@@ -67,6 +100,16 @@
    "pyahocorasick": "2.3.1",
    "evtx": "0.13.1"
   },
-  "ci_run": "37016390345"
+  "datasets": {
+   "sigmahq": "07ec293a51695cb1131a2e05260247872b31e1e1",
+   "attack": "19.2 @ 6cda5ad8462c79e14fbb872f4e09059b18e0cfc4",
+   "otrf_security_datasets": "d9d40ef123d2c87d5d3df28c96bcab4f0faccc87",
+   "evtx_baseline": "v0.8.5",
+   "splunk_attack_data": "b4573ed3b6bf05473b01048dd36380dbd52288c0",
+   "sha256(checksums.sha256)": "bbae446b8fd0990998feb3a9a3c925d5d3ba4adb0d9270f39149ea238ade7bc0",
+   "sha256(splunk_attack_data.tsv)": "0be8e2e4fee208d93187b691162f620e90ff975f37966b585ee801c87f127e6b"
+  },
+  "ci_run": "37093721154",
+  "ci_run_url": "https://github.com/rakshit-737/anvil/actions/runs/37093721154"
  }
 }

@@ -1520,5 +1520,43 @@
    "label": "validated (tested)",
    "color": "#8ec843"
   }
+ ],
+ "metadata": [
+  {
+   "name": "git_sha",
+   "value": "9906b42abfd3ecee1ec9c853658025eb3fdf3b45"
+  },
+  {
+   "name": "ci_run",
+   "value": "37093721154"
+  },
+  {
+   "name": "dataset sigmahq",
+   "value": "07ec293a51695cb1131a2e05260247872b31e1e1"
+  },
+  {
+   "name": "dataset attack",
+   "value": "19.2 @ 6cda5ad8462c79e14fbb872f4e09059b18e0cfc4"
+  },
+  {
+   "name": "dataset otrf_security_datasets",
+   "value": "d9d40ef123d2c87d5d3df28c96bcab4f0faccc87"
+  },
+  {
+   "name": "dataset evtx_baseline",
+   "value": "v0.8.5"
+  },
+  {
+   "name": "dataset splunk_attack_data",
+   "value": "b4573ed3b6bf05473b01048dd36380dbd52288c0"
+  },
+  {
+   "name": "dataset sha256(checksums.sha256)",
+   "value": "bbae446b8fd0990998feb3a9a3c925d5d3ba4adb0d9270f39149ea238ade7bc0"
+  },
+  {
+   "name": "dataset sha256(splunk_attack_data.tsv)",
+   "value": "0be8e2e4fee208d93187b691162f620e90ff975f37966b585ee801c87f127e6b"
+  }
  ]
 }

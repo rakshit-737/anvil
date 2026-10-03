@@ -55,6 +55,10 @@
      0.008
     ],
     "roc_auc_p_delta_le_0": 0.924,
+    "roc_auc_n_delta_le_0": [
+     924,
+     1000
+    ],
     "pr_auc_ci95": [
      0.122,
      0.265
@@ -63,7 +67,11 @@
      -0.051,
      0.083
     ],
-    "pr_auc_p_delta_le_0": 0.377
+    "pr_auc_p_delta_le_0": 0.377,
+    "pr_auc_n_delta_le_0": [
+     377,
+     1000
+    ]
    },
    "gbdt": {
     "roc_auc_ci95": [
@@ -75,6 +83,10 @@
      0.007
     ],
     "roc_auc_p_delta_le_0": 0.953,
+    "roc_auc_n_delta_le_0": [
+     953,
+     1000
+    ],
     "pr_auc_ci95": [
      0.135,
      0.304
@@ -83,7 +95,11 @@
      -0.037,
      0.12
     ],
-    "pr_auc_p_delta_le_0": 0.146
+    "pr_auc_p_delta_le_0": 0.146,
+    "pr_auc_n_delta_le_0": [
+     146,
+     1000
+    ]
    },
    "heuristic_level": {
     "roc_auc_ci95": [
@@ -105,6 +121,10 @@
      0.013
     ],
     "roc_auc_p_delta_le_0": 0.568,
+    "roc_auc_n_delta_le_0": [
+     568,
+     1000
+    ],
     "pr_auc_ci95": [
      0.116,
      0.253
@@ -113,7 +133,11 @@
      -0.056,
      0.059
     ],
-    "pr_auc_p_delta_le_0": 0.501
+    "pr_auc_p_delta_le_0": 0.501,
+    "pr_auc_n_delta_le_0": [
+     501,
+     1000
+    ]
    },
    "heuristic_no_filter": {
     "roc_auc_ci95": [
@@ -125,6 +149,10 @@
      -0.229
     ],
     "roc_auc_p_delta_le_0": 1.0,
+    "roc_auc_n_delta_le_0": [
+     1000,
+     1000
+    ],
     "pr_auc_ci95": [
      0.061,
      0.18
@@ -133,7 +161,11 @@
      -0.102,
      -0.03
     ],
-    "pr_auc_p_delta_le_0": 1.0
+    "pr_auc_p_delta_le_0": 1.0,
+    "pr_auc_n_delta_le_0": [
+     1000,
+     1000
+    ]
    },
    "random": {
     "roc_auc_ci95": [
@@ -145,6 +177,10 @@
      -0.269
     ],
     "roc_auc_p_delta_le_0": 1.0,
+    "roc_auc_n_delta_le_0": [
+     1000,
+     1000
+    ],
     "pr_auc_ci95": [
      0.022,
      0.049
@@ -153,7 +189,11 @@
      -0.21,
      -0.085
     ],
-    "pr_auc_p_delta_le_0": 1.0
+    "pr_auc_p_delta_le_0": 1.0,
+    "pr_auc_n_delta_le_0": [
+     1000,
+     1000
+    ]
    }
   }
  },
@@ -398,7 +438,7 @@
  },
  "label": "rule fires at least once on the benign evtx-baseline corpus (observable rules only)",
  "provenance": {
-  "git_sha": "1c153a2012c76c1d743ffa244b849ae51190ee21",
+  "git_sha": "9906b42abfd3ecee1ec9c853658025eb3fdf3b45",
   "python": "3.12.14",
   "packages": {
    "pySigma": "1.5.1",
@@ -409,6 +449,16 @@
    "pyahocorasick": "2.3.1",
    "evtx": "0.13.1"
   },
-  "ci_run": "37016390345"
+  "datasets": {
+   "sigmahq": "07ec293a51695cb1131a2e05260247872b31e1e1",
+   "attack": "19.2 @ 6cda5ad8462c79e14fbb872f4e09059b18e0cfc4",
+   "otrf_security_datasets": "d9d40ef123d2c87d5d3df28c96bcab4f0faccc87",
+   "evtx_baseline": "v0.8.5",
+   "splunk_attack_data": "b4573ed3b6bf05473b01048dd36380dbd52288c0",
+   "sha256(checksums.sha256)": "bbae446b8fd0990998feb3a9a3c925d5d3ba4adb0d9270f39149ea238ade7bc0",
+   "sha256(splunk_attack_data.tsv)": "0be8e2e4fee208d93187b691162f620e90ff975f37966b585ee801c87f127e6b"
+  },
+  "ci_run": "37093721154",
+  "ci_run_url": "https://github.com/rakshit-737/anvil/actions/runs/37093721154"
  }
 }
