@@ -2,6 +2,11 @@
 
 All notable changes to this project are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses [semantic versioning](https://semver.org/).
 
+## [1.1.2] - 2026-10-03
+
+### Changed
+- The repository was renamed from `rakshit-737/anvil` to `rakshit-737/anvil-detection-engineering`. Repository, docs (https://rakshit-737.github.io/anvil-detection-engineering/), badge and GHCR image (`ghcr.io/rakshit-737/anvil-detection-engineering`) links are updated; the sibling `gauntlet` link now points to `gauntlet-detection-coverage`. Older entries below keep the old names; GitHub redirects the old repository URL, but the old Pages URL no longer resolves.
+
 ## [1.1.1] - 2026-10-03
 
 ### Added
@@ -95,6 +100,7 @@ Real-data release: ANVIL now runs the full SigmaHQ library against public attack
 
 - MVP: Sigma-like engine subset, lint, TP/TN fixture harness, FP/SOC-capacity gate, bundled ATT&CK subset coverage, quality score, schema-drift decay check and synthetic telemetry.
 
+[1.1.2]: https://github.com/rakshit-737/anvil-detection-engineering/releases/tag/v1.1.2
 [1.1.1]: https://github.com/rakshit-737/anvil/releases/tag/v1.1.1
 [1.1.0]: https://github.com/rakshit-737/anvil/releases/tag/v1.1.0
 [1.0.0]: https://github.com/rakshit-737/anvil/releases/tag/v1.0.0
