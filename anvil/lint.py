@@ -28,6 +28,98 @@ class Finding:
         return f"[{self.severity.upper()}] {self.rule_id or '?'} {self.code}: {self.message}"
 
 
+def _quantified_at(pattern: str, i: int) -> bool:
+    """True if a repeat quantifier (``*``, ``+``, ``{n,}`` or ``{n,m}`` with m > 1) starts at ``i``."""
+    if i >= len(pattern):
+        return False
+    if pattern[i] in "*+":
+        return True
+    m = re.match(r"\{(\d*)(,(\d*))?\}", pattern[i:])
+    return bool(m and m.group(2) and (not m.group(3) or int(m.group(3)) > 1))
+
+
+def redos_risk(pattern: str) -> str | None:
+    r"""Heuristic catastrophic-backtracking check for a rule regex.
+
+    Flags a quantified group that itself contains a repeat quantifier (``(a+)+``,
+    ``(a*)*``, ``(\w+\s?)*``) and a quantified alternation with duplicate or
+    prefix-overlapping branches (``(a|a)*``, ``(a|ab)+``). It is a lint heuristic,
+    not a proof: it can miss exotic cases and flag some safe ones.
+
+    Returns:
+        A short reason, or None if no risky construct was found.
+    """
+    stack: list[int] = []
+    i, in_class = 0, False
+    inner_quant: dict[int, bool] = {}
+    while i < len(pattern):
+        c = pattern[i]
+        if c == "\\":
+            i += 2
+            continue
+        if in_class:
+            in_class = c != "]"
+            i += 1
+            continue
+        if c == "[":
+            in_class = True
+            i += 1
+            if i < len(pattern) and pattern[i] == "]":
+                i += 1
+            continue
+        if c == "(":
+            stack.append(i)
+            inner_quant[i] = False
+        elif c == ")" and stack:
+            start = stack.pop()
+            body = pattern[start + 1:i]
+            if body.startswith("?"):
+                body = re.sub(r"^\?(?:[:=!>]|<[=!]|P?<[^>]*>|[a-zA-Z-]+[:)])", "", body)
+            if _quantified_at(pattern, i + 1):
+                if inner_quant.get(start):
+                    return f"quantified group {pattern[start:i + 1]!r} contains a quantifier"
+                alts = _top_level_split(body)
+                for ix, x in enumerate(alts):
+                    for iy, y in enumerate(alts):
+                        if ix != iy and x and y.startswith(x):
+                            return f"quantified alternation {pattern[start:i + 1]!r} has overlapping branches"
+                if stack:
+                    inner_quant[stack[-1]] = True
+            elif inner_quant.get(start) and stack:
+                inner_quant[stack[-1]] = True
+        elif _quantified_at(pattern, i) and stack and i > 0 and pattern[i - 1] not in "(|":
+            inner_quant[stack[-1]] = True
+        i += 1
+    return None
+
+
+def _top_level_split(body: str) -> list[str]:
+    out, depth, cur, i, in_class = [], 0, [], 0, False
+    while i < len(body):
+        c = body[i]
+        if c == "\\":
+            cur.append(body[i:i + 2])
+            i += 2
+            continue
+        if in_class:
+            in_class = c != "]"
+        elif c == "[":
+            in_class = True
+        elif c == "(":
+            depth += 1
+        elif c == ")":
+            depth -= 1
+        elif c == "|" and depth == 0:
+            out.append("".join(cur))
+            cur = []
+            i += 1
+            continue
+        cur.append(c)
+        i += 1
+    out.append("".join(cur))
+    return out
+
+
 def _check_selection(rule: Rule, name: str, sel, out: list[Finding]) -> None:
     items = sel if isinstance(sel, list) else [sel]
     if not items:
@@ -48,6 +140,11 @@ def _check_selection(rule: Rule, name: str, sel, out: list[Finding]) -> None:
                         re.compile(str(v))
                     except re.error as exc:
                         out.append(Finding(rule.id, ERROR, "A107", f"{name}.{key}: bad regex {v!r}: {exc}"))
+                        continue
+                    why = redos_risk(str(v))
+                    if why:
+                        out.append(Finding(rule.id, WARN, "W213", f"{name}.{key}: regex may backtrack "
+                                                                  f"catastrophically (ReDoS): {why}"))
             if "contains" in mods:
                 for v in val if isinstance(val, list) else [val]:
                     if len(str(v)) < 3:

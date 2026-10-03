@@ -94,3 +94,22 @@ def test_otrf_catalog(tmp_path):
     (ds,) = load_catalog(tmp_path)
     assert ds.techniques == ["T1059.001", "T1105"] and ds.available
     assert len(list(ds.events())) == 1 and "powershell" in ds.adversary_view
+
+
+@pytest.mark.parametrize("pattern", ["^(a+)+$", "(a*)*", "(a|a)*", r"(\w+\s?)*$", r"(?:.*\))+"])
+def test_lint_flags_redos_prone_regex(pattern):
+    d = {"title": "t", "id": "5f1d0f4e-1c2b-4c55-9a7e-6f0b7c1d2e3a", "description": "d", "level": "low",
+         "status": "test", "logsource": {"category": "process_creation", "product": "windows"},
+         "detection": {"selection": {"CommandLine|re": pattern}, "condition": "selection"},
+         "tags": ["attack.t1059"], "falsepositives": ["x"]}
+    codes = [f.code for f in lint_rule(Rule.from_dict(d), profile="sigma")]
+    assert "W213" in codes
+
+
+@pytest.mark.parametrize("pattern", [r"\\[a-z]+\.exe$",r"(\d{1,3}\.){3}\d{1,3}", "(abc)+", "(a|b)+", "[(a+)]+"])
+def test_lint_accepts_linear_regex(pattern):
+    d = {"title": "t", "id": "5f1d0f4e-1c2b-4c55-9a7e-6f0b7c1d2e3a", "description": "d", "level": "low",
+         "status": "test", "logsource": {"category": "process_creation", "product": "windows"},
+         "detection": {"selection": {"CommandLine|re": pattern}, "condition": "selection"},
+         "tags": ["attack.t1059"], "falsepositives": ["x"]}
+    assert "W213" not in [f.code for f in lint_rule(Rule.from_dict(d), profile="sigma")]
