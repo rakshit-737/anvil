@@ -12,8 +12,9 @@ must carry `reviewed: true`; otherwise A114 blocks them (the human review gate, 
 
 Each rule's `logsource` is mapped to concrete channels and event IDs (`anvil/logsource.py`,
 ADR 0002; ADR 0007 adds Linux and AWS). Events are indexed by `(channel, EventID)`, so a
-rule is only evaluated against events it can apply to. On the benign corpus this turns
-about 5.15M candidate rule-event evaluations per shard into about 44k.
+rule is only evaluated against events it can apply to. On an 1,800-event benign sample this
+turns 5.15M candidate rule-event evaluations (2,861 rules x 1,800 events) into about 44k;
+Evaluation compares the alerts with routing on and off in the same engine.
 
 ## 3. True-positive replay
 
@@ -41,7 +42,12 @@ rules to `drafts/`. They fail lint until a human sets `reviewed: true`.
 When telemetry changes (a Sysmon-to-4688 migration, an ECS rename, a collector dropping a
 field), `anvil decay` checks every rule's condition for satisfiability against the
 observed per-source field inventory, with no attack data. Evaluation compares this with
-field-presence (schema-style) validation and with replay ground truth.
+field-presence (schema-style) validation and with replay ground truth: simulated changes
+applied to SigmaHQ's regression captures, and a real one, OTRF captures replayed with and
+without their Sysmon channel. A weekly workflow (`decay.yml`) runs the check and opens an
+issue when a rule can no longer fire.
+
+![Decay prediction: symbolic check vs field-presence checks](img/decay_ablation.png)
 
 ## 7. Claimed vs validated coverage
 

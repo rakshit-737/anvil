@@ -4,6 +4,34 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## Unreleased
 
+### Added
+- Real-telemetry decay check without a simulator: OTRF captures that log both Sysmon EID 1 and native Security 4688 are replayed with and without their Sysmon channel, and the static monitor (benign inventory with real Sysmon events dropped) is scored against that ground truth with Wilson intervals and exact McNemar tests against both field-presence baselines. Per-rule flag sets are committed in `results/decay.json`, so the tests can be recomputed.
+- Weekly `decay` workflow: runs `anvil decay --routed` and opens or updates one issue when a rule can no longer fire (on the bundled synthetic telemetry; a v2 schema dispatch option simulates a pipeline rename).
+- `bench` workflow `report` job: joins the bench and OpenSearch jobs of one run, checks that every results file carries that run's id and commit, renders SUMMARY.md, figures and dashboard, and captures the dashboard screenshot with Playwright. Its `results` artefact is committed unmodified.
+- Live Linux emulation window on the CI runner is labelled per technique and scored (`nixcloud.json` `live_emulation`); auditd is now actually captured.
+- Docs CI renders the site in headless Chromium: the architecture Mermaid must produce an SVG with at least 16 nodes and no syntax error, and no page may have a failed request or console error; weekly schedule because Mermaid is loaded unpinned.
+- `docs/img/decay_ablation.png`; dashboard decay tile, run id link and Wilson intervals on the tiles.
+- Lint W213: ReDoS-prone `|re` patterns (nested quantifiers, overlapping quantified alternation).
+- `python benchmarks/bench.py verify` compares results with the committed files, ignoring provenance and timings.
+- Provenance now records dataset pins and checksum-manifest hashes; the Navigator layer carries provenance as layer metadata.
+- Engine ablation with routing disabled; aggregation census of the SigmaHQ checkout; paired drafter comparison with exact McNemar.
+- SECURITY.md: private vulnerability reporting link, supported versions, the accepted diskcache advisory with its re-check date. GitHub secret scanning, push protection, Dependabot alerts and security updates, and private vulnerability reporting are enabled.
+- Release images also get a bare semver tag (for example `1.2.0` next to `v1.2.0`) and OCI version/revision labels.
+
+### Changed
+- Every published number now comes from one green `bench` run, 37093721154 at `9906b42`, cited in README, Evaluation, Reproduce and the dashboard. The stages that did not change reproduce the 1.1.0 counts exactly; OpenSearch regression agreement rises to 450/458 (98.3%) from 433/459 (94.3%) after the indexing fixes.
+- OpenSearch cross-check: Sigma keyword searches query one catch-all field instead of every mapped field (the cause of the 1.1.0 heap OOM and of 15 of its 16 HTTP 500s), values are indexed up to Lucene's term limit (the 17 'undiagnosed' PowerShell disagreements were script blocks over 10,922 characters that were never indexed), the container runs without auto-restart and the job fails on a restart or any OutOfMemoryError, and every failed query is recorded with its cause.
+- SUMMARY.md prints proportions as `k/n, p% [lo, hi]` with one rounding step; intervals are stored at full precision; `wilson()` returns no interval for n = 0.
+- `anvil decay --routed` counts broken and source-missing rules as issues; synthetic telemetry carries its Sysmon channel.
+- FP-model unit tests run in seconds (fewer boosting rounds, single-threaded OpenMP).
+- The seven Dependabot updates (checkout v7.0.1, setup-python v7.0.0, upload-artifact v7.0.1, build-push v7.4.0, login v4.6.0, mkdocs-material, mkdocstrings) are applied.
+
+### Fixed
+- The 1.1.0 notes cite run 37016390345, whose OpenSearch job failed with a heap OOM, plus run 37021246686 at another commit; `results/nixcloud.json` had also been edited after CI. Both are superseded by run 37093721154.
+- `anvil regress` exits 2 for a missing or empty SigmaHQ path instead of passing with `regression: {}`; `anvil report` refuses a missing or empty results folder; `anvil ingest` checks its sources and names the `[evtx]` extra.
+- `scripts/record_linux_live.sh` aborted on `find /tmp` in every run (hidden by `continue-on-error`), and auditd recorded nothing.
+- README claims corrected: the GAUNTLET comparison uses GAUNTLET v1.1.0 on the same 98 recordings; the goodlog gap is a lower bound; the routing effect is isolated from value-semantics changes; the `count()` census; benign rates are install-day telemetry; download sizes agree everywhere.
+
 ## [1.1.0] - 2026-10-02
 
 ### Added
