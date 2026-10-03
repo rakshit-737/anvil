@@ -31,8 +31,28 @@ def benign_shards() -> list[Path]:
     return sorted((data_dir() / "corpus").glob("benign-*/*.jsonl.gz"))
 
 
+def dataset_pins() -> dict[str, str]:
+    """Pinned dataset versions from scripts/download_data.py plus hashes of the checksum manifests."""
+    import hashlib
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("_anvil_download_data", ROOT / "scripts" / "download_data.py")
+    if spec is None or spec.loader is None:
+        return {}
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    pins = {"sigmahq": mod.SIGMA_COMMIT, "attack": f"{mod.ATTACK_VERSION} @ {mod.ATTACK_COMMIT}",
+            "otrf_security_datasets": mod.OTRF_COMMIT, "evtx_baseline": mod.BASELINE_TAG,
+            "splunk_attack_data": mod.SPLUNK_ATTACK_DATA_COMMIT}
+    for name in ("checksums.sha256", "splunk_attack_data.tsv"):
+        f = ROOT / "scripts" / name
+        if f.exists():
+            # hash with normalised line endings so a Windows checkout gives the same digest
+            pins[f"sha256({name})"] = hashlib.sha256(f.read_bytes().replace(b"\r\n", b"\n")).hexdigest()
+    return pins
+
+
 def provenance() -> dict[str, Any]:
-    """Git SHA, Python and key package versions, written into every results file."""
+    """Git SHA, Python, key package versions, dataset pins and the CI run, written into every results file."""
     import importlib.metadata as md
     import platform
     import subprocess
@@ -48,8 +68,12 @@ def provenance() -> dict[str, Any]:
             pk[name] = md.version(name)
         except md.PackageNotFoundError:
             pass
-    return {"git_sha": sha, "python": platform.python_version(), "packages": pk,
-            "ci_run": os.environ.get("GITHUB_RUN_ID", "")}
+    run = os.environ.get("GITHUB_RUN_ID", "")
+    out = {"git_sha": sha, "python": platform.python_version(), "packages": pk, "datasets": dataset_pins(),
+           "ci_run": run}
+    if run and os.environ.get("GITHUB_REPOSITORY"):
+        out["ci_run_url"] = f"https://github.com/{os.environ['GITHUB_REPOSITORY']}/actions/runs/{run}"
+    return out
 
 
 def save(name: str, obj: Any) -> Path:

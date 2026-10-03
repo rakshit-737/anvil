@@ -14,7 +14,6 @@ same technique, or its parent technique (never a sibling sub-technique), fires.
 """
 from __future__ import annotations
 
-import math
 import re
 import time
 from collections import Counter, defaultdict
@@ -23,19 +22,9 @@ from typing import Any
 
 from anvil.runner import Library, load_rule_dir
 from anvil.telemetry import iter_path
+from benchmarks.stats import wilson  # noqa: F401 - re-exported for older imports
 
 T_ID = re.compile(r"\bT\d{4}(?:\.\d{3})?\b")
-
-
-def wilson(k: int, n: int, z: float = 1.96) -> list[float]:
-    """Wilson score 95% interval for k successes out of n."""
-    if not n:
-        return [0.0, 0.0]
-    p = k / n
-    den = 1 + z * z / n
-    c = (p + z * z / (2 * n)) / den
-    h = z * math.sqrt(p * (1 - p) / n + z * z / (4 * n * n)) / den
-    return [round(max(0.0, c - h), 4), round(min(1.0, c + h), 4)]
 
 
 def strict_match(rule_techs: set[str], ds_techs: list[str]) -> bool:

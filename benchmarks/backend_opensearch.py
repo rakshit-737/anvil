@@ -21,7 +21,6 @@ from __future__ import annotations
 
 import http.client
 import json
-import math
 import os
 import re
 import sys
@@ -38,6 +37,7 @@ from anvil.regression import discover, run_case  # noqa: E402
 from anvil.runner import Library, load_rule_dir  # noqa: E402
 from anvil.telemetry import iter_json_file  # noqa: E402
 from benchmarks.common import save, sigma_root  # noqa: E402
+from benchmarks.stats import cohen_kappa, kappa_bootstrap_ci, wilson  # noqa: E402
 
 URL = os.environ.get("OPENSEARCH_URL", "http://localhost:9200")
 INDEX = "anvil-xcheck"
@@ -167,26 +167,6 @@ def _modifiers(path: str) -> list[str]:
     return sorted({m for m in MODIFIERS if re.search(rf"\|{m}\b", text)})
 
 
-def kappa(a: int, b: int, c: int, d: int) -> float:
-    """Cohen's kappa for a 2x2 table: a=both yes, b=anvil only, c=backend only, d=both no."""
-    n = a + b + c + d
-    if not n:
-        return float("nan")
-    po = (a + d) / n
-    pe = ((a + b) * (a + c) + (c + d) * (b + d)) / (n * n)
-    return 1.0 if pe == 1 else (po - pe) / (1 - pe)
-
-
-def wilson(k: int, n: int, z: float = 1.96) -> list[float]:
-    if not n:
-        return [0.0, 0.0]
-    p = k / n
-    den = 1 + z * z / n
-    c = (p + z * z / (2 * n)) / den
-    h = z * math.sqrt(p * (1 - p) / n + z * z / (4 * n * n)) / den
-    return [round(max(0.0, c - h), 4), round(min(1.0, c + h), 4)]
-
-
 def main() -> int:
     from benchmarks.bench import _benign_sample, _rule_dirs
     t0 = time.perf_counter()
@@ -299,7 +279,8 @@ def main() -> int:
                        "disagreements": reg_rows},
         "benign": {**dict(ben),
                    "fire_table": {"both": a, "anvil_only": b, "opensearch_only": cc, "neither": d},
-                   "fire_kappa": round(kappa(a, b, cc, d), 4),
+                   "fire_kappa": round(cohen_kappa(a, b, cc, d), 4),
+                   "fire_kappa_ci95_bootstrap": kappa_bootstrap_ci([a, b, cc, d]),
                    "same_event_set_rate": round(ben["same_event_set"] / max(1, ben["compared"]), 4),
                    "same_event_set_ci95": wilson(ben["same_event_set"], ben["compared"]),
                    "disagreements": sorted(ben_rows, key=lambda x: -abs(x["anvil"] - x["opensearch"]))[:60],

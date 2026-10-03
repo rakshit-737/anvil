@@ -38,8 +38,8 @@ from anvil.parallel import scan_files  # noqa: E402
 from anvil.regression import discover, run_case  # noqa: E402
 from anvil.runner import Library, load_rule_dir  # noqa: E402
 from anvil.telemetry import iter_json_file, iter_path  # noqa: E402
-from benchmarks.common import RESULTS, benign_shards, data_dir, load, save, sigma_root  # noqa: E402
-from benchmarks.nixcloud_bench import wilson  # noqa: E402
+from benchmarks.common import RESULTS, benign_shards, data_dir, load, provenance, save, sigma_root  # noqa: E402
+from benchmarks.stats import wilson  # noqa: E402
 
 CAPACITY, SHARE = 200.0, 0.10          # SOC triage capacity/day and max share for one rule
 BUDGET = CAPACITY * SHARE              # -> 20 alerts/day per rule
@@ -463,6 +463,10 @@ def stage_coverage() -> dict[str, Any]:
         out[name]["tactics"] = rep["tactics"]
         if name == "tp_validated_and_gated":
             layer = navigator_layer(rep, "SigmaHQ Windows rules: claimed vs ANVIL-validated")
+            # Navigator layers allow name/value metadata: carry the same provenance as the JSON results.
+            prov = provenance()
+            layer["metadata"] = ([{"name": k, "value": str(prov.get(k, ""))} for k in ("git_sha", "ci_run")]
+                                 + [{"name": f"dataset {k}", "value": v} for k, v in prov.get("datasets", {}).items()])
             (RESULTS / "navigator_sigmahq_windows.json").write_text(json.dumps(layer, indent=1))
             out["stale_tags"] = rep["stale_tags"]
     if otrf:

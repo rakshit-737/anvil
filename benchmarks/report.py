@@ -5,7 +5,7 @@ import json
 from typing import Any
 
 from benchmarks.common import RESULTS, ROOT
-from benchmarks.nixcloud_bench import wilson
+from benchmarks.stats import wilson
 
 IMG = ROOT / "docs" / "img"
 INK, MUTED, GRID = "#0b0b0b", "#52514e", "#e3e2dc"
